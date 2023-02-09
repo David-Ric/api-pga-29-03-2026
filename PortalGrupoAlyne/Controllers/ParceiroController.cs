@@ -1,0 +1,122 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using PortalGrupoAlyne.Model.Dtos;
+using PortalGrupoAlyne.Services;
+
+namespace PortalGrupoAlyne.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ParceiroController : ControllerBase
+    {
+        private readonly DataContext _context;
+        private IMapper _mapper;
+        private IParceirosService _parceirosService;
+        public ParceiroController(IMapper mapper, IParceirosService parceirosService, DataContext context) 
+        {
+            _parceirosService = parceirosService;
+            _context = context;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll([FromServices] DataContext context,
+            [FromQuery] int pagina,
+             [FromQuery] int totalpagina
+            )
+        {
+            var total = await context.Parceiro.CountAsync();
+            var data = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
+        [HttpGet("filter")]
+
+        public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
+          [FromQuery] int pagina,
+           [FromQuery] int totalpagina,
+          [FromQuery] string filter
+
+          )
+        {
+            var total = await context.Parceiro.CountAsync();
+            var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+                                      .Where(e => (e.Nome.ToLower().Contains(filter.ToLower()) ||
+                                      e.Status.ToLower().Contains(filter.ToLower()) || e.Cnpj_Cpf.ToLower().Contains(filter.ToLower())))
+                         .OrderBy(e => e.id).ToListAsync();
+            return Ok(new
+            {
+                total,
+                data = parceiros
+            });
+        }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var parceiro = await _parceirosService.GetParceirosId(id);
+                if (parceiro == null) return NoContent();
+
+                return Ok(parceiro);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Parceiro não encontrado.");
+            }
+        }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Parceiros>> Get(int id)
+        //{
+        //    var parceiro = await _context.Parceiros.FindAsync(id);
+        //    if (parceiro == null)
+        //        return BadRequest("Parceiro não encontrado.");
+        //    return Ok(parceiro);
+        //}
+
+        [HttpPost]
+        public async Task<ActionResult<List<Parceiro>>> AddParceiros(Parceiro model)
+        {
+
+            if (_context.Parceiro.Any(u => u.Nome == model.Nome))
+            {
+                return BadRequest("Parceiro ja existe na base de dados.");
+            }
+            _context.Parceiro.Add(model);
+            await _context.SaveChangesAsync();
+
+            return Ok((new { message = "Parceiro criado com sucesso" }));
+        }
+
+        [HttpPut("{id}")]
+
+        public IActionResult Update(int id, ParceiroDto model)
+        {
+            //if (_context.Produtos.Any(u => u.Nome == model.Nome))
+            //{
+            //    return BadRequest("Já existe um produto com essa descrição.");
+            //}
+            _parceirosService.Update(id, model);
+            return Ok(new { message = "Parceiro atualizado com sucesso" });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<Parceiro>>> Delete(int id)
+        {
+            var parceiro = await _context.Parceiro.FindAsync(id);
+            if (parceiro == null)
+                return BadRequest("Parceiro não encontrado");
+
+            _context.Parceiro.Remove(parceiro);
+            await _context.SaveChangesAsync();
+
+            return Ok("Parceiro excluído com sucesso!");
+        }
+    }
+}

@@ -1,0 +1,130 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using PortalGrupoAlyne.Model;
+using PortalGrupoAlyne.Model.Dtos;
+using PortalGrupoAlyne.Services;
+using System.Text;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+
+namespace PortalGrupoAlyne.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ItemTabelaPrecoController : ControllerBase
+    {
+        private readonly DataContext _context;
+        private IMapper _mapper;
+        private IItemTabelaService _itemTabelaService;
+        public ItemTabelaPrecoController(DataContext context, IMapper mapper, IItemTabelaService itemTabelaService)
+        {
+            _itemTabelaService = itemTabelaService;
+            _context = context;
+            _mapper = mapper;
+        }
+
+        [HttpGet]
+
+        public async Task<IActionResult> GetAll([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina
+           )
+        {
+
+            var total = await context.ItemTabela.CountAsync();
+            var data = await context.ItemTabela.AsNoTracking().Include(i => i.Produtos).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            // string? sQuery = "select ite.IdProd, pro.Nome, ite.Preco from itemtabela ite join produtos pro on pro.Codigo = ite.IdProd where ite.IdProd = @codprod";
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
+        //[HttpGet("filter")]
+
+        //public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
+        //   [FromQuery] int pagina,
+        //    [FromQuery] int totalpagina,
+        //   [FromQuery] string filter
+
+        //   )
+        //{
+        //    var total = await context.ItemTabela.CountAsync();
+        //    var itens = await context.ItemTabela.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+        //                 //.Where(e => (e.DataInicial.Contains(filter)))
+        //                 .OrderBy(e => e.Id).ToListAsync();
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = itens
+        //    });
+        //}
+
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<ItemTabela>> Get(int id)
+        //{
+        //    var item = await _context.ItemTabela.FindAsync(id);
+        //    if (item == null)
+        //        return BadRequest("Item da tabela de preço não encontrada.");
+        //    return Ok(item);
+        //}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var tabela = await _itemTabelaService.GetItemTabelaAsync(id);
+                if (tabela == null) return NoContent();
+
+                return Ok(tabela);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Ítem não encontrado.");
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<List<ItemTabela>>> AddItemTabela(ItemTabela item)
+        {
+
+            if (_context.ItemTabela.Any(u => u.Id == item.Id))
+            {
+                return BadRequest("Item da tabela de preço ja existe na base de dados.");
+            }
+            if (_context.ItemTabela.Any(u => u.IdProd == item.IdProd))
+            {
+                return BadRequest("Produto já cadastrado nesta tabela de preço.");
+            }
+            _context.ItemTabela.Add(item);
+            await _context.SaveChangesAsync();
+
+            return Ok((new { message = "Item da tabela de preço criado com sucesso" }));
+        }
+
+        [HttpPut("{id}")]
+
+        public IActionResult Update(int id, ItemTabelaDto model)
+        {
+            _itemTabelaService.Update(id, model);
+            return Ok(new { message = "Item da tabela de preço atualizado com sucesso" });
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<List<ItemTabela>>> Delete(int id)
+        {
+            var item = await _context.ItemTabela.FindAsync(id);
+            if (item == null)
+                return BadRequest("Item da tabela de preço não encontrado");
+
+            _context.ItemTabela.Remove(item);
+            await _context.SaveChangesAsync();
+
+            return Ok("Item da tabela de preço excluído com sucesso!");
+        }
+    }
+}
