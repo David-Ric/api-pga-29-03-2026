@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PortalGrupoAlyne.Model.Dtos
 {
@@ -6,10 +7,13 @@ namespace PortalGrupoAlyne.Model.Dtos
     {
         [Key]
         public int Id { get; set; }
-        public string? Codigo { get; set; }
+
+        [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
         public string? Nome { get; set; }
-        public string? GrupoId { get; set; }
-        public string? NomeGrupo { get; set; }
+
+        [ForeignKey("GrupoProduto")]
+        public int GrupoProdutoId { get; set; }
+        public GrupoProduto? GrupoProduto { get; set; }
         public DateTime? AtualizadoEm { get; set; }
     }
 }

@@ -100,7 +100,7 @@ namespace PortalGrupoAlyne.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Vendedor>>> AddVendedor(Vendedor vendedor)
         {
-            if (_context.Vendedor.Any(u => u.CodVendedor == vendedor.CodVendedor))
+            if (_context.Vendedor.Any(u => u.Id == vendedor.Id))
             {
                 return BadRequest("Vendedor ja existe na base de dados.");
             }

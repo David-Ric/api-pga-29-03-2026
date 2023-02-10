@@ -30,7 +30,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.Produto.CountAsync();
-            var data = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoProduto").ToListAsync();
 
             return Ok(new
             {
@@ -43,14 +43,14 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
            [FromQuery] int pagina,
             [FromQuery] int totalpagina,
-           [FromQuery] string filter
+           [FromQuery] string? filter
+       
 
            )
         {
             var total = await context.Produto.CountAsync();
             var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.Codigo.ToLower().Contains(filter.ToLower()) ||
-                                      e.Nome.ToLower().Contains(filter.ToLower())))
+                                      .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
             return Ok(new
             {
@@ -63,13 +63,13 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<IActionResult> GetAllGrupo([FromServices] DataContext context,
           [FromQuery] int pagina,
            [FromQuery] int totalpagina,
-          [FromQuery] string filter
+          [FromQuery] int? grupo
 
           )
         {
             var total = await context.Produto.CountAsync();
             var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.NomeGrupo.ToLower().Contains(filter.ToLower())))
+                                      .Where(e=>e.GrupoProdutoId==grupo)
                          .OrderBy(e => e.Id).ToListAsync();
             return Ok(new
             {
@@ -79,13 +79,22 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Produto>> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var produto= await _context.Produto.FindAsync(id);
-            if (produto == null)
+            try
+            {
+                var produto = await _produtoService.GetProdutoId(id);
+                if (produto == null) return NoContent();
+
+                return Ok(produto);
+            }
+            catch (Exception ex)
+            {
                 return BadRequest("Produto não encontrado.");
-            return Ok(produto);
+            }
         }
+
+
         [HttpPost]
         public async Task<ActionResult<List<Produto>>> AddProduto(Produto produto)
         {
@@ -101,13 +110,13 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpPut("{id}")]
-       
+
         public IActionResult Update(int id, ProdutoDto model)
         {
             _produtoService.Update(id, model);
             return Ok(new { message = "Produto atualizado com sucesso" });
         }
-
+        
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<Produto>>> Delete(int id)
