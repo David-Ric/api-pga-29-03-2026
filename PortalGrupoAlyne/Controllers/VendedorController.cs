@@ -59,6 +59,25 @@ namespace PortalGrupoAlyne.Controllers
                 data = vendedores
             });
         }
+
+        [HttpGet("filter/codigo")]
+        public async Task<IActionResult> GetAllFilterCodigo([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+           [FromQuery] int codigo
+
+           )
+        {
+            var total = await context.Vendedor.CountAsync();
+            var vendedores = await context.Vendedor.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+                                      .Where(e => e.Id==codigo).OrderBy(e => e.Id).ToListAsync();
+            return Ok(new
+            {
+                total,
+                data = vendedores
+            });
+        }
+
         [HttpGet("promotor")]
         public async Task<IActionResult> GetAllPromotor([FromServices] DataContext context,
           [FromQuery] int pagina,

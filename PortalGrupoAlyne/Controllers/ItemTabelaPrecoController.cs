@@ -96,7 +96,7 @@ namespace PortalGrupoAlyne.Controllers
             {
                 return BadRequest("Item da tabela de preço ja existe na base de dados.");
             }
-            if (_context.ItemTabela.Any(u => u.IdProd == item.IdProd))
+            if (_context.ItemTabela.Any(u => u.Id == item.Id && u.IdProd == item.IdProd))
             {
                 return BadRequest("Produto já cadastrado nesta tabela de preço.");
             }
