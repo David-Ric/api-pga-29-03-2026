@@ -119,6 +119,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IUserGrupoPersist,GrupoUsuarioPersist>();
             builder.Services.AddScoped<IPaginaPersist, PaginaPersist>();
             builder.Services.AddScoped<IMenuPermissoesPersist, MenuPermissaoPersist>();
+            builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
 
             var app = builder.Build();
 

@@ -76,7 +76,7 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("nameGrupo")
+                    b.Property<string>("Nome")
                         .HasMaxLength(60)
                         .HasColumnType("varchar(60)");
 
@@ -195,15 +195,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("MenuPermissao");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = 1,
-                            Nome = "Administrativo",
-                            UsuarioId = 1
-                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Pagina", b =>
@@ -245,127 +236,151 @@ namespace PortalGrupoAlyne.Migrations
                         new
                         {
                             Id = 1,
-                            Codigo = 5,
-                            Icon = "fa fa-user-circle-o",
+                            Codigo = 13,
+                            Icon = "fa fa-briefcase",
                             MenuId = 1,
-                            Nome = "Usuarios",
-                            Url = "/cadastro-usuarios"
+                            Nome = "Empresas",
+                            SubMenuId = 1,
+                            Url = "/cadastro-tipo-empresa"
                         },
                         new
                         {
                             Id = 2,
-                            Codigo = 18,
-                            Icon = "fa fa-users",
-                            MenuId = 1,
-                            Nome = "Grupo de Usuarios",
-                            Url = "/cadastro-grupo-usuarios"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Codigo = 7,
+                            Codigo = 13,
                             Icon = "fa fa-user-plus",
                             MenuId = 1,
                             Nome = "Vendedores",
+                            SubMenuId = 1,
                             Url = "/cadastro-vendedores"
                         },
                         new
                         {
+                            Id = 3,
+                            Codigo = 18,
+                            Icon = "fa fa-credit-card",
+                            MenuId = 1,
+                            Nome = "Tipo de Negociação",
+                            SubMenuId = 1,
+                            Url = "/cadastro-tipo-negociacao"
+                        },
+                        new
+                        {
                             Id = 4,
-                            Codigo = 6,
+                            Codigo = 14,
                             Icon = "fa fa-users",
                             MenuId = 1,
                             Nome = "Parceiros",
+                            SubMenuId = 1,
                             Url = "/cadastro-parceiros"
                         },
                         new
                         {
                             Id = 5,
-                            Codigo = 13,
-                            Icon = "fa fa-briefcase",
+                            Codigo = 12,
+                            Icon = "fa fa-shopping-bag",
                             MenuId = 1,
-                            Nome = "Empresas",
-                            Url = "/cadastro-tipo-empresa"
+                            Nome = "Grupo de Produtos",
+                            SubMenuId = 1,
+                            Url = "/cadastro-grupos-produtos"
                         },
                         new
                         {
                             Id = 6,
-                            Codigo = 15,
+                            Codigo = 11,
                             Icon = "fa fa-cart-plus",
                             MenuId = 1,
                             Nome = "Produtos",
+                            SubMenuId = 1,
                             Url = "/cadastro-produtos"
                         },
                         new
                         {
                             Id = 7,
-                            Codigo = 8,
-                            Icon = "fa fa-shopping-bag",
-                            MenuId = 1,
-                            Nome = "Grupo de Produtos",
-                            Url = "/cadastro-grupos-produtos"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Codigo = 9,
+                            Codigo = 16,
                             Icon = "fa fa-user-times",
                             MenuId = 1,
                             Nome = "Concorrentes",
+                            SubMenuId = 1,
                             Url = "/cadastro-concorrentes"
                         },
                         new
                         {
-                            Id = 9,
-                            Codigo = 10,
+                            Id = 8,
+                            Codigo = 17,
                             Icon = "fa fa-user-times",
                             MenuId = 1,
                             Nome = "Produto x Concorrente",
+                            SubMenuId = 1,
                             Url = "/produtos-concorrentes"
                         },
                         new
                         {
-                            Id = 10,
-                            Codigo = 11,
-                            Icon = "fa fa-credit-card",
-                            MenuId = 1,
-                            Nome = "Tipo de Negociação",
-                            Url = "/cadastro-tipo-negociacao"
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Codigo = 14,
-                            Icon = "fa fa-calculator",
-                            MenuId = 1,
-                            Nome = "Tabela de Preço Cliente",
-                            Url = "/tabela-de-preco-cliente"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Codigo = 12,
+                            Id = 9,
+                            Codigo = 19,
                             Icon = "fa fa-calculator",
                             MenuId = 1,
                             Nome = "Tabela de Preço",
+                            SubMenuId = 1,
                             Url = "/tabela-de-preco"
                         },
                         new
                         {
-                            Id = 13,
-                            Codigo = 17,
-                            Icon = "fa fa-newspaper-o",
+                            Id = 10,
+                            Codigo = 20,
+                            Icon = "fa fa-calculator",
                             MenuId = 1,
-                            Nome = "Montar Menu",
-                            Url = "/montar-menu"
+                            Nome = "Tabela de Preço Cliente",
+                            SubMenuId = 1,
+                            Url = "/tabela-de-preco-cliente"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Codigo = 23,
+                            Icon = "fa fa-line-chart",
+                            MenuId = 1,
+                            Nome = "Pedido de Vendas",
+                            SubMenuId = 2,
+                            Url = "/pedido_vendas"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Codigo = 9,
+                            Icon = "fa fa-user-circle-o",
+                            MenuId = 1,
+                            Nome = "Usuarios",
+                            SubMenuId = 4,
+                            Url = "/cadastro-usuarios"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Codigo = 10,
+                            Icon = "fa fa-users",
+                            MenuId = 1,
+                            Nome = "Grupo de Usuarios",
+                            SubMenuId = 4,
+                            Url = "/cadastro-grupo-usuarios"
                         },
                         new
                         {
                             Id = 14,
-                            Codigo = 16,
+                            Codigo = 22,
+                            Icon = "fa fa-newspaper-o",
+                            MenuId = 1,
+                            Nome = "Montar Menu",
+                            SubMenuId = 4,
+                            Url = "/montar-menu"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Codigo = 21,
                             Icon = "fa fa-id-card-o",
                             MenuId = 1,
                             Nome = "Cadastro de Páginas",
+                            SubMenuId = 4,
                             Url = "/cadastro-de-paginas"
                         });
                 });
@@ -432,113 +447,153 @@ namespace PortalGrupoAlyne.Migrations
                         {
                             Id = 5,
                             Codigo = 5,
+                            Icon = "fa fa-map-o",
+                            Nome = "Movimentos",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Codigo = 6,
+                            Icon = "fa fa-object-ungroup",
+                            Nome = "Outros",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Codigo = 7,
+                            Icon = "fa fa-search-minus",
+                            Nome = "Consultas",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Codigo = 8,
+                            Icon = "fa fa-file-o",
+                            Nome = "Relatorios",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Codigo = 9,
                             Icon = "fa fa-user-circle-o",
                             Nome = "Usuarios",
                             Url = "/cadastro-usuarios"
                         },
                         new
                         {
-                            Id = 6,
-                            Codigo = 6,
-                            Icon = "fa fa-users",
-                            Nome = "Parceiros",
-                            Url = "/cadastro-parceiros"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Codigo = 7,
-                            Icon = "fa fa-user-plus",
-                            Nome = "Vendedores",
-                            Url = "/cadastro-vendedores"
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Codigo = 8,
-                            Icon = "fa fa-shopping-bag",
-                            Nome = "Grupo de Produtos",
-                            Url = "/cadastro-grupos-produtos"
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Codigo = 9,
-                            Icon = "fa fa-user-times",
-                            Nome = "Concorrentes",
-                            Url = "/cadastro-concorrentes"
-                        },
-                        new
-                        {
                             Id = 10,
                             Codigo = 10,
-                            Icon = "fa fa-user-times",
-                            Nome = "Produto x Concorrente",
-                            Url = "/produtos-concorrentes"
+                            Icon = "fa fa-users",
+                            Nome = "Grupo de Usuarios",
+                            Url = "/cadastro-grupo-usuarios"
                         },
                         new
                         {
                             Id = 11,
                             Codigo = 11,
-                            Icon = "fa fa-credit-card",
-                            Nome = "Tipo de Negociação",
-                            Url = "/cadastro-tipo-negociacao"
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Codigo = 12,
-                            Icon = "fa fa-calculator",
-                            Nome = "Tabela de Preço",
-                            Url = "/tabela-de-preco"
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Codigo = 13,
-                            Icon = "fa fa-briefcase",
-                            Nome = "Empresas",
-                            Url = "/cadastro-tipo-empresa"
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Codigo = 14,
-                            Icon = "fa fa-calculator",
-                            Nome = "Tabela de Preço Cliente",
-                            Url = "/tabela-de-preco-cliente"
-                        },
-                        new
-                        {
-                            Id = 15,
-                            Codigo = 15,
                             Icon = "fa fa-cart-plus",
                             Nome = "Produtos",
                             Url = "/cadastro-produtos"
                         },
                         new
                         {
+                            Id = 12,
+                            Codigo = 12,
+                            Icon = "fa fa-shopping-bag",
+                            Nome = "Grupo de Produtos",
+                            Url = "/cadastro-grupos-produtos"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Codigo = 13,
+                            Icon = "fa fa-user-plus",
+                            Nome = "Vendedores",
+                            Url = "/cadastro-vendedores"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Codigo = 14,
+                            Icon = "fa fa-users",
+                            Nome = "Parceiros",
+                            Url = "/cadastro-parceiros"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Codigo = 15,
+                            Icon = "fa fa-briefcase",
+                            Nome = "Empresas",
+                            Url = "/cadastro-tipo-empresa"
+                        },
+                        new
+                        {
                             Id = 16,
                             Codigo = 16,
+                            Icon = "fa fa-user-times",
+                            Nome = "Concorrentes",
+                            Url = "/cadastro-concorrentes"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Codigo = 17,
+                            Icon = "fa fa-user-times",
+                            Nome = "Produto x Concorrente",
+                            Url = "/produtos-concorrentes"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Codigo = 18,
+                            Icon = "fa fa-credit-card",
+                            Nome = "Tipo de Negociação",
+                            Url = "/cadastro-tipo-negociacao"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Codigo = 19,
+                            Icon = "fa fa-calculator",
+                            Nome = "Tabela de Preço",
+                            Url = "/tabela-de-preco"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Codigo = 20,
+                            Icon = "fa fa-calculator",
+                            Nome = "Tabela de Preço Cliente",
+                            Url = "/tabela-de-preco-cliente"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Codigo = 21,
                             Icon = "fa fa-id-card-o",
                             Nome = "Cadastro de Páginas",
                             Url = "/cadastro-de-paginas"
                         },
                         new
                         {
-                            Id = 17,
-                            Codigo = 17,
+                            Id = 22,
+                            Codigo = 22,
                             Icon = "fa fa-newspaper-o",
                             Nome = "Montar Menu",
                             Url = "/montar-menu"
                         },
                         new
                         {
-                            Id = 18,
-                            Codigo = 18,
-                            Icon = "fa fa-users",
-                            Nome = "Grupo de Usuarios",
-                            Url = "/cadastro-grupo-usuarios"
+                            Id = 23,
+                            Codigo = 23,
+                            Icon = "fa fa-line-chart",
+                            Nome = "Pedido de Vendas",
+                            Url = "/pedido_vendas"
                         });
                 });
 
@@ -578,120 +633,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("PaginaPermissao");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Codigo = 5,
-                            MenuPermissaoId = 1,
-                            Nome = "Usuarios",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Codigo = 18,
-                            MenuPermissaoId = 1,
-                            Nome = "Grupo de Usuarios",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Codigo = 7,
-                            MenuPermissaoId = 1,
-                            Nome = "Vendedores",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Codigo = 6,
-                            MenuPermissaoId = 1,
-                            Nome = "Parceiros",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Codigo = 13,
-                            MenuPermissaoId = 1,
-                            Nome = "Empresas",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Codigo = 15,
-                            MenuPermissaoId = 1,
-                            Nome = "Produtos",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Codigo = 8,
-                            MenuPermissaoId = 1,
-                            Nome = "Grupo de Produtos",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 8,
-                            Codigo = 9,
-                            MenuPermissaoId = 1,
-                            Nome = "Concorrentes",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 9,
-                            Codigo = 10,
-                            MenuPermissaoId = 1,
-                            Nome = "Produto x Concorrente",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Codigo = 11,
-                            MenuPermissaoId = 1,
-                            Nome = "Tipo de Negociação",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 11,
-                            Codigo = 12,
-                            MenuPermissaoId = 1,
-                            Nome = "Tabela de Preço",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 12,
-                            Codigo = 14,
-                            MenuPermissaoId = 1,
-                            Nome = "Tabela de Preço Cliente",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 13,
-                            Codigo = 16,
-                            MenuPermissaoId = 1,
-                            Nome = "Cadastro de Páginas",
-                            UsuarioId = 1
-                        },
-                        new
-                        {
-                            Id = 14,
-                            Codigo = 17,
-                            MenuPermissaoId = 1,
-                            Nome = "Montar Menu",
-                            UsuarioId = 1
-                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
@@ -718,9 +659,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<string>("Cnpj_Cpf")
                         .HasMaxLength(60)
                         .HasColumnType("varchar(60)");
-
-                    b.Property<int>("CodVendedor")
-                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .HasMaxLength(80)
@@ -814,9 +752,12 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("varchar(4)");
 
+                    b.Property<int>("VendedorId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
-                    b.HasIndex("CodVendedor");
+                    b.HasIndex("VendedorId");
 
                     b.ToTable("Parceiro");
                 });
@@ -830,19 +771,16 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<string>("Codigo")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("GrupoId")
-                        .HasColumnType("longtext");
+                    b.Property<int>("GrupoProdutoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nome")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("NomeGrupo")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GrupoProdutoId");
 
                     b.ToTable("Produto");
                 });
@@ -913,6 +851,44 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("MenuId");
 
                     b.ToTable("SubMenu");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Codigo = 4,
+                            Icon = "fa fa-address-card",
+                            MenuId = 1,
+                            Nome = "Cadastros",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Codigo = 5,
+                            Icon = "fa fa-map-o",
+                            MenuId = 1,
+                            Nome = "Movimentos",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Codigo = 7,
+                            Icon = "fa fa-search-minus",
+                            MenuId = 1,
+                            Nome = "Consultas",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Codigo = 6,
+                            Icon = "fa fa-object-ungroup",
+                            MenuId = 1,
+                            Nome = "Outros",
+                            Ordem = 0
+                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.SubMenuPermissao", b =>
@@ -1010,6 +986,9 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("Codigo")
+                        .HasColumnType("int");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(80)
@@ -1130,9 +1109,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("CodVendedor")
-                        .HasColumnType("int");
-
                     b.Property<string>("Email")
                         .HasMaxLength(50)
                         .HasColumnType("varchar(50)");
@@ -1220,11 +1196,22 @@ namespace PortalGrupoAlyne.Migrations
                 {
                     b.HasOne("PortalGrupoAlyne.Model.Vendedor", "Vendedor")
                         .WithMany()
-                        .HasForeignKey("CodVendedor")
+                        .HasForeignKey("VendedorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Vendedor");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Produto", b =>
+                {
+                    b.HasOne("PortalGrupoAlyne.Model.GrupoProduto", "GrupoProduto")
+                        .WithMany()
+                        .HasForeignKey("GrupoProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("GrupoProduto");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.SubMenu", b =>

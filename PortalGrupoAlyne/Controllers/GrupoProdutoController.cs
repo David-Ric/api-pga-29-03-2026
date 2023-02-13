@@ -49,7 +49,7 @@ namespace PortalGrupoAlyne.Controllers
         {
             var total = await context.GrupoProduto.CountAsync();
             var grupos = await context.GrupoProduto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.nameGrupo.ToLower().Contains(Nome_Grupo.ToLower()) ))
+                                      .Where(e => (e.Nome.ToLower().Contains(Nome_Grupo.ToLower()) ))
                          .OrderBy(e => e.Id).ToListAsync();
             return Ok(new
             {
@@ -73,7 +73,7 @@ namespace PortalGrupoAlyne.Controllers
         [HttpPost]
         public async Task<ActionResult<List<GrupoProduto>>> AddGrupo(GrupoProduto grupo)
         {
-            if (_context.GrupoProduto.Any(u => u.nameGrupo == grupo.nameGrupo))
+            if (_context.GrupoProduto.Any(u => u.Nome == grupo.Nome))
             {
                 return BadRequest("Grupo ja existe na base de dados.");
             }
@@ -97,7 +97,7 @@ namespace PortalGrupoAlyne.Controllers
             //{
             //    return BadRequest("Já existe um grupo com esse nome.");
             //}
-            grupo.nameGrupo = request.nameGrupo;
+            grupo.Nome = request.Nome;
 
             await _context.SaveChangesAsync();
 

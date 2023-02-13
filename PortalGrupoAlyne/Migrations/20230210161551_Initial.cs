@@ -51,7 +51,7 @@ namespace PortalGrupoAlyne.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    nameGrupo = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
@@ -116,28 +116,6 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Produto",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Codigo = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Nome = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    GrupoId = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    NomeGrupo = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Produto", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "ProdutoConcorrente",
                 columns: table => new
                 {
@@ -188,6 +166,7 @@ namespace PortalGrupoAlyne.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Codigo = table.Column<int>(type: "int", nullable: true),
                     Descricao = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
@@ -245,7 +224,6 @@ namespace PortalGrupoAlyne.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CodVendedor = table.Column<int>(type: "int", nullable: false),
                     Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
@@ -262,6 +240,29 @@ namespace PortalGrupoAlyne.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Vendedor", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Produto",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GrupoProdutoId = table.Column<int>(type: "int", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Produto", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Produto_GrupoProduto_GrupoProdutoId",
+                        column: x => x.GrupoProdutoId,
+                        principalTable: "GrupoProduto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -286,35 +287,6 @@ namespace PortalGrupoAlyne.Migrations
                         name: "FK_SubMenu_Menu_MenuId",
                         column: x => x.MenuId,
                         principalTable: "Menu",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "ItemTabela",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    TabelaPrecoId = table.Column<int>(type: "int", nullable: false),
-                    IdProd = table.Column<int>(type: "int", nullable: false),
-                    Preco = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemTabela", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemTabela_Produto_IdProd",
-                        column: x => x.IdProd,
-                        principalTable: "Produto",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ItemTabela_TabelaPreco_TabelaPrecoId",
-                        column: x => x.TabelaPrecoId,
-                        principalTable: "TabelaPreco",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -402,16 +374,45 @@ namespace PortalGrupoAlyne.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Empresa = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CodVendedor = table.Column<int>(type: "int", nullable: false),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
                     AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Parceiro", x => x.id);
                     table.ForeignKey(
-                        name: "FK_Parceiro_Vendedor_CodVendedor",
-                        column: x => x.CodVendedor,
+                        name: "FK_Parceiro_Vendedor_VendedorId",
+                        column: x => x.VendedorId,
                         principalTable: "Vendedor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ItemTabela",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TabelaPrecoId = table.Column<int>(type: "int", nullable: false),
+                    IdProd = table.Column<int>(type: "int", nullable: false),
+                    Preco = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTabela", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemTabela_Produto_IdProd",
+                        column: x => x.IdProd,
+                        principalTable: "Produto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemTabela_TabelaPreco_TabelaPrecoId",
+                        column: x => x.TabelaPrecoId,
+                        principalTable: "TabelaPreco",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -581,20 +582,25 @@ namespace PortalGrupoAlyne.Migrations
                     { 2, 2, "fa fa-bar-chart", "Trade", "" },
                     { 3, 3, "fa fa-money", "Vendas", "" },
                     { 4, 4, "fa fa-address-card", "Cadastros", "" },
-                    { 5, 5, "fa fa-user-circle-o", "Usuarios", "/cadastro-usuarios" },
-                    { 6, 6, "fa fa-users", "Parceiros", "/cadastro-parceiros" },
-                    { 7, 7, "fa fa-user-plus", "Vendedores", "/cadastro-vendedores" },
-                    { 8, 8, "fa fa-shopping-bag", "Grupo de Produtos", "/cadastro-grupos-produtos" },
-                    { 9, 9, "fa fa-user-times", "Concorrentes", "/cadastro-concorrentes" },
-                    { 10, 10, "fa fa-user-times", "Produto x Concorrente", "/produtos-concorrentes" },
-                    { 11, 11, "fa fa-credit-card", "Tipo de Negociação", "/cadastro-tipo-negociacao" },
-                    { 12, 12, "fa fa-calculator", "Tabela de Preço", "/tabela-de-preco" },
-                    { 13, 13, "fa fa-briefcase", "Empresas", "/cadastro-tipo-empresa" },
-                    { 14, 14, "fa fa-calculator", "Tabela de Preço Cliente", "/tabela-de-preco-cliente" },
-                    { 15, 15, "fa fa-cart-plus", "Produtos", "/cadastro-produtos" },
-                    { 16, 16, "fa fa-id-card-o", "Cadastro de Páginas", "/cadastro-de-paginas" },
-                    { 17, 17, "fa fa-newspaper-o", "Montar Menu", "/montar-menu" },
-                    { 18, 18, "fa fa-users", "Grupo de Usuarios", "/cadastro-grupo-usuarios" }
+                    { 5, 5, "fa fa-map-o", "Movimentos", "" },
+                    { 6, 6, "fa fa-object-ungroup", "Outros", "" },
+                    { 7, 7, "fa fa-search-minus", "Consultas", "" },
+                    { 8, 8, "fa fa-file-o", "Relatorios", "" },
+                    { 9, 9, "fa fa-user-circle-o", "Usuarios", "/cadastro-usuarios" },
+                    { 10, 10, "fa fa-users", "Grupo de Usuarios", "/cadastro-grupo-usuarios" },
+                    { 11, 11, "fa fa-cart-plus", "Produtos", "/cadastro-produtos" },
+                    { 12, 12, "fa fa-shopping-bag", "Grupo de Produtos", "/cadastro-grupos-produtos" },
+                    { 13, 13, "fa fa-user-plus", "Vendedores", "/cadastro-vendedores" },
+                    { 14, 14, "fa fa-users", "Parceiros", "/cadastro-parceiros" },
+                    { 15, 15, "fa fa-briefcase", "Empresas", "/cadastro-tipo-empresa" },
+                    { 16, 16, "fa fa-user-times", "Concorrentes", "/cadastro-concorrentes" },
+                    { 17, 17, "fa fa-user-times", "Produto x Concorrente", "/produtos-concorrentes" },
+                    { 18, 18, "fa fa-credit-card", "Tipo de Negociação", "/cadastro-tipo-negociacao" },
+                    { 19, 19, "fa fa-calculator", "Tabela de Preço", "/tabela-de-preco" },
+                    { 20, 20, "fa fa-calculator", "Tabela de Preço Cliente", "/tabela-de-preco-cliente" },
+                    { 21, 21, "fa fa-id-card-o", "Cadastro de Páginas", "/cadastro-de-paginas" },
+                    { 22, 22, "fa fa-newspaper-o", "Montar Menu", "/montar-menu" },
+                    { 23, 23, "fa fa-line-chart", "Pedido de Vendas", "/pedido_vendas" }
                 });
 
             migrationBuilder.InsertData(
@@ -603,50 +609,36 @@ namespace PortalGrupoAlyne.Migrations
                 values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, null, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
-                table: "MenuPermissao",
-                columns: new[] { "Id", "Codigo", "GrupoUsuarioId", "Nome", "UsuarioId" },
-                values: new object[] { 1, 1, null, "Administrativo", 1 });
+                table: "SubMenu",
+                columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "Ordem" },
+                values: new object[,]
+                {
+                    { 1, 4, "fa fa-address-card", 1, "Cadastros", 0 },
+                    { 2, 5, "fa fa-map-o", 1, "Movimentos", 0 },
+                    { 3, 7, "fa fa-search-minus", 1, "Consultas", 0 },
+                    { 4, 6, "fa fa-object-ungroup", 1, "Outros", 0 }
+                });
 
             migrationBuilder.InsertData(
                 table: "Pagina",
                 columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "SubMenuId", "Url" },
                 values: new object[,]
                 {
-                    { 1, 5, "fa fa-user-circle-o", 1, "Usuarios", null, "/cadastro-usuarios" },
-                    { 2, 18, "fa fa-users", 1, "Grupo de Usuarios", null, "/cadastro-grupo-usuarios" },
-                    { 3, 7, "fa fa-user-plus", 1, "Vendedores", null, "/cadastro-vendedores" },
-                    { 4, 6, "fa fa-users", 1, "Parceiros", null, "/cadastro-parceiros" },
-                    { 5, 13, "fa fa-briefcase", 1, "Empresas", null, "/cadastro-tipo-empresa" },
-                    { 6, 15, "fa fa-cart-plus", 1, "Produtos", null, "/cadastro-produtos" },
-                    { 7, 8, "fa fa-shopping-bag", 1, "Grupo de Produtos", null, "/cadastro-grupos-produtos" },
-                    { 8, 9, "fa fa-user-times", 1, "Concorrentes", null, "/cadastro-concorrentes" },
-                    { 9, 10, "fa fa-user-times", 1, "Produto x Concorrente", null, "/produtos-concorrentes" },
-                    { 10, 11, "fa fa-credit-card", 1, "Tipo de Negociação", null, "/cadastro-tipo-negociacao" },
-                    { 11, 14, "fa fa-calculator", 1, "Tabela de Preço Cliente", null, "/tabela-de-preco-cliente" },
-                    { 12, 12, "fa fa-calculator", 1, "Tabela de Preço", null, "/tabela-de-preco" },
-                    { 13, 17, "fa fa-newspaper-o", 1, "Montar Menu", null, "/montar-menu" },
-                    { 14, 16, "fa fa-id-card-o", 1, "Cadastro de Páginas", null, "/cadastro-de-paginas" }
-                });
-
-            migrationBuilder.InsertData(
-                table: "PaginaPermissao",
-                columns: new[] { "Id", "Codigo", "GrupoUsuarioId", "MenuPermissaoId", "Nome", "SubMenuPermissaoId", "UsuarioId" },
-                values: new object[,]
-                {
-                    { 1, 5, null, 1, "Usuarios", null, 1 },
-                    { 2, 18, null, 1, "Grupo de Usuarios", null, 1 },
-                    { 3, 7, null, 1, "Vendedores", null, 1 },
-                    { 4, 6, null, 1, "Parceiros", null, 1 },
-                    { 5, 13, null, 1, "Empresas", null, 1 },
-                    { 6, 15, null, 1, "Produtos", null, 1 },
-                    { 7, 8, null, 1, "Grupo de Produtos", null, 1 },
-                    { 8, 9, null, 1, "Concorrentes", null, 1 },
-                    { 9, 10, null, 1, "Produto x Concorrente", null, 1 },
-                    { 10, 11, null, 1, "Tipo de Negociação", null, 1 },
-                    { 11, 12, null, 1, "Tabela de Preço", null, 1 },
-                    { 12, 14, null, 1, "Tabela de Preço Cliente", null, 1 },
-                    { 13, 16, null, 1, "Cadastro de Páginas", null, 1 },
-                    { 14, 17, null, 1, "Montar Menu", null, 1 }
+                    { 1, 13, "fa fa-briefcase", 1, "Empresas", 1, "/cadastro-tipo-empresa" },
+                    { 2, 13, "fa fa-user-plus", 1, "Vendedores", 1, "/cadastro-vendedores" },
+                    { 3, 18, "fa fa-credit-card", 1, "Tipo de Negociação", 1, "/cadastro-tipo-negociacao" },
+                    { 4, 14, "fa fa-users", 1, "Parceiros", 1, "/cadastro-parceiros" },
+                    { 5, 12, "fa fa-shopping-bag", 1, "Grupo de Produtos", 1, "/cadastro-grupos-produtos" },
+                    { 6, 11, "fa fa-cart-plus", 1, "Produtos", 1, "/cadastro-produtos" },
+                    { 7, 16, "fa fa-user-times", 1, "Concorrentes", 1, "/cadastro-concorrentes" },
+                    { 8, 17, "fa fa-user-times", 1, "Produto x Concorrente", 1, "/produtos-concorrentes" },
+                    { 9, 19, "fa fa-calculator", 1, "Tabela de Preço", 1, "/tabela-de-preco" },
+                    { 10, 20, "fa fa-calculator", 1, "Tabela de Preço Cliente", 1, "/tabela-de-preco-cliente" },
+                    { 11, 23, "fa fa-line-chart", 1, "Pedido de Vendas", 2, "/pedido_vendas" },
+                    { 12, 9, "fa fa-user-circle-o", 1, "Usuarios", 4, "/cadastro-usuarios" },
+                    { 13, 10, "fa fa-users", 1, "Grupo de Usuarios", 4, "/cadastro-grupo-usuarios" },
+                    { 14, 22, "fa fa-newspaper-o", 1, "Montar Menu", 4, "/montar-menu" },
+                    { 15, 21, "fa fa-id-card-o", 1, "Cadastro de Páginas", 4, "/cadastro-de-paginas" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -700,9 +692,14 @@ namespace PortalGrupoAlyne.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Parceiro_CodVendedor",
+                name: "IX_Parceiro_VendedorId",
                 table: "Parceiro",
-                column: "CodVendedor");
+                column: "VendedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Produto_GrupoProdutoId",
+                table: "Produto",
+                column: "GrupoProdutoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SubMenu_MenuId",
@@ -744,9 +741,6 @@ namespace PortalGrupoAlyne.Migrations
                 name: "Empresa");
 
             migrationBuilder.DropTable(
-                name: "GrupoProduto");
-
-            migrationBuilder.DropTable(
                 name: "ItemTabela");
 
             migrationBuilder.DropTable(
@@ -781,6 +775,9 @@ namespace PortalGrupoAlyne.Migrations
 
             migrationBuilder.DropTable(
                 name: "TabelaPreco");
+
+            migrationBuilder.DropTable(
+                name: "GrupoProduto");
 
             migrationBuilder.DropTable(
                 name: "Menu");

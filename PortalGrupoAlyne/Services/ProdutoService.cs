@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using PortalGrupoAlyne.Helpers;
 using PortalGrupoAlyne.Model.Dtos;
+using PortalGrupoAlyne.Persist;
 
 namespace PortalGrupoAlyne.Services
 {
@@ -9,17 +10,20 @@ namespace PortalGrupoAlyne.Services
     {
    
         void Update(int id, ProdutoDto model);
+        Task<Produto> GetProdutoId(int id);
 
     }
     public class ProdutoService : IProdutoService
     {
         private DataContext _context;
         private readonly IMapper _mapper;
+        private readonly IProdutoPersist _produtoPersist;
         public ProdutoService(
+            IProdutoPersist produtoPersist,
            DataContext context,
            IMapper mapper)
         {
-     
+            _produtoPersist = produtoPersist;
             _context = context;
             _mapper = mapper;
         }
@@ -42,6 +46,22 @@ namespace PortalGrupoAlyne.Services
             var produto = _context.Produto.Find(id);
             if (produto == null) throw new KeyNotFoundException("Produto não encontrado!");
             return produto;
+        }
+        public async Task<Produto> GetProdutoId(int id)
+        {
+            try
+            {
+                var produto = await _produtoPersist.GetProdutoId(id);
+                if (produto == null) return null;
+
+                var resultado = _mapper.Map<Produto>(produto);
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }
