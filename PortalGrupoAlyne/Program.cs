@@ -101,7 +101,8 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<ISubMenuPermissaoService, SubMenuPermissaoService>();
             builder.Services.AddScoped<IUserGrupoService, GrupoUsuarioService>();
             builder.Services.AddScoped<IMenuPermissoesService,MenuPermissaoService>();
-           
+            builder.Services.AddScoped<ITabelaPrecoParceiroService, TabelaPrecoParceiroService>();
+
 
             // Persist
 
@@ -120,6 +121,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IPaginaPersist, PaginaPersist>();
             builder.Services.AddScoped<IMenuPermissoesPersist, MenuPermissaoPersist>();
             builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
+            builder.Services.AddScoped<ITabelaPrecoParceiroPersist, TabelaPrecoParceiroPersist>();
 
             var app = builder.Build();
 

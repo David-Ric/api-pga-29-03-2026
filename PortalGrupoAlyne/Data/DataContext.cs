@@ -56,6 +56,8 @@ namespace PortalGrupoAlyne.Data
 
     public DbSet<PaginaPermissao> PaginaPermissao { get; set;}
 
+    public DbSet<TabelaPrecoParceiro> TabelaPrecoParceiro { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
            
@@ -242,14 +244,7 @@ namespace PortalGrupoAlyne.Data
                      Url = "/tabela-de-preco",
                      Icon = "fa fa-calculator"
                  },
-                 new PaginaBase
-                 {
-                     Id = 20,
-                     Codigo = 20,
-                     Nome = "Tabela de Preço Cliente",
-                     Url = "/tabela-de-preco-cliente",
-                     Icon = "fa fa-calculator"
-                 },
+                 
                  new PaginaBase
                  {
                      Id = 21,
@@ -420,16 +415,7 @@ namespace PortalGrupoAlyne.Data
                       MenuId = 1,
                       SubMenuId = 1,
                   },
-                  new Pagina
-                  {
-                      Id = 10,
-                      Codigo = 20,
-                      Nome = "Tabela de Preço Cliente",
-                      Url = "/tabela-de-preco-cliente",
-                      Icon = "fa fa-calculator",
-                      MenuId = 1,
-                      SubMenuId = 1,
-                  },
+                
                   new Pagina
                   {
                       Id = 11,

@@ -77,6 +77,9 @@ namespace PortalGrupoAlyne.Model.Dtos
         [ForeignKey("Vendedor")]
         public int VendedorId { get; set; }
         public Vendedor? Vendedor { get; set; }
+
+        public IEnumerable<TabelaPrecoParceiro>? TabelaPrecoParceiro { get; set; }
         public DateTime? AtualizadoEm { get; set; }
+       
     }
 }

@@ -32,7 +32,7 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<MenuPermissao,MenuPermissaoDto>().ReverseMap();
             CreateMap<SubMenuPermissao,SubMenuPermissaoDto>().ReverseMap();
             CreateMap<PaginaPermissao, PaginaPermissaoDto>().ReverseMap();
-
+            CreateMap<TabelaPrecoParceiro, TabelaPrecoParceiroDto>().ReverseMap();
         }
     }
 }

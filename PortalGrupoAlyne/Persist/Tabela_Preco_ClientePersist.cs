@@ -15,7 +15,7 @@
         public async Task<TabelaPrecoCliente> GetTabelaClienteAsync(int id)
         {
             IQueryable<TabelaPrecoCliente> query = _context.TabelaPrecoCliente
-               .Include(e => e.TabelaPreco).Include(p=>p.Parceiros);
+               .Include(e => e.TabelaPreco);
 
             query = query.AsNoTracking().OrderBy(e => e.id).Where(e => e.id == id);
 

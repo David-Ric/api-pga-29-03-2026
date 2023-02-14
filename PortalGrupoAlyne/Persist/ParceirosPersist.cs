@@ -15,7 +15,7 @@
         public async Task<Parceiro> GetParceirosId(int id)
         {
             IQueryable<Parceiro> query = _context.Parceiro
-                .Include("Vendedor");
+                .Include("Vendedor").Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco"); 
 
             query = query.AsNoTracking().OrderBy(e => e.id).Where(e => e.id == id);
 
