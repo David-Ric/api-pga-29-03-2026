@@ -8,6 +8,8 @@ namespace PortalGrupoAlyne.Model.Dtos
         [Key]
         public int id { get; set; }
 
+        public int? codParceiro { get; set; }
+
         [StringLength(100, ErrorMessage = "inserir no máximo 100 caracteres")]
         public string? Nome { get; set; }
 

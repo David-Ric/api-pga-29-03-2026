@@ -88,10 +88,11 @@ namespace PortalGrupoAlyne.Controllers
             {
                 return BadRequest("Parceiro ja existe na base de dados.");
             }
+            
             _context.Parceiro.Add(model);
             await _context.SaveChangesAsync();
 
-            return Ok((new { message = "Parceiro criado com sucesso" }));
+            return Ok((new { data = model.id, message = "Parceiro criado com sucesso" }));
         }
 
         [HttpPut("{id}")]
