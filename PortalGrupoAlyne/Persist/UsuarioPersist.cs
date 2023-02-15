@@ -16,7 +16,7 @@ namespace PortalGrupoAlyne.Persist
 
         public async Task<Usuario> GetUsuarioIdAsync(int id)
         {
-            IQueryable<Usuario> query = _context.Usuario.Include("MenuPermissao").Include("MenuPermissao.SubMenuPermissao").Include("MenuPermissao.PaginaPermissao").Include("MenuPermissao.SubMenuPermissao.PaginaPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao");
+            IQueryable<Usuario> query = _context.Usuario.Include("MenuPermissao").Include("MenuPermissao.SubMenuPermissao").Include("MenuPermissao.PaginaPermissao").Include("MenuPermissao.SubMenuPermissao.PaginaPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao").Include("GrupoUsuario");
 
             query = query.AsNoTracking().OrderBy(e => e.Id).Where(e => e.Id == id);
 

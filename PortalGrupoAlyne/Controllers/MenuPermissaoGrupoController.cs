@@ -9,13 +9,13 @@ namespace PortalGrupoAlyne.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenuPermissaoController : ControllerBase
+    public class MenuPermissaoGrupoController : ControllerBase
     {
         private readonly DataContext _context;
         private IMapper _mapper;
         private IMenuPermissoesService _menuPermissoesService;
 
-        public MenuPermissaoController(DataContext context, IMapper mapper, IMenuPermissoesService menuPermissoesService)
+        public MenuPermissaoGrupoController(DataContext context, IMapper mapper, IMenuPermissoesService menuPermissoesService)
         {
             _menuPermissoesService = menuPermissoesService;
             _context = context;
@@ -47,7 +47,7 @@ namespace PortalGrupoAlyne.Controllers
            )
         {
             var total = await context.MenuPermissao.CountAsync();
-            var data = await context.MenuPermissao.AsNoTracking().Include("SubMenuPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao").Where(e=>e.UsuarioId==userId).OrderBy(e => e.Id).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.MenuPermissao.AsNoTracking().Include("SubMenuPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao").Where(e => e.UsuarioId == userId).OrderBy(e => e.Id).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
@@ -116,14 +116,14 @@ namespace PortalGrupoAlyne.Controllers
             {
                 return BadRequest("Menu ja existe na base de dados.");
             }
-            if (_context.MenuPermissao.Any(u => u.UsuarioId ==menu.UsuarioId  && u.Codigo == menu.Codigo))
+            if (_context.MenuPermissao.Any(u => u.GrupoUsuarioId == menu.GrupoUsuarioId && u.Codigo == menu.Codigo))
             {
                 return BadRequest("Menu ja existe na base de dados.");
             }
             _context.MenuPermissao.Add(menu);
             await _context.SaveChangesAsync();
 
-            return Ok((new {menu, message = "Menu criado com sucesso" }));
+            return Ok((new { menu, message = "Menu criado com sucesso" }));
         }
 
         [HttpPut("{id}")]

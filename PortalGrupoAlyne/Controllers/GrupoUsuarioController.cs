@@ -66,7 +66,7 @@ namespace PortalGrupoAlyne.Controllers
             _context.GrupoUsuario.Add(grupo);
             await _context.SaveChangesAsync();
 
-            return Ok((new { message = "Grupo de usuários cadastrado com sucesso" }));
+            return Ok((new { data = grupo.Id, message = "Grupo de usuários cadastrado com sucesso" }));
         }
 
         [HttpPut("{id}")]

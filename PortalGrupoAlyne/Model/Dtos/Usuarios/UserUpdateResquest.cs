@@ -11,8 +11,10 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public string? Username { get; set; }
         public string? NomeCompleto { get; set; }
         public string? Status { get; set; }
-        [ForeignKey("Grupo")]
+        [ForeignKey("GrupoUsuario")]
         public int? GrupoId { get; set; }
+
+        public GrupoUsuario? GrupoUsuario { get; set; }
         public string? Funcao { get; set; }
         public string? Telefone { get; set; }
         public string? ImagemURL { get; set; }

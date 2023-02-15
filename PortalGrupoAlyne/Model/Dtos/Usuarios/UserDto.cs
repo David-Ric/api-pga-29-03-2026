@@ -19,8 +19,10 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
 
         [StringLength(20, ErrorMessage = "inserir no máximo 20 caracteres")]
         public string? Status { get; set; }
-        [ForeignKey("Grupo")]
+        [ForeignKey("GrupoUsuario")]
         public int? GrupoId { get; set; }
+        public GrupoUsuario? GrupoUsuario { get; set; }
+
 
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
         public string? Funcao { get; set; }

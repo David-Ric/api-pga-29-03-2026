@@ -44,7 +44,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.Usuario.CountAsync();
-            var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoUsuario").ToListAsync();
            
             return Ok(new
             {
@@ -64,7 +64,7 @@ namespace PortalGrupoAlyne.Controllers
             var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower()) ||
                                       e.Status.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
+                         .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
             return Ok(new
             {
                 total,
@@ -181,8 +181,8 @@ namespace PortalGrupoAlyne.Controllers
         private string GetImagebyUser(string userName)
         {
             string ImageUrl = string.Empty;
-            string HostUrl = "https://10.0.0.158:8095/";
-            //string HostUrl = "https://localhost:8095/";
+            //string HostUrl = "https://10.0.0.158:8095/";
+            string HostUrl = "https://localhost:8095/";
             string Filepath = GetFilePath(userName);
             string Imagepath = Filepath + "\\image.png";
             if (!System.IO.File.Exists(Imagepath))
