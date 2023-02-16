@@ -10,6 +10,8 @@ namespace PortalGrupoAlyne.Services
     {
         void Update(int id, VendedorDto model);
         Task<Vendedor> GetVendedoreTipoAsync(string tipo);
+        
+       Task<Vendedor> GetVendedorByIdAsync(int id);
 
     }
 
@@ -61,7 +63,24 @@ namespace PortalGrupoAlyne.Services
             }
             catch (System.Exception ex)
             {
-                throw new Exception($"Genrente não encontrado");
+                throw new Exception($"Gerente não encontrado");
+            }
+        }
+
+        public async Task<Vendedor> GetVendedorByIdAsync(int id)
+        {
+            try
+            {
+                var tabela = await _vendedorPersist.GetVendedorByIdAsync(id);
+                if (tabela == null) return null;
+
+                var resultado = _mapper.Map<Vendedor>(tabela);
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
             }
         }
     }

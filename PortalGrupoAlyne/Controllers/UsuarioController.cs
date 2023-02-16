@@ -37,7 +37,7 @@ namespace PortalGrupoAlyne.Controllers
         }
        
         [HttpGet]
-        [AllowAnonymous]
+      //  [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina
@@ -53,7 +53,7 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
         [HttpGet("filter")]
-        [AllowAnonymous]
+      //  [AllowAnonymous]
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina,
@@ -74,7 +74,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("userName")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public async Task<IActionResult> GetAllName([FromServices] DataContext context,
  
            [FromQuery] string name
@@ -102,7 +102,7 @@ namespace PortalGrupoAlyne.Controllers
         //}
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
+      //  [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -120,7 +120,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public IActionResult Update(int id, UserUpdateResquest model)
         {
             _userService.Update(id, model);
@@ -130,7 +130,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost("UploadImage")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public async Task<ActionResult> UploadImage([FromQuery]
         string name)
         
@@ -171,18 +171,18 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(Results);
         }
         [NonAction]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         private string GetFilePath(string UserName)
         {
             return this._environment.WebRootPath + "\\Uploads\\Usuarios\\" + UserName;
         }
         [NonAction]
-        [AllowAnonymous]
+      //  [AllowAnonymous]
         private string GetImagebyUser(string userName)
         {
             string ImageUrl = string.Empty;
-            string HostUrl = "https://10.0.0.158:8095/";
-            //string HostUrl = "https://localhost:8095/";
+            //string HostUrl = "https://10.0.0.158:8095/";
+            string HostUrl = "https://localhost:8095/";
             string Filepath = GetFilePath(userName);
             string Imagepath = Filepath + "\\image.png";
             if (!System.IO.File.Exists(Imagepath))
@@ -197,7 +197,7 @@ namespace PortalGrupoAlyne.Controllers
 
         }
         [HttpDelete("{id}")]
-        [AllowAnonymous]
+      //  [AllowAnonymous]
         public async Task<ActionResult<List<Usuario>>> Delete(int id)
         {
             var usuario = await _context.Usuario.FindAsync(id);

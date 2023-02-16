@@ -17,7 +17,7 @@
             IQueryable<TabelaPrecoParceiro> query = _context.TabelaPrecoParceiro
                .Include(e => e.TabelaPreco).Include(p => p.Empresa);
 
-            query = query.AsNoTracking().OrderBy(e => e.id).Where(e => e.id == id);
+            query = query.AsNoTracking().OrderBy(e => e.EmpresaId).Where(e => e.id == id);
 
             return await query.FirstOrDefaultAsync();
         }

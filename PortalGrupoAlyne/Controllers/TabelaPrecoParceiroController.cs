@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Model;
@@ -7,6 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TabelaPrecoParceiroController : ControllerBase
@@ -28,7 +30,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.TabelaPrecoParceiro.CountAsync();
-            var data = await context.TabelaPrecoParceiro.Include(e => e.TabelaPreco).Include(e => e.Empresa).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.TabelaPrecoParceiro.Include(e => e.TabelaPreco).Include(e => e.Empresa).OrderBy(e => e.EmpresaId).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {

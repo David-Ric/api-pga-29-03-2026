@@ -37,7 +37,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost("register")]
-        [AllowAnonymous]
+       // [AllowAnonymous]
         public async Task<IActionResult> Register(UserRegisterRequest request)
         {
             if (_context.Usuario.Any(u => u.Email == request.Email))
@@ -187,7 +187,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                expires: DateTime.Now.AddDays(1),
+                expires: DateTime.Now.AddHours(10),
                 signingCredentials: creds);
 
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Model.Dtos;
@@ -6,6 +7,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
+  //  [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ParceiroController : ControllerBase
@@ -56,6 +58,27 @@ namespace PortalGrupoAlyne.Controllers
                 data = parceiros
             });
         }
+
+        [HttpGet("filter/Vendedor")]
+
+        public async Task<IActionResult> GetAllFilterVendedor([FromServices] DataContext context,
+          [FromQuery] int pagina,
+           [FromQuery] int totalpagina,
+          [FromQuery] int codVendedor
+
+          )
+        {
+            var total = await context.Parceiro.CountAsync();
+            var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+                                      .Where(e => e.VendedorId==codVendedor)
+                         .OrderBy(e => e.id).Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").ToListAsync();
+            return Ok(new
+            {
+                total,
+                data = parceiros
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

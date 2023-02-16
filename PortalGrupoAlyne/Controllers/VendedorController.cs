@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace PortalGrupoAlyne.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VendedorController : ControllerBase
@@ -97,21 +98,30 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Vendedor>> Get(int id)
-        {
-            var vendedor = await _context.Vendedor.FindAsync(id);
-            if (vendedor == null)
-                return BadRequest("Vendedor não encontrado.");
-            return Ok(vendedor);
-        }
-
-        //[HttpGet("{tipo}")]
-        //public async Task<IActionResult> GetByTipo(string tipo)
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Vendedor>> Get(int id)
         //{
-        //    var vendedor = await _vendedorService.GetVendedoreTipoAsync(tipo);
+        //    var vendedor = await _context.Vendedor.FindAsync(id);
+        //    if (vendedor == null)
+        //        return BadRequest("Vendedor não encontrado.");
         //    return Ok(vendedor);
         //}
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            try
+            {
+                var vendedor = await _vendedorService.GetVendedorByIdAsync(id);
+                if (vendedor == null) return NoContent();
+
+                return Ok(vendedor);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Vendedor não encontrado.");
+            }
+        }
 
 
 

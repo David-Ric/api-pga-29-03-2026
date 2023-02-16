@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230216120045_vendedorTrazendoPasrceiro")]
+    partial class vendedorTrazendoPasrceiro
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -756,21 +758,12 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int?>("Conv")
-                        .HasColumnType("int");
-
                     b.Property<int>("GrupoProdutoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(60)
                         .HasColumnType("varchar(60)");
-
-                    b.Property<string>("TipoUnid")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("TipoUnid2")
-                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -1220,7 +1213,7 @@ namespace PortalGrupoAlyne.Migrations
             modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
                 {
                     b.HasOne("PortalGrupoAlyne.Model.Vendedor", "Vendedor")
-                        .WithMany()
+                        .WithMany("Parceiro")
                         .HasForeignKey("VendedorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1368,6 +1361,11 @@ namespace PortalGrupoAlyne.Migrations
                     b.Navigation("PaginaPermissao");
 
                     b.Navigation("SubMenuPermissao");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Vendedor", b =>
+                {
+                    b.Navigation("Parceiro");
                 });
 #pragma warning restore 612, 618
         }
