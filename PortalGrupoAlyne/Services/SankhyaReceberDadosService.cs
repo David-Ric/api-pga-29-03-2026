@@ -26,17 +26,45 @@ namespace PortalGrupoAlyne.Services
                     FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0";
                     sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
                     await AtualizarTabela(sql, "Vendedor", "Id");
+                    // ------------------------ Tipo Negociacao -------------------------
+                    AtualizadoEm = atualizadoEm("TipoNegociacao"); // último timestamp
+                    sql = @"SELECT CODTIPVENDA Id, 
+                        RTRIM(LTRIM(DESCRTIPVENDA)) Descricao,
+                        DHALTER AtualizadoEm
+                    FROM TGFTPV
+                    WHERE CODTIPVENDA IN (
+                        SELECT COND FROM (
+                            SELECT CPL.SUGTIPNEGSAID COND
+                                from TGFPAR PAR
+                                LEFT JOIN TGFCPL CPL ON CPL.CODPARC = PAR.CODPARC
+                                , TGFPAEM PAEM
+                                WHERE -- PAR.DTALTER >= CONVERT(DATE,SYSDATETIME())
+                                CLIENTE = 'S'
+                                AND PAR.CODPARC = PAEM.CODPARC
+                                AND PAEM.CODEMP = 1
+                                AND CODVEND IN (
+                                        SELECT CODVEND 
+                                        FROM TGFVEN VEN
+                                        WHERE CODVEND NOT IN (0,1)
+                                        AND TIPVEND = 'R'
+                                        )
+                            GROUP BY CPL.SUGTIPNEGSAID
+                        ) T WHERE T.COND IS NOT NULL AND T.COND <> 0
+                    )
+                    AND DHALTER > '$AtualizadoEm'";
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    await AtualizarTabela(sql, "TipoNegociacao", "Id");
                     // ------------------------ Parceiro --------------------------------
                     AtualizadoEm = atualizadoEm("Parceiro"); // último timestamp
                     sql = @"SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, 
-                            PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, 
-                            PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, 
-                            ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, 
-                            REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,
-                            REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,
-                            REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
-                            PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
-                            PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
+                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, 
+                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, 
+                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, 
+                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,
+                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,
+                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
+                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
+                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
                     FROM TGFPAR (NOLOCK) PAR
                     JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
                     JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
@@ -47,6 +75,62 @@ namespace PortalGrupoAlyne.Services
                     AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0";
                     sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "Parceiro", "Id");
+                    // ------------------------ Grupo Produto ---------------------------
+                    sql = @"SELECT CODGRUPOPROD Id, 
+                        RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
+                    FROM sankhya.TGFGRU (NOLOCK)
+                    WHERE ANALITICO = 'S'";                    
+                    await AtualizarTabela(sql, "GrupoProduto", "Id");
+                    // ------------------------ Produto --------------------------------
+                    AtualizadoEm = atualizadoEm("Produto"); // último timestamp
+                    sql = @"SELECT PRO.CODPROD Id, 
+                        PRO.DESCRPROD Nome, 
+                        PRO.CODGRUPOPROD GrupoProdutoId, 
+                        PRO.DTALTER AtualizadoEm
+                        -- ,PRO.CODVOL Unid,VOA.CODVOL Unid2,VOA.QUANTIDADE Conv
+                    FROM sankhya.TGFPRO (NOLOCK) PRO
+                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
+                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
+                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
+                    AND PRO.DTALTER > '$AtualizadoEm'";
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    await AtualizarTabela(sql, "Produto", "Id");
+                    // ------------------------ Tabela de Preco -------------------------
+                    AtualizadoEm = atualizadoEm("TabelaPreco"); // último timestamp
+                    sql = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, --, TAB.DTVIGOR
+                    '1970-01-01 01:01:01' DataInicial, '2070-01-01 01:01:01' DataFinal 
+                    FROM TGFNTA (NOLOCK) NTA
+                    --JOIN TGFTAB (NOLOCK) TAB ON TAB.CODTAB = NTA.CODTAB AND TAB.ATIVO = 'S'
+                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' 
+                    WHERE NTA.ATIVO = 'S'
+                    GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)) --,TAB.DTVIGOR
+                    ORDER BY 1";
+                    //AND PRO.DTALTER > '$AtualizadoEm'";
+                    //sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    await AtualizarTabela(sql, "TabelaPreco", "Id");
+                    // ------------------------ Item da Tabela de Preco -----------------
+                    AtualizadoEm = atualizadoEm("ItemTabela"); // último timestamp
+                    sql = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco
+                    FROM TGFTAB TAB
+                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB AND NTA.ATIVO='S'
+                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB
+                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD
+                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB 
+                                            FROM TGFNTA (NOLOCK) NTA
+                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' 
+                                            WHERE NTA.ATIVO = 'S'
+                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
+                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
+                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
+                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)
+                    ORDER BY TAB.CODTAB, PRO.CODPROD";
+                    //AND PRO.DTALTER > '$AtualizadoEm'";
+                    //sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    await AtualizarTabela(sql, "ItemTabela", "TabelaPrecoId,IdProd");
                     // ------------------------ Logout ----------------------------------
                     await SankhyaService.logout();
                 }
@@ -96,17 +180,12 @@ namespace PortalGrupoAlyne.Services
                                     fields             += $"{name},";
                                     values             += $"{value},";
                                     if (key != null) {
-                                        /*
-                                        $keydata = explode(",", $key);
-                                        if (in_array($name, $keydata)) {
-                                            $value = strval($value);
-                                            $where .= "{$name} = {$value} AND ";
-                                        }
-                                        */
-                                        if (name == key)
-                                        {
+                                        String[] keydata = key.Split(',');
+                                        if (keydata.Contains(name)) 
+                                        {                                            
+                                            value = $"'{value.ToString().Trim()}'";
                                             where += $"{name} = {value} AND ";
-                                        }                                        
+                                        }
                                     }
                                 }
                                 fieldsValues = fieldsValues.Substring(0, fieldsValues.Length -1);
@@ -114,7 +193,7 @@ namespace PortalGrupoAlyne.Services
                                 values = values.Substring(0, values.Length -1);
                                 if (where.Count() > 0) {
                                     where = where.Substring(0, where.Length -5);
-                                    String query = $"SELECT {key} Qtd FROM {table} WHERE {where}";
+                                    String query = $"SELECT {key} FROM {table} WHERE {where}";
                                     Console.WriteLine(query);
                                     string chave = con.ExecuteScalar<string>(query);
                                     var cSql = "";
