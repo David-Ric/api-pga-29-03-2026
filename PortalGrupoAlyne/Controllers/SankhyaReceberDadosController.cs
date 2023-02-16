@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Route("api/Sankhya")]
+    [Authorize]
+    [Route("api/Sankhya")]    
     [ApiController]
     public class SankhyaReceberDadosController : ControllerBase
     {
