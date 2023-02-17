@@ -11,7 +11,7 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemTabelaPrecoController : ControllerBase
@@ -63,6 +63,63 @@ namespace PortalGrupoAlyne.Controllers
         //        data = itens
         //    });
         //}
+
+        [HttpGet("codTabela/codProduto")]
+        public async Task<IActionResult> GetAllFilteritemcodProd([FromServices] DataContext context,
+          [FromQuery] int pagina,
+           [FromQuery] int totalpagina,
+           [FromQuery] int? codTabela,
+           [FromQuery] int? codProduto
+
+          )
+        {
+            var total = await context.ItemTabela.CountAsync();
+            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela)&& (e.IdProd == codProduto)).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
+        [HttpGet("codTabela/nomeProduto")]
+        public async Task<IActionResult> GetAllFilteritemProdName([FromServices] DataContext context,
+         [FromQuery] int pagina,
+          [FromQuery] int totalpagina,
+          [FromQuery] int? codTabela,
+          [FromQuery] string nomeProduto
+
+         )
+        {
+            var total = await context.ItemTabela.CountAsync();
+            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
+        [HttpGet("codTabela/grupoId")]
+        public async Task<IActionResult> GetAllFilteritemGrupoProd([FromServices] DataContext context,
+         [FromQuery] int pagina,
+          [FromQuery] int totalpagina,
+          [FromQuery] int? codTabela,
+          [FromQuery] int? grupoId
+
+         )
+        {
+            var total = await context.ItemTabela.CountAsync();
+            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId)).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
 
         [HttpGet("codTabela")]
         public async Task<IActionResult> GetAllFilteritem([FromServices] DataContext context,

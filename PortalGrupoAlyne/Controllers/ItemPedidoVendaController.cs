@@ -55,6 +55,58 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
+        [HttpGet("filter/codProduto")]
+        public async Task<IActionResult> GetAllFilterCodProduto([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] int codProduto
+
+           )
+        {
+            var total = await context.ItemPedidoVenda.CountAsync();
+            var data = await context.ItemPedidoVenda.Where(e => e.ProdutoId == codProduto && e.ProdutoId == codProduto).OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+        [HttpGet("filter/produto")]
+        public async Task<IActionResult> GetAllFilterProduto([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] string produto
+
+           )
+        {
+            var total = await context.ItemPedidoVenda.CountAsync();
+            var data = await context.ItemPedidoVenda.Where(e => (e.Produto.Nome.ToLower().Contains(produto.ToLower()))).OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+        [HttpGet("filter/grupoProduto")]
+        public async Task<IActionResult> GetAllFilterProduto([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] int grupoProduto
+
+           )
+        {
+            var total = await context.ItemPedidoVenda.CountAsync();
+            var data = await context.ItemPedidoVenda.Where(e => e.Produto.GrupoProdutoId == grupoProduto).OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
