@@ -97,22 +97,20 @@ namespace PortalGrupoAlyne.Services
                     await AtualizarTabela(sql, "Produto", "Id");
                     // ------------------------ Tabela de Preco -------------------------
                     AtualizadoEm = atualizadoEm("TabelaPreco"); // último timestamp
-                    sql = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, --, TAB.DTVIGOR
-                    '1970-01-01 01:01:01' DataInicial, '2070-01-01 01:01:01' DataFinal 
+                    sql = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal 
                     FROM TGFNTA (NOLOCK) NTA
-                    --JOIN TGFTAB (NOLOCK) TAB ON TAB.CODTAB = NTA.CODTAB AND TAB.ATIVO = 'S'
+                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                     JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
-					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' 
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1)  AND VEN.TIPVEND = 'R'
                     WHERE NTA.ATIVO = 'S'
-                    GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)) --,TAB.DTVIGOR
+                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
                     ORDER BY 1";
-                    //AND PRO.DTALTER > '$AtualizadoEm'";
-                    //sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
                     await AtualizarTabela(sql, "TabelaPreco", "Id");
                     // ------------------------ Item da Tabela de Preco -----------------
                     AtualizadoEm = atualizadoEm("ItemTabela"); // último timestamp
-                    sql = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco
+                    sql = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, 
+                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm
                     FROM TGFTAB TAB
                     JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB AND NTA.ATIVO='S'
                     JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB
@@ -127,9 +125,9 @@ namespace PortalGrupoAlyne.Services
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
-                    ORDER BY TAB.CODTAB, PRO.CODPROD";
-                    //AND PRO.DTALTER > '$AtualizadoEm'";
-                    //sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    ORDER BY TAB.CODTAB, PRO.CODPROD";                    
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
                     await AtualizarTabela(sql, "ItemTabela", "TabelaPrecoId,IdProd");
                     // ------------------------ Logout ----------------------------------
                     await SankhyaService.logout();

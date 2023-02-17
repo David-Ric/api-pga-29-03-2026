@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using PortalGrupoAlyne.Services;
-using PortalGrupoAlyne.Model.Dtos.Sankhya;
 
 namespace PortalGrupoAlyne.Controllers
-{    
+{
+    [Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaController : ControllerBase
@@ -20,7 +20,7 @@ namespace PortalGrupoAlyne.Controllers
         */
 
         [HttpPost("login")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult<string>> login()
         {
             var response = await SankhyaService.login();
@@ -28,7 +28,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpPost("logout")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult<string>> logout()
         {
             var response = await SankhyaService.logout();            
@@ -36,7 +36,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpPost("executeQuery")]
-        [AllowAnonymous]
+        //[AllowAnonymous]
         public async Task<ActionResult<string>> executeQuery([FromForm] string sql)
         {
             if (sql == null) return BadRequest(new {errors = new {sql = "Precisa ser enviado."}});
