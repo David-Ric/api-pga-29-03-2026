@@ -39,7 +39,7 @@ namespace PortalGrupoAlyne.Data
     public DbSet<ItemTabela> ItemTabela { get; set; }
     public DbSet<Empresa> Empresa { get; set; }
 
-    public DbSet<TabelaPrecoCliente> TabelaPrecoCliente { get; set; }
+
 
     public DbSet<Pagina> Pagina { get; set; }
     public DbSet<PaginaBase> PaginaBase { get; set; }
@@ -57,6 +57,10 @@ namespace PortalGrupoAlyne.Data
     public DbSet<PaginaPermissao> PaginaPermissao { get; set;}
 
     public DbSet<TabelaPrecoParceiro> TabelaPrecoParceiro { get; set; }
+
+    public DbSet<CabecalhoPedidoVenda> CabecalhoPedidoVenda { get; set; }
+
+    public DbSet<ItemPedidoVenda> ItemPedidoVenda { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

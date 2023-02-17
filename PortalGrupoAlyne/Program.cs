@@ -92,7 +92,6 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IItemTabelaService, ItemTabelaService>();
             builder.Services.AddScoped<IMailService, MailService>();
             builder.Services.AddScoped<IEmpresaService, EmpresaService>();
-            builder.Services.AddScoped<ITabela_Preco_ClienteService,Tabela_Preco_ClienteService>();
             builder.Services.AddScoped<IPaginaPermissaoService, PaginaPermissaoService>();
             builder.Services.AddScoped<IPaginaService, PaginaService>();
             builder.Services.AddScoped<IPaginaBaseService, PaginaBaseService>();
@@ -102,6 +101,8 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IUserGrupoService, GrupoUsuarioService>();
             builder.Services.AddScoped<IMenuPermissoesService,MenuPermissaoService>();
             builder.Services.AddScoped<ITabelaPrecoParceiroService, TabelaPrecoParceiroService>();
+            builder.Services.AddScoped<ICabecalhoPedidoVendaService, CabecalhoPedidoVendaService>();
+            builder.Services.AddScoped<IItemPedidoVendaService, ItemPedidoVendaService>();
 
 
             // Persist
@@ -111,7 +112,6 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IParceirosPersist,ParceirosPersist>();
             builder.Services.AddScoped<IGeralPersist, GeralPersist>();
             builder.Services.AddScoped<IVendedorPersist, VendedorPersist>();
-            builder.Services.AddScoped<ITabela_Preco_ClientePersist,Tabela_Preco_ClientePersist>();
             builder.Services.AddScoped<IPaginaPermissaoPersist, PaginaPermissaoPersist>();
             builder.Services.AddScoped<IUsuarioPersist,UsuarioPersist>();
             builder.Services.AddScoped<IMenuPersist,MenuPersist>();
@@ -122,6 +122,8 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IMenuPermissoesPersist, MenuPermissaoPersist>();
             builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
             builder.Services.AddScoped<ITabelaPrecoParceiroPersist, TabelaPrecoParceiroPersist>();
+            builder.Services.AddScoped<ICabecalhoPedidoVendaPersist, CabecalhoPedidoVendaPersist>();
+            builder.Services.AddScoped<IItemPedidoVendaPersist, ItemPedidoVendaPersist>();
 
             var app = builder.Build();
 

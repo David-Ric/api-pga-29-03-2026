@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace PortalGrupoAlyne.Model
+namespace PortalGrupoAlyne.Model.Dtos
 {
-    public class CabecalhoPedidoVenda
+    public class CabecalhoPedidoVendaDto
     {
         [Key]
         public int Id { get; set; }
@@ -39,6 +39,6 @@ namespace PortalGrupoAlyne.Model
         [StringLength(40, ErrorMessage = "inserir no máximo 40 caracteres")]
         public string? Status { get; set; }
         public IEnumerable<ItemPedidoVenda>? ItemPedidoVenda { get; set; }
-
     }
+    
 }

@@ -22,7 +22,6 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<TabelaPreco, TabelaPrecoDto>().ReverseMap();
             CreateMap<ItemTabela, ItemTabelaDto>().ReverseMap();
             CreateMap<Empresa, EmpresaDto>().ReverseMap();
-            CreateMap<TabelaPrecoCliente, TabelaPrecoClienteDto>().ReverseMap();
             CreateMap<Usuario, UserDto>().ReverseMap();
             CreateMap<PaginaBase, PaginaBaseDto>().ReverseMap();
             CreateMap<Menu, MenuDto>().ReverseMap();
@@ -33,6 +32,8 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<SubMenuPermissao,SubMenuPermissaoDto>().ReverseMap();
             CreateMap<PaginaPermissao, PaginaPermissaoDto>().ReverseMap();
             CreateMap<TabelaPrecoParceiro, TabelaPrecoParceiroDto>().ReverseMap();
+            CreateMap<CabecalhoPedidoVenda, CabecalhoPedidoVendaDto>().ReverseMap();
+            CreateMap<ItemPedidoVenda, ItemPedidoVendaDto>().ReverseMap();
         }
     }
 }

@@ -181,8 +181,8 @@ namespace PortalGrupoAlyne.Controllers
         private string GetImagebyUser(string userName)
         {
             string ImageUrl = string.Empty;
-            string HostUrl = "https://10.0.0.158:8095/";
-            //string HostUrl = "https://localhost:8095/";
+            //string HostUrl = "https://10.0.0.158:8095/";
+            string HostUrl = "https://localhost:8095/";
             string Filepath = GetFilePath(userName);
             string Imagepath = Filepath + "\\image.png";
             if (!System.IO.File.Exists(Imagepath))

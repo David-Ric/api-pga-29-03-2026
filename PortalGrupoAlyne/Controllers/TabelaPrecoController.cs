@@ -41,26 +41,7 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
-        //[HttpGet("filter")]
-
-        //public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
-        //   [FromQuery] int pagina,
-        //    [FromQuery] int totalpagina,
-        //   [FromQuery] string filter
-
-        //   )
-        //{
-        //    var total = await context.TabelaPreco.CountAsync();
-        //    var tabela = await context.TabelaPreco.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-        //                              //.Where(e => (e.DataInicial.Contains(filter)))
-
-        //                 .OrderBy(e => e.Id).ToListAsync();
-        //    return Ok(new
-        //    {
-        //        total,
-        //        data = tabela
-        //    });
-        //}
+   
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -79,19 +60,6 @@ namespace PortalGrupoAlyne.Controllers
         }
 
        
-
-       
-
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<TabelaPreco>> Get(int id)
-        //{
-        //    var tabela = await _context.TabelaPreco.FindAsync(id);
-        //    if (tabela == null)
-        //        return BadRequest("Tabela de preço não encontrada.");
-        //    return Ok(tabela);
-        //}
-
-
 
 
 
