@@ -30,7 +30,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.TabelaPrecoParceiro.CountAsync();
-            var data = await context.TabelaPrecoParceiro.Include(e => e.TabelaPreco).Include(e => e.Empresa).OrderBy(e => e.EmpresaId).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.TabelaPrecoParceiro.Include(e => e.TabelaPreco).Include(e => e.Empresa).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
@@ -38,7 +38,23 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+        [HttpGet("filter/cliente/empresa")]
+        public async Task<IActionResult> GetAllFilterCleinteEmpresa([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] int? codCliente,
+            [FromQuery] int? codEmpresa
+           )
+        {
+            var total = await context.TabelaPrecoParceiro.CountAsync();
+            var data = await context.TabelaPrecoParceiro.Where(e => (e.ParceiroId == codCliente)&&(e.EmpresaId==codEmpresa)).OrderBy(e => e.EmpresaId).OrderBy(e => e.EmpresaId).Include(e => e.TabelaPreco).Include(e => e.Empresa).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
 
         //[HttpGet("{id}")]
         //public async Task<ActionResult<Tabela_Preco_Cliente>> Get(int id)
