@@ -16,7 +16,7 @@ namespace PortalGrupoAlyne.Model
         public string? Email { get; set; }
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Tipo { get; set; }
-        public bool AtuaCompras { get; set; }
+        public bool? AtuaCompras { get; set; }
       
         public DateTime? AtualizadoEm { get; set; }
 

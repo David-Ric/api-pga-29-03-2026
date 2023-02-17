@@ -40,10 +40,10 @@ namespace PortalGrupoAlyne.Model.Dtos
         [StringLength(100, ErrorMessage = "inserir no máximo 100 caracteres")]
         public string? Endereco { get; set; }
 
-        [StringLength(30, ErrorMessage = "inserir no máximo 30 caracteres")]
+        [StringLength(50, ErrorMessage = "inserir no máximo 50 caracteres")]
         public string? Bairro { get; set; }
 
-        [StringLength(40, ErrorMessage = "inserir no máximo 40 caracteres")]
+        [StringLength(50, ErrorMessage = "inserir no máximo 50 caracteres")]
         public string? Municipio { get; set; }
 
         [StringLength(4, ErrorMessage = "inserir no máximo 4 caracteres")]
@@ -57,18 +57,18 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Status { get; set; }
-        public bool SemVisita { get; set; }
-        public bool PrimeiraSem { get; set; }
-        public bool SegundaSem { get; set; }
-        public bool TerceiraSem { get; set; }
-        public bool QuartaSem { get; set; }
-        public bool QuintaSem { get; set; }
-        public bool Segunda { get; set; }
-        public bool Terca { get; set; }
-        public bool Quarta { get; set; }
-        public bool Quinta { get; set; }
-        public bool Sexta { get; set; }
-        public bool Sabado { get; set; }
+        public bool? SemVisita { get; set; }
+        public bool? PrimeiraSem { get; set; }
+        public bool? SegundaSem { get; set; }
+        public bool? TerceiraSem { get; set; }
+        public bool? QuartaSem { get; set; }
+        public bool? QuintaSem { get; set; }
+        public bool? Segunda { get; set; }
+        public bool? Terca { get; set; }
+        public bool? Quarta { get; set; }
+        public bool? Quinta { get; set; }
+        public bool? Sexta { get; set; }
+        public bool? Sabado { get; set; }
 
         [StringLength(30, ErrorMessage = "inserir no máximo 30 caracteres")]
         public string? TipoNegociacao { get; set; }
