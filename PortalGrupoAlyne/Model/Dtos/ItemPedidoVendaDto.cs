@@ -11,6 +11,9 @@ namespace PortalGrupoAlyne.Model.Dtos
         [StringLength(2, ErrorMessage = "inserir no máximo 2 caracteres")]
         public string? Filial { get; set; }
 
+        [ForeignKey("CabecalhoPedidoVenda")]
+        public int CabecalhoPedidoVendaId { get; set; }
+
         [ForeignKey("Vendedor")]
         public int VendedorId { get; set; }
         public Vendedor? Vendedor { get; set; }
@@ -23,6 +26,7 @@ namespace PortalGrupoAlyne.Model.Dtos
         public Produto? Produto { get; set; }
         public decimal? Quant { get; set; }
         public decimal? ValUnit { get; set; }
+        public decimal? ValTotal { get; set; }
 
         [StringLength(4, ErrorMessage = "inserir no máximo 4 caracteres")]
         public string? Baixado { get; set; }

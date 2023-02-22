@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230220184241_Pedidos")]
+    partial class Pedidos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +53,9 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(18)
                         .HasColumnType("varchar(18)");
 
+                    b.Property<int>("Pedido")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .HasMaxLength(40)
                         .HasColumnType("varchar(40)");
@@ -63,10 +68,6 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.Property<int>("VendedorId")
                         .HasColumnType("int");
-
-                    b.Property<string>("pedido")
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)");
 
                     b.HasKey("Id");
 
@@ -175,7 +176,7 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("varchar(4)");
 
-                    b.Property<int>("CabecalhoPedidoVendaId")
+                    b.Property<int?>("CabecalhoPedidoVendaId")
                         .HasColumnType("int");
 
                     b.Property<string>("Filial")
@@ -1262,9 +1263,7 @@ namespace PortalGrupoAlyne.Migrations
                 {
                     b.HasOne("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", null)
                         .WithMany("ItemPedidoVenda")
-                        .HasForeignKey("CabecalhoPedidoVendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CabecalhoPedidoVendaId");
 
                     b.HasOne("PortalGrupoAlyne.Model.Produto", "Produto")
                         .WithMany()

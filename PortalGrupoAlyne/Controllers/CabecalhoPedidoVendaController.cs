@@ -29,7 +29,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.CabecalhoPedidoVenda.CountAsync();
-            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
@@ -46,7 +46,7 @@ namespace PortalGrupoAlyne.Controllers
            )
         {
             var total = await context.CabecalhoPedidoVenda.CountAsync();
-            var data = await context.CabecalhoPedidoVenda.Where(e => e.VendedorId == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Where(e => e.VendedorId == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
@@ -84,7 +84,7 @@ namespace PortalGrupoAlyne.Controllers
             _context.CabecalhoPedidoVenda.Add(tabela);
             await _context.SaveChangesAsync();
 
-            return Ok((new { message = "Pedido de Venda criado com sucesso." }));
+            return Ok((new {data=tabela, message = "Pedido de Venda criado com sucesso." }));
         }
 
         [HttpPut("{id}")]
