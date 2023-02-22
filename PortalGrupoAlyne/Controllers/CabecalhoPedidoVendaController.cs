@@ -46,7 +46,7 @@ namespace PortalGrupoAlyne.Controllers
            )
         {
             var total = await context.CabecalhoPedidoVenda.CountAsync();
-            var data = await context.CabecalhoPedidoVenda.Where(e => e.VendedorId == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
