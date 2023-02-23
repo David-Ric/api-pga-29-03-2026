@@ -11,8 +11,9 @@ namespace PortalGrupoAlyne.Services
         static DataContext? _context;
         public static async Task<Object> processar(IConfiguration configuration, DataContext context)
         {
-            try {
-                LoginResponse? result = (LoginResponse?) await SankhyaService.login();
+            try
+            {
+                LoginResponse? result = (LoginResponse?)await SankhyaService.login();
                 if (result != null && result.status == "1") //SankhyaService.getJsessionid() == null) 
                 {
                     _configuration = configuration;
@@ -24,7 +25,7 @@ namespace PortalGrupoAlyne.Services
                     sql = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
                     TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
                     FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0";
-                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "Vendedor", "Id");
                     // ------------------------ Tipo Negociacao -------------------------
                     AtualizadoEm = atualizadoEm("TipoNegociacao"); // último timestamp
@@ -52,7 +53,7 @@ namespace PortalGrupoAlyne.Services
                         ) T WHERE T.COND IS NOT NULL AND T.COND <> 0
                     )
                     AND DHALTER > '$AtualizadoEm'";
-                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "TipoNegociacao", "Id");
                     // ------------------------ Parceiro --------------------------------
                     AtualizadoEm = atualizadoEm("Parceiro"); // último timestamp
@@ -79,21 +80,23 @@ namespace PortalGrupoAlyne.Services
                     sql = @"SELECT CODGRUPOPROD Id, 
                         RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
                     FROM sankhya.TGFGRU (NOLOCK)
-                    WHERE ANALITICO = 'S'";                    
+                    WHERE ANALITICO = 'S'";
                     await AtualizarTabela(sql, "GrupoProduto", "Id");
                     // ------------------------ Produto --------------------------------
                     AtualizadoEm = atualizadoEm("Produto"); // último timestamp
                     sql = @"SELECT PRO.CODPROD Id, 
                         PRO.DESCRPROD Nome, 
                         PRO.CODGRUPOPROD GrupoProdutoId, 
-                        PRO.DTALTER AtualizadoEm
-                        -- ,PRO.CODVOL Unid,VOA.CODVOL Unid2,VOA.QUANTIDADE Conv
+                        PRO.DTALTER AtualizadoEm,
+                        PRO.CODVOL TipoUnid,
+                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,
+                        ISNULL(VOA.QUANTIDADE,1) Conv
                     FROM sankhya.TGFPRO (NOLOCK) PRO
                     LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
                     LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
                     WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
                     AND PRO.DTALTER > '$AtualizadoEm'";
-                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "Produto", "Id");
                     // ------------------------ Tabela de Preco -------------------------
                     AtualizadoEm = atualizadoEm("TabelaPreco"); // último timestamp
@@ -126,13 +129,15 @@ namespace PortalGrupoAlyne.Services
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
                     AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
-                    ORDER BY TAB.CODTAB, PRO.CODPROD";                    
-                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));                    
+                    ORDER BY TAB.CODTAB, PRO.CODPROD";
+                    sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "ItemTabela", "TabelaPrecoId,IdProd");
                     // ------------------------ Logout ----------------------------------
                     await SankhyaService.logout();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Console.WriteLine("error: " + e.Message);
                 return "error: " + e.Message;
             }
@@ -141,56 +146,60 @@ namespace PortalGrupoAlyne.Services
 
         public static async Task<String> AtualizarTabela(string sql, string table, string key)
         {
-            try {
+            try
+            {
                 Console.WriteLine(sql);
                 QueryResponse data = await SankhyaService.execQuery(sql);
-                if (data != null) 
+                if (data != null)
                 {
-                    if (data.status == "1") 
+                    if (data.status == "1")
                     {
                         IList<QueryFieldsMetadata> fieldsMetadata = data.responseBody.fieldsMetadata;
                         IList<IList<Object>> rows = data.responseBody.rows;
-                        if (rows != null) 
+                        if (rows != null)
                         {
                             string MySqlCon = _configuration.GetConnectionString("DefaultConnection");
                             using var con = new MySqlConnection(MySqlCon);
                             con.Open();
-                            for (int i=0; i < rows.Count; i++) 
+                            for (int i = 0; i < rows.Count; i++)
                             {
                                 string where = "";
                                 int qtdCol = fieldsMetadata.Count;
                                 String fieldsValues = "";
                                 String fields = "";
                                 String values = "";
-                                for (int j=0; j < qtdCol; j++) { 
+                                for (int j = 0; j < qtdCol; j++)
+                                {
                                     QueryFieldsMetadata field = fieldsMetadata[j];
-                                    String name        = field.name;
-                                    IList<Object> row  = rows[i];                                    
-                                    Object value       = row[j];
+                                    String name = field.name;
+                                    IList<Object> row = rows[i];
+                                    Object value = row[j];
                                     if (field.userType == "S" && value != null)
                                         value = $"'{value.ToString().Trim()}'";
                                     if (field.userType == "H" && value != null)
                                     {
-                                        DateTime dtvalue   = DateTime.ParseExact(value.ToString(), "ddMMyyyy HH:mm:ss", null);
+                                        DateTime dtvalue = DateTime.ParseExact(value.ToString(), "ddMMyyyy HH:mm:ss", null);
                                         value = "'" + dtvalue.ToString("yyyy-MM-dd HH:mm:ss") + "'";
                                     }
-                                    fieldsValues       += $"{name}={value},";
-                                    fields             += $"{name},";
-                                    values             += $"{value},";
-                                    if (key != null) {
+                                    fieldsValues += $"{name}={value},";
+                                    fields += $"{name},";
+                                    values += $"{value},";
+                                    if (key != null)
+                                    {
                                         String[] keydata = key.Split(',');
-                                        if (keydata.Contains(name)) 
-                                        {                                            
+                                        if (keydata.Contains(name))
+                                        {
                                             value = $"'{value.ToString().Trim()}'";
                                             where += $"{name} = {value} AND ";
                                         }
                                     }
                                 }
-                                fieldsValues = fieldsValues.Substring(0, fieldsValues.Length -1);
-                                fields = fields.Substring(0, fields.Length -1);
-                                values = values.Substring(0, values.Length -1);
-                                if (where.Count() > 0) {
-                                    where = where.Substring(0, where.Length -5);
+                                fieldsValues = fieldsValues.Substring(0, fieldsValues.Length - 1);
+                                fields = fields.Substring(0, fields.Length - 1);
+                                values = values.Substring(0, values.Length - 1);
+                                if (where.Count() > 0)
+                                {
+                                    where = where.Substring(0, where.Length - 5);
                                     String query = $"SELECT {key} FROM {table} WHERE {where}";
                                     Console.WriteLine(query);
                                     string chave = con.ExecuteScalar<string>(query);
@@ -203,11 +212,15 @@ namespace PortalGrupoAlyne.Services
                             }
                             con.Close();
                         }
-                    } else {
+                    }
+                    else
+                    {
                         Console.WriteLine("message" + data.statusMessage);
                     }
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e)
+            {
                 Console.WriteLine("error: " + e.Message);
                 throw new Exception("Falha na comunicação com o BD!" + "\n" + e.Message);
             }
@@ -225,11 +238,11 @@ namespace PortalGrupoAlyne.Services
                 string sql = $"SELECT COALESCE(MAX(AtualizadoEm),'1970-01-01 01:01:01') AtualizadoEm FROM {table}";
                 AtualizadoEm = con.ExecuteScalar<DateTime>(sql);
                 con.Close();
-            } 
-            catch (Exception e) 
+            }
+            catch (Exception e)
             {
                 Console.WriteLine("error" + e.Message);
-            } 
+            }
             return AtualizadoEm;
         }
     }

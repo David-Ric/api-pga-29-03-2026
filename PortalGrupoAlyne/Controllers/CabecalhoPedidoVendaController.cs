@@ -29,7 +29,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.CabecalhoPedidoVenda.CountAsync();
-            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
