@@ -7,9 +7,6 @@ namespace PortalGrupoAlyne.Model
         [Key]
         public int Id { get; set; }
 
-        //[StringLength(30, ErrorMessage = "inserir no máximo 30 caracteres")]
-        //public string? Codigo { get; set; }
-
         [StringLength(100, ErrorMessage = "inserir maximo de 100 caracteres")]
         public string? Nome { get; set; }
         [StringLength(20, ErrorMessage = "inserir no máximo 20 caracteres")]
