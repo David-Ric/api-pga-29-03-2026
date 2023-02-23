@@ -24,9 +24,17 @@ namespace PortalGrupoAlyne.Model
         [ForeignKey("TipoNegociacao")]
         public int TipoNegociacaoId { get; set; }
         public TipoNegociacao? TipoNegociacao { get; set; }
+
+        [ForeignKey("Parceiro")]
+        public int ParceiroId { get; set; }
+
+        public Parceiro? Parceiro { get; set; }
         public DateTime Data { get; set; }
+
         public decimal? Valor { get; set; }
+
         public DateTime DataEntrega { get; set; }
+       
 
         [StringLength(256, ErrorMessage = "inserir no máximo 256 caracteres")]
         public string? Observacao { get; set; }
