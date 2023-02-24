@@ -4,26 +4,24 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
-    [Route("api/Sankhya")]    
+   // [Authorize]
+    [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaReceberDadosController : ControllerBase
     {
         private readonly IConfiguration _configuration;
-        private readonly DataContext _context;
 
-        public SankhyaReceberDadosController(IConfiguration configuration, DataContext context)
+        public SankhyaReceberDadosController(IConfiguration configuration)
         {
             _configuration = configuration;
-            _context = context;
         }
 
         [HttpPost("ReceberDados")]
         //[AllowAnonymous]
-        public async Task<ActionResult<string>> Processar()
+        public async Task<ActionResult<string>> Processar([FromQuery] string tabela)
         {
-            var response = await SankhyaReceberDadosService.processar(_configuration, _context);
-            return Ok(response);
+            var response = await SankhyaReceberDadosService.processar(_configuration, tabela);
+            return Ok((  tabela+ " Atualizado!"));
         }
 
     }

@@ -24,6 +24,7 @@ namespace PortalGrupoAlyne
 
         {
 
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
@@ -126,6 +127,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IItemPedidoVendaPersist, ItemPedidoVendaPersist>();
 
             var app = builder.Build();
+           
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

@@ -9,21 +9,18 @@ namespace PortalGrupoAlyne.Controllers
     [ApiController]
     public class SankhyaController : ControllerBase
     {
-        /*
-        private readonly DataContext _context;
-        private readonly SankhyaService sankhyaService;
+        private readonly IConfiguration _configuration;
 
-        public SankhyaController(DataContext context) 
+        public SankhyaController(IConfiguration configuration)
         {
-            _context = context;
+            _configuration = configuration;
         }
-        */
 
         [HttpPost("login")]
         //[AllowAnonymous]
         public async Task<ActionResult<string>> login()
         {
-            var response = await SankhyaService.login();
+            var response = await SankhyaService.login(_configuration);
             return Ok(response);
         }
 
@@ -31,7 +28,7 @@ namespace PortalGrupoAlyne.Controllers
         //[AllowAnonymous]
         public async Task<ActionResult<string>> logout()
         {
-            var response = await SankhyaService.logout();            
+            var response = await SankhyaService.logout(_configuration);
             return Ok(response);
         }
 
@@ -39,8 +36,8 @@ namespace PortalGrupoAlyne.Controllers
         //[AllowAnonymous]
         public async Task<ActionResult<string>> executeQuery([FromForm] string sql)
         {
-            if (sql == null) return BadRequest(new {errors = new {sql = "Precisa ser enviado."}});
-            var response = await SankhyaService.executeQuery(sql);
+            if (sql == null) return BadRequest(new { errors = new { sql = "Precisa ser enviado." } });
+            var response = await SankhyaService.executeQuery(_configuration, sql);
             return Ok(response);
         }
 

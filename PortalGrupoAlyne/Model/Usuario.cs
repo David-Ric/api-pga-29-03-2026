@@ -7,7 +7,7 @@ namespace PortalGrupoAlyne.Model
     {
         [Key]
         public int Id { get; set; }
-        [StringLength(80, ErrorMessage = "inserir no máximo 80 caracteres")]
+        [StringLength(300, ErrorMessage = "inserir no máximo 300 caracteres")]
         public string Email { get; set; } = string.Empty;
 
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]

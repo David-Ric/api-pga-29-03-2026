@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230224184306_TableConfiguracao")]
+    partial class TableConfiguracao
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -907,9 +909,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<string>("Lat")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
-
-                    b.Property<decimal?>("Lc")
-                        .HasColumnType("decimal(65,30)");
 
                     b.Property<string>("Long")
                         .HasMaxLength(10)

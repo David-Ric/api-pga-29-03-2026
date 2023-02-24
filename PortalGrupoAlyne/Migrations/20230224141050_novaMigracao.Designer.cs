@@ -11,8 +11,8 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230223104523_migracaocodparceiro")]
-    partial class migracaocodparceiro
+    [Migration("20230224141050_novaMigracao")]
+    partial class novaMigracao
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -484,6 +484,16 @@ namespace PortalGrupoAlyne.Migrations
                             Nome = "Cadastro de Páginas",
                             SubMenuId = 4,
                             Url = "/cadastro-de-paginas"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Codigo = 24,
+                            Icon = "fa fa-external-link-square",
+                            MenuId = 1,
+                            Nome = "Receber dados Sankhya",
+                            SubMenuId = 4,
+                            Url = ""
                         });
                 });
 
@@ -688,6 +698,14 @@ namespace PortalGrupoAlyne.Migrations
                             Icon = "fa fa-line-chart",
                             Nome = "Pedido de Vendas",
                             Url = "/pedido_vendas"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Codigo = 24,
+                            Icon = "fa fa-external-link-square",
+                            Nome = "Receber dados Sankhya",
+                            Url = ""
                         });
                 });
 
@@ -755,8 +773,8 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("varchar(60)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(80)
-                        .HasColumnType("varchar(80)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Empresa")
                         .HasMaxLength(30)
@@ -1117,8 +1135,8 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(80)
-                        .HasColumnType("varchar(80)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Funcao")
                         .HasMaxLength(60)
@@ -1222,8 +1240,8 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(80)
-                        .HasColumnType("varchar(80)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(100)

@@ -13,7 +13,7 @@ namespace PortalGrupoAlyne.Model.Dtos
         public string? Status { get; set; }
         [StringLength(50, ErrorMessage = "inserir no máximo 50 caracteres")]
         public string? Regiao { get; set; }
-        [StringLength(80, ErrorMessage = "inserir no máximo 80 caracteres")]
+        [StringLength(300, ErrorMessage = "inserir no máximo 300 caracteres")]
         public string? Email { get; set; }
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Tipo { get; set; }

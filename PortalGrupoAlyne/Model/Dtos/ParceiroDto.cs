@@ -22,7 +22,7 @@ namespace PortalGrupoAlyne.Model.Dtos
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
         public string? Cnpj_Cpf { get; set; }
 
-        [StringLength(80, ErrorMessage = "inserir no máximo 80 caracteres")]
+        [StringLength(300, ErrorMessage = "inserir no máximo 300 caracteres")]
         public string? Email { get; set; }
 
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
@@ -54,6 +54,7 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Long { get; set; }
+        public decimal? Lc { get; set; }
 
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Status { get; set; }

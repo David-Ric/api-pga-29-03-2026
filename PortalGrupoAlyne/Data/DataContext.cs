@@ -61,6 +61,11 @@ namespace PortalGrupoAlyne.Data
     public DbSet<CabecalhoPedidoVenda> CabecalhoPedidoVenda { get; set; }
 
     public DbSet<ItemPedidoVenda> ItemPedidoVenda { get; set; }
+    
+    public DbSet<Configuracao> Configuracao { get; set; }
+
+    public DbSet<IntegracaoSankhya> IntegracaoSankhya { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -273,7 +278,16 @@ namespace PortalGrupoAlyne.Data
                       Url = "/pedido_vendas",
                       Icon = "fa fa-line-chart"
 
-                  }
+                  },
+                   new PaginaBase
+                   {
+                       Id = 24,
+                       Codigo = 24,
+                       Nome = "Receber dados Sankhya",
+                       Url = "",
+                       Icon = "fa fa-external-link-square"
+
+                   }
 
           );
 
@@ -471,6 +485,17 @@ namespace PortalGrupoAlyne.Data
                       MenuId = 1,
                       SubMenuId = 4,
 
+                  },
+                  new Pagina
+                  {
+                      Id = 16,
+                      Codigo = 24,
+                      Nome = "Receber dados Sankhya",
+                      Url = "",
+                      Icon = "fa fa-external-link-square",
+                      MenuId = 1,
+                      SubMenuId = 4,
+
                   }
 
           );
@@ -482,7 +507,144 @@ namespace PortalGrupoAlyne.Data
 
                }
            );
-         
+
+            modelBuilder.Entity<Configuracao>().HasData(
+                 new Configuracao
+                 {
+                     Id = 1,
+                     SankhyaServidor = "http://10.0.0.254:8280/",
+                     SankhyaUsuario = "ADMIN",
+                     SankhyaSenha = "SYNC550V"
+                 }
+             );
+            modelBuilder.Entity<IntegracaoSankhya>().HasData(
+               new IntegracaoSankhya
+               {
+                   Id = 1,
+                   TabelaPortal = "Vendedor",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
+                    TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
+                    FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 2,
+                   TabelaPortal = "TipoNegociacao",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT DISTINCT TPV.CODTIPVENDA Id, 
+                        RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao,
+                        TPV.DHALTER AtualizadoEm
+                    FROM TGFTPV (NOLOCK) TPV
+                    JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA
+                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'
+                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)
+                    WHERE TPV.CODTIPVENDA > 0
+                    AND DHALTER > '$AtualizadoEm'
+                    ORDER BY 1"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 3,
+                   TabelaPortal = "Parceiro",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, 
+                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, 
+                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, 
+                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, 
+                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,
+                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,
+                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
+                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
+                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
+                    FROM TGFPAR (NOLOCK) PAR
+					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)                    
+                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
+                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
+                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
+                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
+                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
+                    WHERE PAR.DTALTER > '$AtualizadoEm'
+                    AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 4,
+                   TabelaPortal = "GrupoProduto",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT CODGRUPOPROD Id, 
+                        RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
+                    FROM sankhya.TGFGRU (NOLOCK)
+                    WHERE ANALITICO = 'S'"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 5,
+                   TabelaPortal = "Produto",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
+                        PRO.DESCRPROD Nome, 
+                        PRO.CODGRUPOPROD GrupoProdutoId, 
+                        PRO.DTALTER AtualizadoEm,
+                        PRO.CODVOL TipoUnid,
+                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,
+                        ISNULL(VOA.QUANTIDADE,1) Conv
+                    FROM sankhya.TGFPRO (NOLOCK) PRO
+                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
+                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
+                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
+                    AND PRO.DTALTER > '$AtualizadoEm'"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 6,
+                   TabelaPortal = "TabelaPreco",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal 
+                    FROM TGFNTA (NOLOCK) NTA
+                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB
+                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R'
+                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
+                    ORDER BY 1"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 7,
+                   TabelaPortal = "ItemTabela",
+                   ChaveTabelaPortal = "TabelaPrecoId,IdProd",
+                   SqlObterSankhya = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, 
+                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm
+                    FROM TGFTAB TAB
+                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB
+                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB
+                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD
+                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB 
+                                            FROM TGFNTA (NOLOCK) NTA
+                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' 
+                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
+                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
+                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
+                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)
+                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    ORDER BY TAB.CODTAB, PRO.CODPROD"
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 8,
+                   TabelaPortal = "TabelaPrecoParceiro",
+                   ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
+                   SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
+                    FROM TGFPAR (NOLOCK) PAR 
+                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)"
+               }
+
+           );
         }
 
 

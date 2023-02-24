@@ -96,6 +96,10 @@ namespace PortalGrupoAlyne.Controllers
             var empresa = await _context.Empresa.FindAsync(id);
             if (empresa == null)
                 return BadRequest("Empresa não encontrada");
+            if (_context.TabelaPrecoParceiro.Any(u => u.EmpresaId == empresa.Id))
+            {
+                return BadRequest("Esta empresa não pode ser excluída, pois está associada a um parceiro.");
+            }
 
             _context.Empresa.Remove(empresa);
             await _context.SaveChangesAsync();
