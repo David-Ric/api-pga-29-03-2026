@@ -22,5 +22,6 @@ namespace PortalGrupoAlyne.Persist
 
             return await query.ToArrayAsync();
         }
+        
     }
 }

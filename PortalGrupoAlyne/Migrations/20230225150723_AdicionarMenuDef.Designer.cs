@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230225150723_AdicionarMenuDef")]
+    partial class AdicionarMenuDef
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -156,7 +158,7 @@ namespace PortalGrupoAlyne.Migrations
                         new
                         {
                             Id = 1,
-                            Descricao = "Industria"
+                            Descricao = "Indústria"
                         },
                         new
                         {
@@ -426,14 +428,6 @@ namespace PortalGrupoAlyne.Migrations
                             Icon = "fa fa-object-ungroup",
                             Nome = "Outros",
                             Ordem = 0
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Codigo = 25,
-                            Icon = "fa fa-cogs",
-                            Nome = "Configurações",
-                            Ordem = 0
                         });
                 });
 
@@ -633,16 +627,6 @@ namespace PortalGrupoAlyne.Migrations
                         },
                         new
                         {
-                            Id = 29,
-                            Codigo = 26,
-                            Icon = "fa fa-refresh",
-                            MenuId = 1,
-                            Nome = "Restaurar dados sistema",
-                            SubMenuId = 10,
-                            Url = ""
-                        },
-                        new
-                        {
                             Id = 17,
                             Codigo = 13,
                             Icon = "fa fa-briefcase",
@@ -756,15 +740,6 @@ namespace PortalGrupoAlyne.Migrations
                             Icon = "fa fa-external-link-square",
                             MenuId = 5,
                             Nome = "Receber dados Sankhya",
-                            Url = ""
-                        },
-                        new
-                        {
-                            Id = 32,
-                            Codigo = 26,
-                            Icon = "fa fa-refresh",
-                            MenuId = 10,
-                            Nome = "Restaurar dados sistema",
                             Url = ""
                         });
                 });
@@ -1288,15 +1263,6 @@ namespace PortalGrupoAlyne.Migrations
                             Icon = "fa fa-object-ungroup",
                             MenuId = 1,
                             Nome = "Outros",
-                            Ordem = 0
-                        },
-                        new
-                        {
-                            Id = 10,
-                            Codigo = 25,
-                            Icon = "fa fa-cogs",
-                            MenuId = 1,
-                            Nome = "Configurações",
                             Ordem = 0
                         });
                 });

@@ -67,5 +67,6 @@ namespace PortalGrupoAlyne.Services
                 throw new Exception(ex.Message);
             }
         }
+        
     }
 }

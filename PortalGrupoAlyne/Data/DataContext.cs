@@ -90,7 +90,7 @@ namespace PortalGrupoAlyne.Data
                new Empresa
                {
                    Id = 1,
-                   Descricao = "Indústria"
+                   Descricao = "Industria"
                    
                },
                new Empresa
@@ -300,8 +300,53 @@ namespace PortalGrupoAlyne.Data
                   Nome = "Administrativo",
                   Icon = "fa fa-bank",
 
-              }
+              },
+               new Menu
+               {
+                   Id = 2,
+                   Codigo = 4,
+                   Ordem = 0,
+                   Nome = "Cadastros",
+                   Icon = "fa fa-address-card",
+
+               },
+               new Menu
+               {
+                   Id = 3,
+                   Codigo = 5,
+                   Ordem = 0,
+                   Nome = "Movimentos",
+                   Icon = "fa fa-map-o",
+
+               }, 
+               new Menu
+               {
+                   Id = 4,
+                   Codigo = 7,
+                   Ordem = 0,
+                   Nome = "Consultas",
+                   Icon = "fa fa-search-minus",
+
+               },
+                new Menu
+                {
+                    Id = 5,
+                    Codigo = 6,
+                    Ordem = 0,
+                    Nome = "Outros",
+                    Icon = "fa fa-object-ungroup",
+
+                },
+                new Menu
+                { 
+                    Id = 10, 
+                    Codigo = 25, 
+                    Ordem = 0, 
+                    Nome = "Configurações", 
+                    Icon = "fa fa-cogs" 
+                }
           );
+
             modelBuilder.Entity<SubMenu>().HasData(
              new SubMenu
              {
@@ -337,6 +382,15 @@ namespace PortalGrupoAlyne.Data
                    Ordem = 0,
                    Nome = "Outros",
                    Icon = "fa fa-object-ungroup",
+                   MenuId = 1
+               },
+               new SubMenu
+               {
+                   Id = 10,
+                   Codigo = 25,
+                   Ordem = 0,
+                   Nome = "Configurações",
+                   Icon = "fa fa-cogs",
                    MenuId = 1
                }
          );
@@ -464,28 +518,28 @@ namespace PortalGrupoAlyne.Data
                    MenuId = 1,
                    SubMenuId = 4,
                },
-                 new Pagina
-                 {
-                     Id = 14,
-                     Codigo = 22,
-                     Nome = "Montar Menu",
-                     Url = "/montar-menu",
-                     Icon = "fa fa-newspaper-o",
-                     MenuId = 1,
-                     SubMenuId = 4,
+                 //new Pagina
+                 //{
+                 //    Id = 14,
+                 //    Codigo = 22,
+                 //    Nome = "Montar Menu",
+                 //    Url = "/montar-menu",
+                 //    Icon = "fa fa-newspaper-o",
+                 //    MenuId = 1,
+                 //    SubMenuId = 4,
 
-                 },
-                  new Pagina
-                  {
-                      Id = 15,
-                      Codigo = 21,
-                      Nome = "Cadastro de Páginas",
-                      Url = "/cadastro-de-paginas",
-                      Icon = "fa fa-id-card-o",
-                      MenuId = 1,
-                      SubMenuId = 4,
+                 //},
+                 // new Pagina
+                 // {
+                 //     Id = 15,
+                 //     Codigo = 21,
+                 //     Nome = "Cadastro de Páginas",
+                 //     Url = "/cadastro-de-paginas",
+                 //     Icon = "fa fa-id-card-o",
+                 //     MenuId = 1,
+                 //     SubMenuId = 4,
 
-                  },
+                 // },
                   new Pagina
                   {
                       Id = 16,
@@ -495,6 +549,177 @@ namespace PortalGrupoAlyne.Data
                       Icon = "fa fa-external-link-square",
                       MenuId = 1,
                       SubMenuId = 4,
+
+                  },
+                    new Pagina
+                    {
+                        Id = 29,
+                        Codigo = 26,
+                        Nome = "Restaurar dados sistema",
+                        Url = "",
+                        Icon = "fa fa-refresh",
+                        MenuId = 1,
+                        SubMenuId = 10,
+                    },
+                  new Pagina
+                  {
+                      Id = 17,
+                      Codigo = 13,
+                      Nome = "Empresas",
+                      Url = "/cadastro-tipo-empresa",
+                      Icon = "fa fa-briefcase",
+                      MenuId = 2,
+
+
+                  },
+                  new Pagina
+                  {
+                      Id = 18,
+                      Codigo = 13,
+                      Nome = "Vendedores",
+                      Url = "/cadastro-vendedores",
+                      Icon = "fa fa-user-plus",
+                      MenuId = 2,
+                      
+
+                  }, new Pagina
+                  {
+                      Id = 19,
+                      Codigo = 18,
+                      Nome = "Tipo de Negociação",
+                      Url = "/cadastro-tipo-negociacao",
+                      Icon = "fa fa-credit-card",
+                      MenuId = 2,
+                      
+                  },
+                  new Pagina
+                  {
+                      Id = 20,
+                      Codigo = 14,
+                      Nome = "Parceiros",
+                      Url = "/cadastro-parceiros",
+                      Icon = "fa fa-users",
+                      MenuId = 2,
+                  },
+                  new Pagina
+                  {
+                      Id = 21,
+                      Codigo = 12,
+                      Nome = "Grupo de Produtos",
+                      Url = "/cadastro-grupos-produtos",
+                      Icon = "fa fa-shopping-bag",
+                      MenuId = 2,
+                  },
+                  new Pagina
+                  {
+                      Id = 22,
+                      Codigo = 11,
+                      Nome = "Produtos",
+                      Url = "/cadastro-produtos",
+                      Icon = "fa fa-cart-plus",
+                      MenuId = 2,
+                  },
+                  new Pagina
+                  {
+                      Id = 23,
+                      Codigo = 16,
+                      Nome = "Concorrentes",
+                      Url = "/cadastro-concorrentes",
+                      Icon = "fa fa-user-times",
+                      MenuId = 2,
+
+                  },
+                  new Pagina
+                  {
+                      Id = 24,
+                      Codigo = 17,
+                      Nome = "Produto x Concorrente",
+                      Url = "/produtos-concorrentes",
+                      Icon = "fa fa-user-times",
+                      MenuId = 2,
+                  },
+                  new Pagina
+                  {
+                      Id = 25,
+                      Codigo = 19,
+                      Nome = "Tabela de Preço",
+                      Url = "/tabela-de-preco",
+                      Icon = "fa fa-calculator",
+                      MenuId = 2,
+                  },
+
+                  new Pagina
+                  {
+                      Id = 26,
+                      Codigo = 23,
+                      Nome = "Pedido de Vendas",
+                      Url = "/pedido_vendas",
+                      Icon = "fa fa-line-chart",
+                      MenuId = 3,
+                      
+                  },
+              new Pagina
+              {
+                  Id = 27,
+                  Codigo = 9,
+                  Nome = "Usuarios",
+                  Url = "/cadastro-usuarios",
+                  Icon = "fa fa-user-circle-o",
+                  MenuId = 5,
+                  
+              },
+               new Pagina
+               {
+                   Id = 28,
+                   Codigo = 10,
+                   Nome = "Grupo de Usuarios",
+                   Url = "/cadastro-grupo-usuarios",
+                   Icon = "fa fa-users",
+                   MenuId = 5,
+                   
+               },
+                 //new Pagina
+                 //{
+                 //    Id = 29,
+                 //    Codigo = 22,
+                 //    Nome = "Montar Menu",
+                 //    Url = "/montar-menu",
+                 //    Icon = "fa fa-newspaper-o",
+                 //    MenuId = 5,
+                   
+
+                 //},
+                 // new Pagina
+                 // {
+                 //     Id = 30,
+                 //     Codigo = 21,
+                 //     Nome = "Cadastro de Páginas",
+                 //     Url = "/cadastro-de-paginas",
+                 //     Icon = "fa fa-id-card-o",
+                 //     MenuId = 5,
+                   
+
+                 // },
+                  new Pagina
+                  {
+                      Id = 31,
+                      Codigo = 24,
+                      Nome = "Receber dados Sankhya",
+                      Url = "",
+                      Icon = "fa fa-external-link-square",
+                      MenuId = 5,
+                     
+
+                  },
+                  new Pagina
+                  {
+                      Id = 32,
+                      Codigo = 26,
+                      Nome = "Restaurar dados sistema",
+                      Url = "",
+                      Icon = "fa fa-refresh",
+                      MenuId = 10,
+
 
                   }
 

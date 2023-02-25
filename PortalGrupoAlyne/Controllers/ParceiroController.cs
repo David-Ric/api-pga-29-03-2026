@@ -50,6 +50,26 @@ namespace PortalGrupoAlyne.Controllers
             var total = await context.Parceiro.CountAsync();
             var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.Nome.ToLower().Contains(filter.ToLower()) ||
+                                       e.Cnpj_Cpf.ToLower().Contains(filter.ToLower())))
+                         .OrderBy(e => e.id).ToListAsync();
+            return Ok(new
+            {
+                total,
+                data = parceiros
+            });
+        }
+        [HttpGet("filter/status")]
+
+        public async Task<IActionResult> GetAllFilterStatus([FromServices] DataContext context,
+         [FromQuery] int pagina,
+          [FromQuery] int totalpagina,
+         [FromQuery] string filter
+
+         )
+        {
+            var total = await context.Parceiro.CountAsync();
+            var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+                                      .Where(e => (
                                       e.Status.ToLower().Contains(filter.ToLower()) || e.Cnpj_Cpf.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.id).ToListAsync();
             return Ok(new
