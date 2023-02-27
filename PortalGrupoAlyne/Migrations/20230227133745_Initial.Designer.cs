@@ -11,7 +11,7 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230210161551_Initial")]
+    [Migration("20230227133745_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,6 +20,69 @@ namespace PortalGrupoAlyne.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "6.0.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Baixado")
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
+
+                    b.Property<DateTime>("Data")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DataEntrega")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Filial")
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("Lote")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
+                    b.Property<string>("Observacao")
+                        .HasMaxLength(256)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("PalMPV")
+                        .HasMaxLength(18)
+                        .HasColumnType("varchar(18)");
+
+                    b.Property<int>("ParceiroId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.Property<int>("TipoNegociacaoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Valor")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("VendedorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("pedido")
+                        .HasMaxLength(40)
+                        .HasColumnType("varchar(40)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParceiroId");
+
+                    b.HasIndex("TipoNegociacaoId");
+
+                    b.HasIndex("VendedorId");
+
+                    b.ToTable("CabecalhoPedidoVenda");
+                });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Concorrente", b =>
                 {
@@ -37,6 +100,41 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Concorrente");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Configuracao", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AtualizadoEm")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("SankhyaSenha")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<string>("SankhyaServidor")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<string>("SankhyaUsuario")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Configuracao");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            SankhyaSenha = "SYNC550V",
+                            SankhyaServidor = "http://10.0.0.254:8280/",
+                            SankhyaUsuario = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Empresa", b =>
@@ -60,7 +158,7 @@ namespace PortalGrupoAlyne.Migrations
                         new
                         {
                             Id = 1,
-                            Descricao = "Indústria"
+                            Descricao = "Industria"
                         },
                         new
                         {
@@ -107,6 +205,136 @@ namespace PortalGrupoAlyne.Migrations
                             Id = 1,
                             Nome = "Administrativo"
                         });
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.IntegracaoSankhya", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AtualizadoEm")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("ChaveTabelaPortal")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.Property<string>("SqlObterSankhya")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TabelaPortal")
+                        .HasMaxLength(60)
+                        .HasColumnType("varchar(60)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("IntegracaoSankhya");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, \r\n                    TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm\r\n                    FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0",
+                            TabelaPortal = "Vendedor"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT DISTINCT TPV.CODTIPVENDA Id, \r\n                        RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao,\r\n                        TPV.DHALTER AtualizadoEm\r\n                    FROM TGFTPV (NOLOCK) TPV\r\n                    JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA\r\n                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)\r\n                    WHERE TPV.CODTIPVENDA > 0\r\n                    AND DHALTER > '$AtualizadoEm'\r\n                    ORDER BY 1",
+                            TabelaPortal = "TipoNegociacao"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, \r\n                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, \r\n                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, \r\n                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, \r\n                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,\r\n                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,\r\n                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, \r\n                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, \r\n                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)                    \r\n                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID\r\n                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF\r\n                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC\r\n                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND\r\n                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI\r\n                    WHERE PAR.DTALTER > '$AtualizadoEm'\r\n                    AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0",
+                            TabelaPortal = "Parceiro"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT CODGRUPOPROD Id, \r\n                        RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome\r\n                    FROM sankhya.TGFGRU (NOLOCK)\r\n                    WHERE ANALITICO = 'S'",
+                            TabelaPortal = "GrupoProduto"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT PRO.CODPROD Id, \r\n                        PRO.DESCRPROD Nome, \r\n                        PRO.CODGRUPOPROD GrupoProdutoId, \r\n                        PRO.DTALTER AtualizadoEm,\r\n                        PRO.CODVOL TipoUnid,\r\n                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,\r\n                        ISNULL(VOA.QUANTIDADE,1) Conv\r\n                    FROM sankhya.TGFPRO (NOLOCK) PRO\r\n                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'\r\n                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'\r\n                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')\r\n                    AND PRO.DTALTER > '$AtualizadoEm'",
+                            TabelaPortal = "Produto"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            ChaveTabelaPortal = "Id",
+                            SqlObterSankhya = "SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal \r\n                    FROM TGFNTA (NOLOCK) NTA\r\n                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R'\r\n                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR \r\n                    ORDER BY 1",
+                            TabelaPortal = "TabelaPreco"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            ChaveTabelaPortal = "TabelaPrecoId,IdProd",
+                            SqlObterSankhya = "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD",
+                            TabelaPortal = "ItemTabela"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
+                            SqlObterSankhya = "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                    FROM TGFPAR (NOLOCK) PAR \r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)",
+                            TabelaPortal = "TabelaPrecoParceiro"
+                        });
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.ItemPedidoVenda", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("Baixado")
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
+
+                    b.Property<int>("CabecalhoPedidoVendaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Filial")
+                        .HasMaxLength(2)
+                        .HasColumnType("varchar(2)");
+
+                    b.Property<string>("PalMPV")
+                        .HasMaxLength(18)
+                        .HasColumnType("varchar(18)");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Quant")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("ValTotal")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<decimal?>("ValUnit")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int>("VendedorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CabecalhoPedidoVendaId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.HasIndex("VendedorId");
+
+                    b.ToTable("ItemPedidoVenda");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.ItemTabela", b =>
@@ -167,6 +395,46 @@ namespace PortalGrupoAlyne.Migrations
                             Codigo = 1,
                             Icon = "fa fa-bank",
                             Nome = "Administrativo",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Codigo = 4,
+                            Icon = "fa fa-address-card",
+                            Nome = "Cadastros",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Codigo = 5,
+                            Icon = "fa fa-map-o",
+                            Nome = "Movimentos",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Codigo = 7,
+                            Icon = "fa fa-search-minus",
+                            Nome = "Consultas",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Codigo = 6,
+                            Icon = "fa fa-object-ungroup",
+                            Nome = "Outros",
+                            Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Codigo = 25,
+                            Icon = "fa fa-cogs",
+                            Nome = "Configurações",
                             Ordem = 0
                         });
                 });
@@ -327,16 +595,6 @@ namespace PortalGrupoAlyne.Migrations
                         },
                         new
                         {
-                            Id = 10,
-                            Codigo = 20,
-                            Icon = "fa fa-calculator",
-                            MenuId = 1,
-                            Nome = "Tabela de Preço Cliente",
-                            SubMenuId = 1,
-                            Url = "/tabela-de-preco-cliente"
-                        },
-                        new
-                        {
                             Id = 11,
                             Codigo = 23,
                             Icon = "fa fa-line-chart",
@@ -367,23 +625,149 @@ namespace PortalGrupoAlyne.Migrations
                         },
                         new
                         {
-                            Id = 14,
-                            Codigo = 22,
-                            Icon = "fa fa-newspaper-o",
+                            Id = 16,
+                            Codigo = 24,
+                            Icon = "fa fa-external-link-square",
                             MenuId = 1,
-                            Nome = "Montar Menu",
+                            Nome = "Receber dados Sankhya",
                             SubMenuId = 4,
-                            Url = "/montar-menu"
+                            Url = ""
                         },
                         new
                         {
-                            Id = 15,
-                            Codigo = 21,
-                            Icon = "fa fa-id-card-o",
+                            Id = 29,
+                            Codigo = 26,
+                            Icon = "fa fa-refresh",
                             MenuId = 1,
-                            Nome = "Cadastro de Páginas",
-                            SubMenuId = 4,
-                            Url = "/cadastro-de-paginas"
+                            Nome = "Restaurar dados sistema",
+                            SubMenuId = 10,
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Codigo = 13,
+                            Icon = "fa fa-briefcase",
+                            MenuId = 2,
+                            Nome = "Empresas",
+                            Url = "/cadastro-tipo-empresa"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Codigo = 13,
+                            Icon = "fa fa-user-plus",
+                            MenuId = 2,
+                            Nome = "Vendedores",
+                            Url = "/cadastro-vendedores"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Codigo = 18,
+                            Icon = "fa fa-credit-card",
+                            MenuId = 2,
+                            Nome = "Tipo de Negociação",
+                            Url = "/cadastro-tipo-negociacao"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Codigo = 14,
+                            Icon = "fa fa-users",
+                            MenuId = 2,
+                            Nome = "Parceiros",
+                            Url = "/cadastro-parceiros"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Codigo = 12,
+                            Icon = "fa fa-shopping-bag",
+                            MenuId = 2,
+                            Nome = "Grupo de Produtos",
+                            Url = "/cadastro-grupos-produtos"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Codigo = 11,
+                            Icon = "fa fa-cart-plus",
+                            MenuId = 2,
+                            Nome = "Produtos",
+                            Url = "/cadastro-produtos"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Codigo = 16,
+                            Icon = "fa fa-user-times",
+                            MenuId = 2,
+                            Nome = "Concorrentes",
+                            Url = "/cadastro-concorrentes"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Codigo = 17,
+                            Icon = "fa fa-user-times",
+                            MenuId = 2,
+                            Nome = "Produto x Concorrente",
+                            Url = "/produtos-concorrentes"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Codigo = 19,
+                            Icon = "fa fa-calculator",
+                            MenuId = 2,
+                            Nome = "Tabela de Preço",
+                            Url = "/tabela-de-preco"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Codigo = 23,
+                            Icon = "fa fa-line-chart",
+                            MenuId = 3,
+                            Nome = "Pedido de Vendas",
+                            Url = "/pedido_vendas"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Codigo = 9,
+                            Icon = "fa fa-user-circle-o",
+                            MenuId = 5,
+                            Nome = "Usuarios",
+                            Url = "/cadastro-usuarios"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Codigo = 10,
+                            Icon = "fa fa-users",
+                            MenuId = 5,
+                            Nome = "Grupo de Usuarios",
+                            Url = "/cadastro-grupo-usuarios"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Codigo = 24,
+                            Icon = "fa fa-external-link-square",
+                            MenuId = 5,
+                            Nome = "Receber dados Sankhya",
+                            Url = ""
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Codigo = 26,
+                            Icon = "fa fa-refresh",
+                            MenuId = 10,
+                            Nome = "Restaurar dados sistema",
+                            Url = ""
                         });
                 });
 
@@ -567,14 +951,6 @@ namespace PortalGrupoAlyne.Migrations
                         },
                         new
                         {
-                            Id = 20,
-                            Codigo = 20,
-                            Icon = "fa fa-calculator",
-                            Nome = "Tabela de Preço Cliente",
-                            Url = "/tabela-de-preco-cliente"
-                        },
-                        new
-                        {
                             Id = 21,
                             Codigo = 21,
                             Icon = "fa fa-id-card-o",
@@ -596,6 +972,14 @@ namespace PortalGrupoAlyne.Migrations
                             Icon = "fa fa-line-chart",
                             Nome = "Pedido de Vendas",
                             Url = "/pedido_vendas"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Codigo = 24,
+                            Icon = "fa fa-external-link-square",
+                            Nome = "Receber dados Sankhya",
+                            Url = ""
                         });
                 });
 
@@ -647,8 +1031,8 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Bairro")
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Canal")
                         .HasMaxLength(60)
@@ -663,8 +1047,8 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("varchar(60)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(80)
-                        .HasColumnType("varchar(80)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Empresa")
                         .HasMaxLength(30)
@@ -682,13 +1066,16 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
+                    b.Property<decimal?>("Lc")
+                        .HasColumnType("decimal(65,30)");
+
                     b.Property<string>("Long")
                         .HasMaxLength(10)
                         .HasColumnType("varchar(10)");
 
                     b.Property<string>("Municipio")
-                        .HasMaxLength(40)
-                        .HasColumnType("varchar(40)");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(100)
@@ -698,34 +1085,34 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100)");
 
-                    b.Property<bool>("PrimeiraSem")
+                    b.Property<bool?>("PrimeiraSem")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Quarta")
+                    b.Property<bool?>("Quarta")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("QuartaSem")
+                    b.Property<bool?>("QuartaSem")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Quinta")
+                    b.Property<bool?>("Quinta")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("QuintaSem")
+                    b.Property<bool?>("QuintaSem")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Sabado")
+                    b.Property<bool?>("Sabado")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Segunda")
+                    b.Property<bool?>("Segunda")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("SegundaSem")
+                    b.Property<bool?>("SegundaSem")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("SemVisita")
+                    b.Property<bool?>("SemVisita")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Sexta")
+                    b.Property<bool?>("Sexta")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Status")
@@ -736,10 +1123,10 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(60)
                         .HasColumnType("varchar(60)");
 
-                    b.Property<bool>("Terca")
+                    b.Property<bool?>("Terca")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("TerceiraSem")
+                    b.Property<bool?>("TerceiraSem")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("TipoNegociacao")
@@ -755,6 +1142,9 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("varchar(4)");
 
                     b.Property<int>("VendedorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("codParceiro")
                         .HasColumnType("int");
 
                     b.HasKey("id");
@@ -773,12 +1163,23 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<int?>("Conv")
+                        .HasColumnType("int");
+
                     b.Property<int>("GrupoProdutoId")
                         .HasColumnType("int");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(60)
                         .HasColumnType("varchar(60)");
+
+                    b.Property<string>("TipoUnid")
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
+
+                    b.Property<string>("TipoUnid2")
+                        .HasMaxLength(4)
+                        .HasColumnType("varchar(4)");
 
                     b.HasKey("Id");
 
@@ -890,6 +1291,15 @@ namespace PortalGrupoAlyne.Migrations
                             MenuId = 1,
                             Nome = "Outros",
                             Ordem = 0
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Codigo = 25,
+                            Icon = "fa fa-cogs",
+                            MenuId = 1,
+                            Nome = "Configurações",
+                            Ordem = 0
                         });
                 });
 
@@ -953,7 +1363,7 @@ namespace PortalGrupoAlyne.Migrations
                     b.ToTable("TabelaPreco");
                 });
 
-            modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPrecoCliente", b =>
+            modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPrecoParceiro", b =>
                 {
                     b.Property<int>("id")
                         .ValueGeneratedOnAdd()
@@ -962,22 +1372,24 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("CodEmpresa")
+                    b.Property<int>("EmpresaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CodParceiro")
+                    b.Property<int>("ParceiroId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CodTabelaPreco")
+                    b.Property<int>("TabelaPrecoId")
                         .HasColumnType("int");
 
                     b.HasKey("id");
 
-                    b.HasIndex("CodParceiro");
+                    b.HasIndex("EmpresaId");
 
-                    b.HasIndex("CodTabelaPreco");
+                    b.HasIndex("ParceiroId");
 
-                    b.ToTable("TabelaPrecoCliente");
+                    b.HasIndex("TabelaPrecoId");
+
+                    b.ToTable("TabelaPrecoParceiro");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.TipoNegociacao", b =>
@@ -1009,8 +1421,8 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("varchar(60)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Funcao")
                         .HasMaxLength(60)
@@ -1076,6 +1488,8 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("GrupoId");
+
                     b.ToTable("Usuario");
 
                     b.HasData(
@@ -1105,15 +1519,15 @@ namespace PortalGrupoAlyne.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<bool>("AtuaCompras")
+                    b.Property<bool?>("AtuaCompras")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<DateTime?>("AtualizadoEm")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
 
                     b.Property<string>("Nome")
                         .HasMaxLength(100)
@@ -1134,6 +1548,58 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Vendedor");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", b =>
+                {
+                    b.HasOne("PortalGrupoAlyne.Model.Parceiro", "Parceiro")
+                        .WithMany()
+                        .HasForeignKey("ParceiroId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PortalGrupoAlyne.Model.TipoNegociacao", "TipoNegociacao")
+                        .WithMany()
+                        .HasForeignKey("TipoNegociacaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PortalGrupoAlyne.Model.Vendedor", "Vendedor")
+                        .WithMany()
+                        .HasForeignKey("VendedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Parceiro");
+
+                    b.Navigation("TipoNegociacao");
+
+                    b.Navigation("Vendedor");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.ItemPedidoVenda", b =>
+                {
+                    b.HasOne("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", null)
+                        .WithMany("ItemPedidoVenda")
+                        .HasForeignKey("CabecalhoPedidoVendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PortalGrupoAlyne.Model.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PortalGrupoAlyne.Model.Vendedor", "Vendedor")
+                        .WithMany()
+                        .HasForeignKey("VendedorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Produto");
+
+                    b.Navigation("Vendedor");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.ItemTabela", b =>
@@ -1242,23 +1708,43 @@ namespace PortalGrupoAlyne.Migrations
                         .HasForeignKey("UsuarioId");
                 });
 
-            modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPrecoCliente", b =>
+            modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPrecoParceiro", b =>
                 {
-                    b.HasOne("PortalGrupoAlyne.Model.Parceiro", "Parceiros")
+                    b.HasOne("PortalGrupoAlyne.Model.Empresa", "Empresa")
                         .WithMany()
-                        .HasForeignKey("CodParceiro")
+                        .HasForeignKey("EmpresaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PortalGrupoAlyne.Model.Parceiro", null)
+                        .WithMany("TabelaPrecoParceiro")
+                        .HasForeignKey("ParceiroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PortalGrupoAlyne.Model.TabelaPreco", "TabelaPreco")
                         .WithMany()
-                        .HasForeignKey("CodTabelaPreco")
+                        .HasForeignKey("TabelaPrecoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Parceiros");
+                    b.Navigation("Empresa");
 
                     b.Navigation("TabelaPreco");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Usuario", b =>
+                {
+                    b.HasOne("PortalGrupoAlyne.Model.GrupoUsuario", "GrupoUsuario")
+                        .WithMany()
+                        .HasForeignKey("GrupoId");
+
+                    b.Navigation("GrupoUsuario");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", b =>
+                {
+                    b.Navigation("ItemPedidoVenda");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.GrupoUsuario", b =>
@@ -1282,6 +1768,11 @@ namespace PortalGrupoAlyne.Migrations
                     b.Navigation("PaginaPermissao");
 
                     b.Navigation("SubMenuPermissao");
+                });
+
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
+                {
+                    b.Navigation("TabelaPrecoParceiro");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.SubMenu", b =>

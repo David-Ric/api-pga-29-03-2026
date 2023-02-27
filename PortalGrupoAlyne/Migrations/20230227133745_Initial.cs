@@ -30,6 +30,26 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Configuracao",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SankhyaServidor = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SankhyaUsuario = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SankhyaSenha = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Configuracao", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Empresa",
                 columns: table => new
                 {
@@ -73,6 +93,26 @@ namespace PortalGrupoAlyne.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_GrupoUsuario", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "IntegracaoSankhya",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TabelaPortal = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ChaveTabelaPortal = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    SqlObterSankhya = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IntegracaoSankhya", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -178,12 +218,65 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Vendedor",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Regiao = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Email = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Tipo = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AtuaCompras = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vendedor", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Produto",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TipoUnid = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TipoUnid2 = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Conv = table.Column<int>(type: "int", nullable: true),
+                    GrupoProdutoId = table.Column<int>(type: "int", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Produto", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Produto_GrupoProduto_GrupoProdutoId",
+                        column: x => x.GrupoProdutoId,
+                        principalTable: "GrupoProduto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Usuario",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Email = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: false)
+                    Email = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Username = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -215,54 +308,11 @@ namespace PortalGrupoAlyne.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuario", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Vendedor",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Status = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Regiao = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Tipo = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    AtuaCompras = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Vendedor", x => x.Id);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Produto",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    GrupoProdutoId = table.Column<int>(type: "int", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Produto", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Produto_GrupoProduto_GrupoProdutoId",
-                        column: x => x.GrupoProdutoId,
-                        principalTable: "GrupoProduto",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        name: "FK_Usuario_GrupoUsuario_GrupoId",
+                        column: x => x.GrupoId,
+                        principalTable: "GrupoUsuario",
+                        principalColumn: "Id");
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -293,39 +343,12 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "MenuPermissao",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    UsuarioId = table.Column<int>(type: "int", nullable: true),
-                    GrupoUsuarioId = table.Column<int>(type: "int", nullable: true),
-                    Codigo = table.Column<int>(type: "int", nullable: false),
-                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MenuPermissao", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_MenuPermissao_GrupoUsuario_GrupoUsuarioId",
-                        column: x => x.GrupoUsuarioId,
-                        principalTable: "GrupoUsuario",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_MenuPermissao_Usuario_UsuarioId",
-                        column: x => x.UsuarioId,
-                        principalTable: "Usuario",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Parceiro",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    codParceiro = table.Column<int>(type: "int", nullable: true),
                     Nome = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     TipoPessoa = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
@@ -334,7 +357,7 @@ namespace PortalGrupoAlyne.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Cnpj_Cpf = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Email = table.Column<string>(type: "varchar(80)", maxLength: 80, nullable: true)
+                    Email = table.Column<string>(type: "varchar(300)", maxLength: 300, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Fone = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -346,9 +369,9 @@ namespace PortalGrupoAlyne.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Endereco = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Bairro = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
+                    Bairro = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Municipio = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: true)
+                    Municipio = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     UF = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -356,20 +379,21 @@ namespace PortalGrupoAlyne.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Long = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Lc = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
                     Status = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    SemVisita = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    PrimeiraSem = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    SegundaSem = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    TerceiraSem = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuartaSem = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    QuintaSem = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Segunda = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Terca = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Quarta = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Quinta = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Sexta = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    Sabado = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    SemVisita = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    PrimeiraSem = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    SegundaSem = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    TerceiraSem = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    QuartaSem = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    QuintaSem = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Segunda = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Terca = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Quarta = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Quinta = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Sexta = table.Column<bool>(type: "tinyint(1)", nullable: true),
+                    Sabado = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     TipoNegociacao = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Empresa = table.Column<string>(type: "varchar(30)", maxLength: 30, nullable: true)
@@ -419,6 +443,34 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "MenuPermissao",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    UsuarioId = table.Column<int>(type: "int", nullable: true),
+                    GrupoUsuarioId = table.Column<int>(type: "int", nullable: true),
+                    Codigo = table.Column<int>(type: "int", nullable: false),
+                    Nome = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MenuPermissao", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_MenuPermissao_GrupoUsuario_GrupoUsuarioId",
+                        column: x => x.GrupoUsuarioId,
+                        principalTable: "GrupoUsuario",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MenuPermissao_Usuario_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuario",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Pagina",
                 columns: table => new
                 {
@@ -447,6 +499,92 @@ namespace PortalGrupoAlyne.Migrations
                         column: x => x.SubMenuId,
                         principalTable: "SubMenu",
                         principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "CabecalhoPedidoVenda",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Filial = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Lote = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
+                    PalMPV = table.Column<string>(type: "varchar(18)", maxLength: 18, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TipoNegociacaoId = table.Column<int>(type: "int", nullable: false),
+                    ParceiroId = table.Column<int>(type: "int", nullable: false),
+                    Data = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    DataEntrega = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Observacao = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Baixado = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    pedido = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Status = table.Column<string>(type: "varchar(40)", maxLength: 40, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CabecalhoPedidoVenda", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CabecalhoPedidoVenda_Parceiro_ParceiroId",
+                        column: x => x.ParceiroId,
+                        principalTable: "Parceiro",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CabecalhoPedidoVenda_TipoNegociacao_TipoNegociacaoId",
+                        column: x => x.TipoNegociacaoId,
+                        principalTable: "TipoNegociacao",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CabecalhoPedidoVenda_Vendedor_VendedorId",
+                        column: x => x.VendedorId,
+                        principalTable: "Vendedor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "TabelaPrecoParceiro",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmpresaId = table.Column<int>(type: "int", nullable: false),
+                    ParceiroId = table.Column<int>(type: "int", nullable: false),
+                    TabelaPrecoId = table.Column<int>(type: "int", nullable: false),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TabelaPrecoParceiro", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_TabelaPrecoParceiro_Empresa_EmpresaId",
+                        column: x => x.EmpresaId,
+                        principalTable: "Empresa",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TabelaPrecoParceiro_Parceiro_ParceiroId",
+                        column: x => x.ParceiroId,
+                        principalTable: "Parceiro",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TabelaPrecoParceiro_TabelaPreco_TabelaPrecoId",
+                        column: x => x.TabelaPrecoId,
+                        principalTable: "TabelaPreco",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -486,29 +624,43 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "TabelaPrecoCliente",
+                name: "ItemPedidoVenda",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CodEmpresa = table.Column<int>(type: "int", nullable: false),
-                    CodParceiro = table.Column<int>(type: "int", nullable: false),
-                    CodTabelaPreco = table.Column<int>(type: "int", nullable: false),
-                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                    Filial = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CabecalhoPedidoVendaId = table.Column<int>(type: "int", nullable: false),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
+                    PalMPV = table.Column<string>(type: "varchar(18)", maxLength: 18, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProdutoId = table.Column<int>(type: "int", nullable: false),
+                    Quant = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    ValUnit = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    ValTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    Baixado = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TabelaPrecoCliente", x => x.id);
+                    table.PrimaryKey("PK_ItemPedidoVenda", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TabelaPrecoCliente_Parceiro_CodParceiro",
-                        column: x => x.CodParceiro,
-                        principalTable: "Parceiro",
-                        principalColumn: "id",
+                        name: "FK_ItemPedidoVenda_CabecalhoPedidoVenda_CabecalhoPedidoVendaId",
+                        column: x => x.CabecalhoPedidoVendaId,
+                        principalTable: "CabecalhoPedidoVenda",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TabelaPrecoCliente_TabelaPreco_CodTabelaPreco",
-                        column: x => x.CodTabelaPreco,
-                        principalTable: "TabelaPreco",
+                        name: "FK_ItemPedidoVenda_Produto_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemPedidoVenda_Vendedor_VendedorId",
+                        column: x => x.VendedorId,
+                        principalTable: "Vendedor",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -555,11 +707,16 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.InsertData(
+                table: "Configuracao",
+                columns: new[] { "Id", "AtualizadoEm", "SankhyaSenha", "SankhyaServidor", "SankhyaUsuario" },
+                values: new object[] { 1, null, "SYNC550V", "http://10.0.0.254:8280/", "ADMIN" });
+
+            migrationBuilder.InsertData(
                 table: "Empresa",
                 columns: new[] { "Id", "AtualizadoEm", "Descricao" },
                 values: new object[,]
                 {
-                    { 1, null, "Indústria" },
+                    { 1, null, "Industria" },
                     { 2, null, "Distribuidora" }
                 });
 
@@ -569,9 +726,32 @@ namespace PortalGrupoAlyne.Migrations
                 values: new object[] { 1, "Administrativo" });
 
             migrationBuilder.InsertData(
+                table: "IntegracaoSankhya",
+                columns: new[] { "Id", "AtualizadoEm", "ChaveTabelaPortal", "SqlObterSankhya", "TabelaPortal" },
+                values: new object[,]
+                {
+                    { 1, null, "Id", "SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, \r\n                    TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm\r\n                    FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0", "Vendedor" },
+                    { 2, null, "Id", "SELECT DISTINCT TPV.CODTIPVENDA Id, \r\n                        RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao,\r\n                        TPV.DHALTER AtualizadoEm\r\n                    FROM TGFTPV (NOLOCK) TPV\r\n                    JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA\r\n                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)\r\n                    WHERE TPV.CODTIPVENDA > 0\r\n                    AND DHALTER > '$AtualizadoEm'\r\n                    ORDER BY 1", "TipoNegociacao" },
+                    { 3, null, "Id", "SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, \r\n                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, \r\n                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, \r\n                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, \r\n                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,\r\n                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,\r\n                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, \r\n                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, \r\n                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)                    \r\n                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID\r\n                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF\r\n                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC\r\n                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND\r\n                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI\r\n                    WHERE PAR.DTALTER > '$AtualizadoEm'\r\n                    AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0", "Parceiro" },
+                    { 4, null, "Id", "SELECT CODGRUPOPROD Id, \r\n                        RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome\r\n                    FROM sankhya.TGFGRU (NOLOCK)\r\n                    WHERE ANALITICO = 'S'", "GrupoProduto" },
+                    { 5, null, "Id", "SELECT PRO.CODPROD Id, \r\n                        PRO.DESCRPROD Nome, \r\n                        PRO.CODGRUPOPROD GrupoProdutoId, \r\n                        PRO.DTALTER AtualizadoEm,\r\n                        PRO.CODVOL TipoUnid,\r\n                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,\r\n                        ISNULL(VOA.QUANTIDADE,1) Conv\r\n                    FROM sankhya.TGFPRO (NOLOCK) PRO\r\n                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'\r\n                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'\r\n                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')\r\n                    AND PRO.DTALTER > '$AtualizadoEm'", "Produto" },
+                    { 6, null, "Id", "SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal \r\n                    FROM TGFNTA (NOLOCK) NTA\r\n                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R'\r\n                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR \r\n                    ORDER BY 1", "TabelaPreco" },
+                    { 7, null, "TabelaPrecoId,IdProd", "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD", "ItemTabela" },
+                    { 8, null, "ParceiroId,EmpresaId,TabelaPrecoId", "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                    FROM TGFPAR (NOLOCK) PAR \r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)", "TabelaPrecoParceiro" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "Menu",
                 columns: new[] { "Id", "Codigo", "Icon", "Nome", "Ordem" },
-                values: new object[] { 1, 1, "fa fa-bank", "Administrativo", 0 });
+                values: new object[,]
+                {
+                    { 1, 1, "fa fa-bank", "Administrativo", 0 },
+                    { 2, 4, "fa fa-address-card", "Cadastros", 0 },
+                    { 3, 5, "fa fa-map-o", "Movimentos", 0 },
+                    { 4, 7, "fa fa-search-minus", "Consultas", 0 },
+                    { 5, 6, "fa fa-object-ungroup", "Outros", 0 },
+                    { 10, 25, "fa fa-cogs", "Configurações", 0 }
+                });
 
             migrationBuilder.InsertData(
                 table: "PaginaBase",
@@ -597,16 +777,32 @@ namespace PortalGrupoAlyne.Migrations
                     { 17, 17, "fa fa-user-times", "Produto x Concorrente", "/produtos-concorrentes" },
                     { 18, 18, "fa fa-credit-card", "Tipo de Negociação", "/cadastro-tipo-negociacao" },
                     { 19, 19, "fa fa-calculator", "Tabela de Preço", "/tabela-de-preco" },
-                    { 20, 20, "fa fa-calculator", "Tabela de Preço Cliente", "/tabela-de-preco-cliente" },
                     { 21, 21, "fa fa-id-card-o", "Cadastro de Páginas", "/cadastro-de-paginas" },
                     { 22, 22, "fa fa-newspaper-o", "Montar Menu", "/montar-menu" },
-                    { 23, 23, "fa fa-line-chart", "Pedido de Vendas", "/pedido_vendas" }
+                    { 23, 23, "fa fa-line-chart", "Pedido de Vendas", "/pedido_vendas" },
+                    { 24, 24, "fa fa-external-link-square", "Receber dados Sankhya", "" }
                 });
 
             migrationBuilder.InsertData(
-                table: "Usuario",
-                columns: new[] { "Id", "Email", "Funcao", "GrupoId", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
-                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, null, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
+                table: "Pagina",
+                columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "SubMenuId", "Url" },
+                values: new object[,]
+                {
+                    { 17, 13, "fa fa-briefcase", 2, "Empresas", null, "/cadastro-tipo-empresa" },
+                    { 18, 13, "fa fa-user-plus", 2, "Vendedores", null, "/cadastro-vendedores" },
+                    { 19, 18, "fa fa-credit-card", 2, "Tipo de Negociação", null, "/cadastro-tipo-negociacao" },
+                    { 20, 14, "fa fa-users", 2, "Parceiros", null, "/cadastro-parceiros" },
+                    { 21, 12, "fa fa-shopping-bag", 2, "Grupo de Produtos", null, "/cadastro-grupos-produtos" },
+                    { 22, 11, "fa fa-cart-plus", 2, "Produtos", null, "/cadastro-produtos" },
+                    { 23, 16, "fa fa-user-times", 2, "Concorrentes", null, "/cadastro-concorrentes" },
+                    { 24, 17, "fa fa-user-times", 2, "Produto x Concorrente", null, "/produtos-concorrentes" },
+                    { 25, 19, "fa fa-calculator", 2, "Tabela de Preço", null, "/tabela-de-preco" },
+                    { 26, 23, "fa fa-line-chart", 3, "Pedido de Vendas", null, "/pedido_vendas" },
+                    { 27, 9, "fa fa-user-circle-o", 5, "Usuarios", null, "/cadastro-usuarios" },
+                    { 28, 10, "fa fa-users", 5, "Grupo de Usuarios", null, "/cadastro-grupo-usuarios" },
+                    { 31, 24, "fa fa-external-link-square", 5, "Receber dados Sankhya", null, "" },
+                    { 32, 26, "fa fa-refresh", 10, "Restaurar dados sistema", null, "" }
+                });
 
             migrationBuilder.InsertData(
                 table: "SubMenu",
@@ -616,8 +812,14 @@ namespace PortalGrupoAlyne.Migrations
                     { 1, 4, "fa fa-address-card", 1, "Cadastros", 0 },
                     { 2, 5, "fa fa-map-o", 1, "Movimentos", 0 },
                     { 3, 7, "fa fa-search-minus", 1, "Consultas", 0 },
-                    { 4, 6, "fa fa-object-ungroup", 1, "Outros", 0 }
+                    { 4, 6, "fa fa-object-ungroup", 1, "Outros", 0 },
+                    { 10, 25, "fa fa-cogs", 1, "Configurações", 0 }
                 });
+
+            migrationBuilder.InsertData(
+                table: "Usuario",
+                columns: new[] { "Id", "Email", "Funcao", "GrupoId", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
+                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, null, new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
                 table: "Pagina",
@@ -633,13 +835,42 @@ namespace PortalGrupoAlyne.Migrations
                     { 7, 16, "fa fa-user-times", 1, "Concorrentes", 1, "/cadastro-concorrentes" },
                     { 8, 17, "fa fa-user-times", 1, "Produto x Concorrente", 1, "/produtos-concorrentes" },
                     { 9, 19, "fa fa-calculator", 1, "Tabela de Preço", 1, "/tabela-de-preco" },
-                    { 10, 20, "fa fa-calculator", 1, "Tabela de Preço Cliente", 1, "/tabela-de-preco-cliente" },
                     { 11, 23, "fa fa-line-chart", 1, "Pedido de Vendas", 2, "/pedido_vendas" },
                     { 12, 9, "fa fa-user-circle-o", 1, "Usuarios", 4, "/cadastro-usuarios" },
                     { 13, 10, "fa fa-users", 1, "Grupo de Usuarios", 4, "/cadastro-grupo-usuarios" },
-                    { 14, 22, "fa fa-newspaper-o", 1, "Montar Menu", 4, "/montar-menu" },
-                    { 15, 21, "fa fa-id-card-o", 1, "Cadastro de Páginas", 4, "/cadastro-de-paginas" }
+                    { 16, 24, "fa fa-external-link-square", 1, "Receber dados Sankhya", 4, "" },
+                    { 29, 26, "fa fa-refresh", 1, "Restaurar dados sistema", 10, "" }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CabecalhoPedidoVenda_ParceiroId",
+                table: "CabecalhoPedidoVenda",
+                column: "ParceiroId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CabecalhoPedidoVenda_TipoNegociacaoId",
+                table: "CabecalhoPedidoVenda",
+                column: "TipoNegociacaoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CabecalhoPedidoVenda_VendedorId",
+                table: "CabecalhoPedidoVenda",
+                column: "VendedorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemPedidoVenda_CabecalhoPedidoVendaId",
+                table: "ItemPedidoVenda",
+                column: "CabecalhoPedidoVendaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemPedidoVenda_ProdutoId",
+                table: "ItemPedidoVenda",
+                column: "ProdutoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemPedidoVenda_VendedorId",
+                table: "ItemPedidoVenda",
+                column: "VendedorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemTabela_IdProd",
@@ -722,14 +953,24 @@ namespace PortalGrupoAlyne.Migrations
                 column: "UsuarioId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TabelaPrecoCliente_CodParceiro",
-                table: "TabelaPrecoCliente",
-                column: "CodParceiro");
+                name: "IX_TabelaPrecoParceiro_EmpresaId",
+                table: "TabelaPrecoParceiro",
+                column: "EmpresaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TabelaPrecoCliente_CodTabelaPreco",
-                table: "TabelaPrecoCliente",
-                column: "CodTabelaPreco");
+                name: "IX_TabelaPrecoParceiro_ParceiroId",
+                table: "TabelaPrecoParceiro",
+                column: "ParceiroId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TabelaPrecoParceiro_TabelaPrecoId",
+                table: "TabelaPrecoParceiro",
+                column: "TabelaPrecoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuario_GrupoId",
+                table: "Usuario",
+                column: "GrupoId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -738,7 +979,13 @@ namespace PortalGrupoAlyne.Migrations
                 name: "Concorrente");
 
             migrationBuilder.DropTable(
-                name: "Empresa");
+                name: "Configuracao");
+
+            migrationBuilder.DropTable(
+                name: "IntegracaoSankhya");
+
+            migrationBuilder.DropTable(
+                name: "ItemPedidoVenda");
 
             migrationBuilder.DropTable(
                 name: "ItemTabela");
@@ -756,10 +1003,10 @@ namespace PortalGrupoAlyne.Migrations
                 name: "ProdutoConcorrente");
 
             migrationBuilder.DropTable(
-                name: "TabelaPrecoCliente");
+                name: "TabelaPrecoParceiro");
 
             migrationBuilder.DropTable(
-                name: "TipoNegociacao");
+                name: "CabecalhoPedidoVenda");
 
             migrationBuilder.DropTable(
                 name: "Produto");
@@ -771,10 +1018,16 @@ namespace PortalGrupoAlyne.Migrations
                 name: "SubMenuPermissao");
 
             migrationBuilder.DropTable(
-                name: "Parceiro");
+                name: "Empresa");
 
             migrationBuilder.DropTable(
                 name: "TabelaPreco");
+
+            migrationBuilder.DropTable(
+                name: "Parceiro");
+
+            migrationBuilder.DropTable(
+                name: "TipoNegociacao");
 
             migrationBuilder.DropTable(
                 name: "GrupoProduto");
@@ -789,10 +1042,10 @@ namespace PortalGrupoAlyne.Migrations
                 name: "Vendedor");
 
             migrationBuilder.DropTable(
-                name: "GrupoUsuario");
+                name: "Usuario");
 
             migrationBuilder.DropTable(
-                name: "Usuario");
+                name: "GrupoUsuario");
         }
     }
 }

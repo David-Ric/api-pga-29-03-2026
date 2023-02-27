@@ -30,6 +30,59 @@ namespace PortalGrupoAlyne.Controllers
         {
             try
             {
+                var empresas = await context.Empresa.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
+
+                var empresa1 = await _context.Empresa
+                .FindAsync(1);
+                if (empresa1 == null)
+                {
+                    var novaEmpresa = new List<Empresa> {
+                new Empresa { Id = 1, Descricao = "Industria"} };
+                    _context.Empresa.AddRange(novaEmpresa);
+                }
+                var empresa2 = await _context.Empresa
+                .FindAsync(2);
+                if (empresa2 == null)
+                {
+                    var novaEmpresa2 = new List<Empresa> {
+                new Empresa { Id = 2, Descricao = "Distribuidora"} };
+                    _context.Empresa.AddRange(novaEmpresa2);
+                }
+                var empresa3 = await _context.Empresa
+                .FindAsync(3);
+
+                var grupoUsuario = await _context.GrupoUsuario
+                .FindAsync(1);
+                if (grupoUsuario == null)
+                {
+                    var novoUsuario = new List<GrupoUsuario> {
+                new GrupoUsuario { Id = 1, Nome = "Administrativo"} };
+                    _context.GrupoUsuario.AddRange(novoUsuario);
+                }
+                var usuario1 = await _context.Usuario
+                .FindAsync(1);
+                if (usuario1 == null)
+                {
+                    var novoUser= new List<Usuario> {
+                new Usuario {
+                 Id = 1,
+                    Email = "nfe@grupoalyne.com.br",
+                    Username = "admin",
+                    NomeCompleto = "Administrador Grupo Alyne",
+                    Status = "1",
+                    GrupoId = 1,
+                    Funcao = "Administrador do Sistema",
+                    Telefone = "(85) 3521-8888",
+                    ImagemURL = "",
+                    PrimeiroLoginAdm = true
+
+
+                } };
+                    _context.Usuario.AddRange(novoUser);
+                }
+
+
+
                 var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
                 if (paginas == null) return NoContent();
                 _context.Pagina.RemoveRange(paginas);
@@ -307,6 +360,8 @@ namespace PortalGrupoAlyne.Controllers
 
                 };
                 _context.Pagina.AddRange(novaPagina);
+
+
 
                 await _context.SaveChangesAsync();
               
