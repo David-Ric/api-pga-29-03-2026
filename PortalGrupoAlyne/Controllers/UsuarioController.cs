@@ -62,8 +62,25 @@ namespace PortalGrupoAlyne.Controllers
         {
             var total = await context.Usuario.CountAsync();
             var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower()) ||
-                                      e.Status.ToLower().Contains(filter.ToLower())))
+                                      .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower())))
+                         .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
+            return Ok(new
+            {
+                total,
+                data = users
+            });
+        }
+        [HttpGet("filter/status")]
+        //  [AllowAnonymous]
+        public async Task<IActionResult> GetAllFilterStatus([FromServices] DataContext context,
+            [FromQuery] int pagina,
+             [FromQuery] int totalpagina,
+            [FromQuery] string filter
+            )
+        {
+            var total = await context.Usuario.CountAsync();
+            var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
+                                      .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
             return Ok(new
             {
