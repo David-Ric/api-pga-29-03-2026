@@ -48,8 +48,6 @@ namespace PortalGrupoAlyne.Controllers
                 new Empresa { Id = 2, Descricao = "Distribuidora"} };
                     _context.Empresa.AddRange(novaEmpresa2);
                 }
-                var empresa3 = await _context.Empresa
-                .FindAsync(3);
 
                 var grupoUsuario = await _context.GrupoUsuario
                 .FindAsync(1);
@@ -99,7 +97,7 @@ namespace PortalGrupoAlyne.Controllers
                 new Menu { Id = 3, Codigo = 5, Ordem = 0, Nome = "Movimentos", Icon = "fa fa-map-o" },
                 new Menu { Id = 4, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus" },
                 new Menu { Id = 5, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup" },
-                new Menu { Id = 6, Codigo = 25, Ordem = 0, Nome = "Configurações",Icon = "fa fa-cogs" }
+                new Menu { Id = 10, Codigo = 25, Ordem = 0, Nome = "Configurações",Icon = "fa fa-cogs" }
 
                 };
                 _context.Menu.AddRange(novoMenu);
@@ -109,7 +107,7 @@ namespace PortalGrupoAlyne.Controllers
                     new SubMenu { Id = 2, Codigo = 3, Ordem = 0,  Nome = "Movimentos", Icon = "fa fa-map-o",MenuId=1  },
                     new SubMenu { Id = 3, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus",MenuId=1  },
                     new SubMenu { Id = 4, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup",MenuId=1  },
-                    new SubMenu {  Id = 5,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
+                    new SubMenu {  Id = 10,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
 
                 };
                 _context.SubMenu.AddRange(novoSubMenu);
@@ -242,7 +240,7 @@ namespace PortalGrupoAlyne.Controllers
                         Url = "",
                         Icon = "fa fa-refresh",
                         MenuId = 1,
-                        SubMenuId = 5,
+                        SubMenuId = 10,
                      },
                          new Pagina {
                       Id = 17,
@@ -354,7 +352,7 @@ namespace PortalGrupoAlyne.Controllers
                       Nome = "Restaurar dados sistema",
                       Url = "",
                       Icon = "fa fa-refresh",
-                      MenuId = 6,
+                      MenuId = 10,
                      }
 
 
