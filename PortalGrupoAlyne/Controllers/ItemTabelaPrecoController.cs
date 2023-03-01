@@ -55,15 +55,30 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            
-            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela)&& (e.IdProd == codProduto)).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemTabela
+                .AsNoTracking()
+               .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
+                .OrderBy(e => e.Id).Include(e => e.Produtos)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
                 data = data
             });
+
+
         }
 
         [HttpGet("codTabela/nomeProduto")]
@@ -75,14 +90,29 @@ namespace PortalGrupoAlyne.Controllers
 
          )
         {
-            
-            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemTabela
+                .AsNoTracking()
+               .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
+                .OrderBy(e => e.Id).Include(e => e.Produtos)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
                 data = data
             });
+
+         
         }
 
         [HttpGet("codTabela/grupoId")]
@@ -94,14 +124,30 @@ namespace PortalGrupoAlyne.Controllers
 
          )
         {
-            
-            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId)).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemTabela
+                .AsNoTracking()
+              .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
+                .OrderBy(e => e.Id).Include(e => e.Produtos)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
                 data = data
             });
+
+
+           
         }
 
         [HttpGet("codTabela")]
@@ -112,14 +158,30 @@ namespace PortalGrupoAlyne.Controllers
            
           )
         {
-            
-            var data = await context.ItemTabela.Where(e => (e.TabelaPrecoId== codTabela)).OrderBy(e => e.Id).Include(e => e.Produtos).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemTabela
+                .AsNoTracking()
+              .Where(e => (e.TabelaPrecoId == codTabela))
+                .OrderBy(e => e.Id).Include(e => e.Produtos)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemTabela
+                .AsNoTracking()
+               .Where(e => (e.TabelaPrecoId == codTabela))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
                 data = data
             });
+
+
+          
         }
 
 

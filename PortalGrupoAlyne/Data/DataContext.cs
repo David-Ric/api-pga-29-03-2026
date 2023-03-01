@@ -750,7 +750,7 @@ namespace PortalGrupoAlyne.Data
                    ChaveTabelaPortal = "Id",
                    SqlObterSankhya = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
                     TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
-                    FROM TGFVEN WHERE DTALTER > '$AtualizadoEm' AND CODVEND > 0"
+                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId AND DTALTER > '$AtualizadoEm'"
                },
                new IntegracaoSankhya
                {
@@ -764,7 +764,8 @@ namespace PortalGrupoAlyne.Data
                     JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA
                     JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
+                                            AND VEN.CODVEND = $VendedorId
                     WHERE TPV.CODTIPVENDA > 0
                     AND DHALTER > '$AtualizadoEm'
                     ORDER BY 1"
@@ -784,7 +785,8 @@ namespace PortalGrupoAlyne.Data
                         PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
                         PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
                     FROM TGFPAR (NOLOCK) PAR
-					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)                    
+					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
+                                            AND VEN.CODVEND = $VendedorId
                     JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
                     JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
                     LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
@@ -831,7 +833,8 @@ namespace PortalGrupoAlyne.Data
                     JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                     JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R'
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
+                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'
                     GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
                     ORDER BY 1"
                },
@@ -850,7 +853,8 @@ namespace PortalGrupoAlyne.Data
                                             FROM TGFNTA (NOLOCK) NTA
                                             JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                                             JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
-						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND NOT IN (0,1) AND VEN.TIPVEND = 'R' 
+						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
+                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' 
                                             GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
@@ -866,10 +870,12 @@ namespace PortalGrupoAlyne.Data
                    SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
                     FROM TGFPAR (NOLOCK) PAR 
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND NOT IN (0,1)"
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
+                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'"
                }
 
            );
+
         }
 
 

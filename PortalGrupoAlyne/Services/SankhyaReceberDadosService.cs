@@ -113,7 +113,8 @@ namespace PortalGrupoAlyne.Services
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
-                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                        AND TAB.CODTAB = 2465
                     ORDER BY TAB.CODTAB, PRO.CODPROD";
                     sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                     await AtualizarTabela(sql, "ItemTabela", "TabelaPrecoId,IdProd");
