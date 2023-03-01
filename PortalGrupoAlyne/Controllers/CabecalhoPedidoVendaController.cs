@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Services;
 
@@ -45,9 +46,9 @@ namespace PortalGrupoAlyne.Controllers
    
            )
         {
-            var total = await context.CabecalhoPedidoVenda.CountAsync();
+            
             var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-
+            var total = data.Count();
             return Ok(new
             {
                 total,

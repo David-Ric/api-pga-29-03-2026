@@ -48,9 +48,11 @@ namespace PortalGrupoAlyne.Controllers
 
          )
         {
-            var total = await context.SubMenu.CountAsync();
+            
             var grupos = await context.SubMenu.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                   .Where(e => (e.Nome.ToLower().Contains(Nome.ToLower()))).OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
+
             return Ok(new
             {
                 total,
@@ -65,9 +67,11 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.SubMenu.CountAsync();
+            
             var grupos = await context.SubMenu.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                   .Where(e => e.Codigo == Codigo).OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
+
             return Ok(new
             {
                 total,
@@ -82,9 +86,11 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.SubMenu.CountAsync();
+           
             var grupos = await context.SubMenu.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                   .Where(e => e.MenuId == Codigo).OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
+
             return Ok(new
             {
                 total,

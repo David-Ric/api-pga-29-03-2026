@@ -47,11 +47,12 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.Parceiro.CountAsync();
+            
             var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.Nome.ToLower().Contains(filter.ToLower()) ||
                                        e.Cnpj_Cpf.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.id).ToListAsync();
+            var total = parceiros.Count();
             return Ok(new
             {
                 total,
@@ -67,11 +68,12 @@ namespace PortalGrupoAlyne.Controllers
 
          )
         {
-            var total = await context.Parceiro.CountAsync();
+            
             var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (
                                       e.Status.ToLower().Contains(filter.ToLower()) || e.Cnpj_Cpf.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.id).ToListAsync();
+            var total = parceiros.Count();
             return Ok(new
             {
                 total,
@@ -88,10 +90,11 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.Parceiro.CountAsync();
+            
             var parceiros = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => e.VendedorId==codVendedor)
                          .OrderBy(e => e.id).Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").ToListAsync();
+            var total = parceiros.Count();
             return Ok(new
             {
                 total,

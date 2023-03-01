@@ -10,7 +10,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+  //  [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
@@ -60,10 +60,12 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] string filter
             )
         {
-            var total = await context.Usuario.CountAsync();
+            
             var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
+            var total = users.Count();
+
             return Ok(new
             {
                 total,
@@ -78,10 +80,12 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] string filter
             )
         {
-            var total = await context.Usuario.CountAsync();
+            
             var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
+            var total = users.Count();
+
             return Ok(new
             {
                 total,
@@ -91,7 +95,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("userName")]
-       // [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllName([FromServices] DataContext context,
  
            [FromQuery] string name

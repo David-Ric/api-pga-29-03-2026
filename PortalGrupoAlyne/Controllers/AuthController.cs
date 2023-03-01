@@ -17,7 +17,7 @@ using PortalGrupoAlyne.Model.Dtos.Usuarios;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase

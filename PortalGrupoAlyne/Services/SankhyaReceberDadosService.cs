@@ -135,7 +135,7 @@ namespace PortalGrupoAlyne.Services
             return "Sucesso";
         }
 
-        public static async Task<Object> processar(IConfiguration configuration, string tabela)
+        public static async Task<Object> processar(IConfiguration configuration, string tabela, int vendedorId)
         {
             try
             {
@@ -154,6 +154,14 @@ namespace PortalGrupoAlyne.Services
                     chave = integracao.ChaveTabelaPortal;
                     if (sql != null && chave != null)
                     {
+                        if (vendedorId > 0)
+                        {
+                            sql = sql.Replace("$VendedorId", vendedorId.ToString());
+                        }
+                        else
+                        {
+                            sql = sql.Replace("VEN.CODVEND = $VendedorId AND ", "");
+                        }
                         sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
                         await AtualizarTabela(sql, tabela, chave);
                     }

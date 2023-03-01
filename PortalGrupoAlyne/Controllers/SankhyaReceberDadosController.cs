@@ -18,10 +18,10 @@ namespace PortalGrupoAlyne.Controllers
 
         [HttpPost("ReceberDados")]
         //[AllowAnonymous]
-        public async Task<ActionResult<string>> Processar([FromQuery] string tabela)
+        public async Task<ActionResult<string>> Processar([FromQuery] string tabela, [FromQuery] int vendedorId)
         {
-            var response = await SankhyaReceberDadosService.processar(_configuration, tabela);
-            return Ok((  tabela+ " Atualizado!"));
+            var response = await SankhyaReceberDadosService.processar(_configuration, tabela, vendedorId);
+            return Ok((tabela + " Atualizado!"));
         }
 
     }

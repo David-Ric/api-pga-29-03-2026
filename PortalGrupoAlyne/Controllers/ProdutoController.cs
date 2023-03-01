@@ -8,7 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ProdutoController : ControllerBase
@@ -49,10 +49,11 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-            var total = await context.Produto.CountAsync();
+           
             var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoProduto")
                                       .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = produtos.Count();
             return Ok(new
             {
                 total,
@@ -68,10 +69,11 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.Produto.CountAsync();
+            //var total = await context.Produto.CountAsync();
             var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoProduto")
                                       .Where(e=>e.GrupoProdutoId==grupo)
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = produtos.Count();
             return Ok(new
             {
                 total,

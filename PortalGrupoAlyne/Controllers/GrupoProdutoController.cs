@@ -48,10 +48,11 @@ namespace PortalGrupoAlyne.Controllers
         
             )
         {
-            var total = await context.GrupoProduto.CountAsync();
+            
             var grupos = await context.GrupoProduto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => (e.Nome.ToLower().Contains(Nome_Grupo.ToLower()) ))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
             return Ok(new
             {
                 total,

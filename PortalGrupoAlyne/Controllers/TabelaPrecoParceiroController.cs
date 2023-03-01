@@ -8,7 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TabelaPrecoParceiroController : ControllerBase
@@ -46,8 +46,10 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] int? codEmpresa
            )
         {
-            var total = await context.TabelaPrecoParceiro.CountAsync();
+            
             var data = await context.TabelaPrecoParceiro.Where(e => (e.ParceiroId == codCliente)&&(e.EmpresaId==codEmpresa)).OrderBy(e => e.EmpresaId).Include(e => e.TabelaPreco).Include(e => e.Empresa).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var total = data.Count();
+
 
             return Ok(new
             {

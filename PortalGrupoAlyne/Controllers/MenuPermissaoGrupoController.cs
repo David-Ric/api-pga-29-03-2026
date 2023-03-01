@@ -48,8 +48,9 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] int userId
            )
         {
-            var total = await context.MenuPermissao.CountAsync();
+            
             var data = await context.MenuPermissao.AsNoTracking().Include("SubMenuPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao").Where(e => e.UsuarioId == userId).OrderBy(e => e.Id).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var total = data.Count();
 
             return Ok(new
             {
@@ -66,9 +67,10 @@ namespace PortalGrupoAlyne.Controllers
 
          )
         {
-            var total = await context.MenuPermissao.CountAsync();
+            
             var grupos = await context.MenuPermissao.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                   .Where(e => (e.Nome.ToLower().Contains(Nome.ToLower()))).OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
             return Ok(new
             {
                 total,
@@ -84,9 +86,10 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.MenuPermissao.CountAsync();
+            
             var grupos = await context.MenuPermissao.AsNoTracking().Include("SubMenuPermissao").Include("SubMenuPermissao.PaginaPermissao").Include("PaginaPermissao").Skip((pagina - 1) * totalpagina).Take(totalpagina)
                   .Where(e => e.Codigo == Codigo).OrderBy(e => e.Id).ToListAsync();
+            var total = grupos.Count();
             return Ok(new
             {
                 total,

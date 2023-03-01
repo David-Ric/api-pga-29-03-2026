@@ -55,6 +55,7 @@ namespace PortalGrupoAlyne.Controllers
             var paginas = await context.Pagina.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                       .Where(e => e.Codigo==codigo && e.MenuId==idMenu)
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = paginas.Count();
             return Ok(paginas);
         }
 

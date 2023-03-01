@@ -47,9 +47,10 @@ namespace PortalGrupoAlyne.Controllers
              [FromQuery] string filter
             )
         {
-            var total = await context.GrupoUsuario.CountAsync();
+          
             var data = await context.GrupoUsuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = data.Count();
 
             return Ok(new
             {

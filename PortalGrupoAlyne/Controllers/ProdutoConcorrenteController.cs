@@ -46,11 +46,12 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-            var total = await context.ProdutoConcorrente.CountAsync();
+            
             var prodconcorrentes = await context.ProdutoConcorrente.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                        .Where(e => (e.NomeProduto.ToLower().Contains(filter.ToLower()) ||
                                       e.NomeProdutoSimilar.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = prodconcorrentes.Count();
             return Ok(new
             {
                 total,
@@ -67,10 +68,12 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.ProdutoConcorrente.CountAsync();
+            
             var prodconcorrentes = await context.ProdutoConcorrente.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                        .Where(e => (e.NomeConcorrente.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = prodconcorrentes.Count();
+
             return Ok(new
             {
                 total,

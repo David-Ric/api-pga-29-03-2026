@@ -8,9 +8,10 @@ using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Services;
 using System.Text.RegularExpressions;
 
+
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class VendedorController : ControllerBase
@@ -49,29 +50,52 @@ namespace PortalGrupoAlyne.Controllers
 
             )
         {
-            var total = await context.Vendedor.CountAsync();
-            var vendedores = await context.Vendedor.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.Nome.ToLower().Contains(filter.ToLower()) 
-                                      ))
-                         .OrderBy(e => e.Id).ToListAsync();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var vendedores = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
                 data = vendedores
             });
         }
+       
         [HttpGet("filter/status")]
         public async Task<IActionResult> GetAllFilterStatus([FromServices] DataContext context,
-            [FromQuery] int pagina,
-             [FromQuery] int totalpagina,
-            [FromQuery] string filter
-
-            )
+        [FromQuery] int pagina,
+        [FromQuery] int totalpagina,
+        [FromQuery] string filter)
         {
-            var total = await context.Vendedor.CountAsync();
-            var vendedores = await context.Vendedor.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var vendedores = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
@@ -87,9 +111,23 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-            var total = await context.Vendedor.CountAsync();
-            var vendedores = await context.Vendedor.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => e.Id==codigo).OrderBy(e => e.Id).ToListAsync();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var vendedores = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Id== codigo))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Vendedor
+                .AsNoTracking()
+                .Where(e => (e.Id == codigo))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
@@ -105,10 +143,12 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            var total = await context.Vendedor.CountAsync();
+            
             var vendedores = await context.Vendedor.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
                                        .Where(e => (e.Tipo.ToLower().Contains(filter.ToLower())))
                          .OrderBy(e => e.Id).ToListAsync();
+            var total = vendedores.Count();
+
             return Ok(new
             {
                 total,
