@@ -46,17 +46,31 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-            
-            var prodconcorrentes = await context.ProdutoConcorrente.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                       .Where(e => (e.NomeProduto.ToLower().Contains(filter.ToLower()) ||
-                                      e.NomeProdutoSimilar.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = prodconcorrentes.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ProdutoConcorrente
+                .AsNoTracking()
+                 .Where(e => (e.NomeProduto.ToLower().Contains(filter.ToLower()) ||
+                  e.NomeProdutoSimilar.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ProdutoConcorrente
+                .AsNoTracking()
+                .Where(e => (e.NomeProduto.ToLower().Contains(filter.ToLower()) ||
+                 e.NomeProdutoSimilar.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
-                data = prodconcorrentes
+                data = data
             });
+
         }
        
         [HttpGet("concorrente")]
@@ -68,17 +82,29 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            
-            var prodconcorrentes = await context.ProdutoConcorrente.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                       .Where(e => (e.NomeConcorrente.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = prodconcorrentes.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ProdutoConcorrente
+                .AsNoTracking()
+                 .Where(e => (e.NomeConcorrente.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ProdutoConcorrente
+                .AsNoTracking()
+                .Where(e => (e.NomeConcorrente.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
-                data = prodconcorrentes
+                data = data
             });
+
         }
 
         [HttpGet("{id}")]

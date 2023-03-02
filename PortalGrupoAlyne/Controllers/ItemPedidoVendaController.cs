@@ -45,15 +45,29 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-          
-            var data = await context.ItemPedidoVenda.Where(e => e.VendedorId == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.VendedorId == codVendedor)
+                .OrderBy(e => e.Id).Include("Vendedor").Include("tipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.VendedorId == codVendedor)
+                .CountAsync();
 
             return Ok(new
             {
                 total,
                 data = data
             });
+
+           
         }
 
         
@@ -66,15 +80,29 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            
-            var data = await context.ItemPedidoVenda.Where(e => e.CabecalhoPedidoVendaId==pedidoId).OrderBy(e => e.Id).Include("Vendedor").Include("Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.ItemPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.CabecalhoPedidoVendaId == pedidoId)
+                .OrderBy(e => e.Id).Include("Vendedor").Include("Produto")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.ItemPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.CabecalhoPedidoVendaId == pedidoId)
+                .CountAsync();
 
             return Ok(new
             {
                 total,
                 data = data
             });
+
+            
         }
 
         

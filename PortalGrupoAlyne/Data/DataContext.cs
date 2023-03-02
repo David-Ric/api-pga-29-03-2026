@@ -800,10 +800,11 @@ namespace PortalGrupoAlyne.Data
                    Id = 4,
                    TabelaPortal = "GrupoProduto",
                    ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT CODGRUPOPROD Id, 
-                        RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
+                   SqlObterSankhya = @"SELECT convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) Id, 
+                    RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
                     FROM sankhya.TGFGRU (NOLOCK)
-                    WHERE ANALITICO = 'S'"
+                    WHERE ANALITICO = 'S'
+                    and SUBSTRING(RTRIM(CODGRUPOPROD),1,3) = '120'"
                },
                new IntegracaoSankhya
                {
@@ -812,7 +813,7 @@ namespace PortalGrupoAlyne.Data
                    ChaveTabelaPortal = "Id",
                    SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
                         PRO.DESCRPROD Nome, 
-                        PRO.CODGRUPOPROD GrupoProdutoId, 
+                        convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) GrupoProdutoId,
                         PRO.DTALTER AtualizadoEm,
                         PRO.CODVOL TipoUnid,
                         ISNULL(VOA.CODVOL,'UN') TipoUnid2,

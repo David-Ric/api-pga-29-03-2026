@@ -21,7 +21,8 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<ActionResult<string>> Processar([FromQuery] string tabela, [FromQuery] int vendedorId)
         {
             var response = await SankhyaReceberDadosService.processar(_configuration, tabela, vendedorId);
-            return Ok((tabela + " Atualizado!"));
+            
+            return Ok(response);
         }
 
     }

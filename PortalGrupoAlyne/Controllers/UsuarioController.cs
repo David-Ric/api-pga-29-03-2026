@@ -10,7 +10,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-  //  [Authorize]
+   [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
@@ -60,17 +60,30 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] string filter
             )
         {
-            
-            var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
-            var total = users.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.Usuario
+            .AsNoTracking()
+                 .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id).Include("GrupoUsuario")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Usuario
+            .AsNoTracking()
+                .Where(e => (e.NomeCompleto.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
-                data = users
+                data = data
             });
+
+            
         }
         [HttpGet("filter/status")]
         //  [AllowAnonymous]
@@ -80,17 +93,29 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] string filter
             )
         {
-            
-            var users = await context.Usuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).Include("GrupoUsuario").ToListAsync();
-            var total = users.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.Usuario
+            .AsNoTracking()
+                 .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id).Include("GrupoUsuario")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Usuario
+            .AsNoTracking()
+                .Where(e => (e.Status.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
-                data = users
+                data = data
             });
+
         }
 
 
@@ -102,7 +127,7 @@ namespace PortalGrupoAlyne.Controllers
            
            )
         {
-            
+
             var users = await context.Usuario.AsNoTracking().Where(e => (e.Username.ToLower().Contains(name.ToLower()) 
                                      ))
                          .OrderBy(e => e.Id).ToListAsync();
@@ -113,14 +138,7 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(users);
         }
 
-        //[HttpGet("{id}")]
-        //[AllowAnonymous]
-        //public IActionResult GetById(int id)
-        //{
-        //    var user = _userService.GetById(id);
-
-        //    return Ok(user);
-        //}
+       
 
         [HttpGet("{id}")]
       //  [AllowAnonymous]

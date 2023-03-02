@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Services;
+using System.Text.RegularExpressions;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -46,16 +47,29 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] int? codEmpresa
            )
         {
-            
-            var data = await context.TabelaPrecoParceiro.Where(e => (e.ParceiroId == codCliente)&&(e.EmpresaId==codEmpresa)).OrderBy(e => e.EmpresaId).Include(e => e.TabelaPreco).Include(e => e.Empresa).AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
 
+            var data = await context.TabelaPrecoParceiro
+            .AsNoTracking()
+                 .Where(e => (e.ParceiroId == codCliente) && (e.EmpresaId == codEmpresa))
+                .OrderBy(e => e.id).Include(e => e.TabelaPreco).Include(e => e.Empresa)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.TabelaPrecoParceiro
+            .AsNoTracking()
+                .Where(e => (e.ParceiroId == codCliente) && (e.EmpresaId == codEmpresa))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
                 data = data
             });
+
+            
         }
 
         [HttpGet("{id}")]

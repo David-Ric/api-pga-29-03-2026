@@ -47,16 +47,29 @@ namespace PortalGrupoAlyne.Controllers
              [FromQuery] string filter
             )
         {
-          
-            var data = await context.GrupoUsuario.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = data.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.GrupoUsuario
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.GrupoUsuario
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
 
             return Ok(new
             {
                 total,
                 data = data
             });
+
+            
         }
 
         [HttpGet("{id}")]

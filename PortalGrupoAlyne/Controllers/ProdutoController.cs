@@ -49,16 +49,29 @@ namespace PortalGrupoAlyne.Controllers
 
            )
         {
-           
-            var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoProduto")
-                                      .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = produtos.Count();
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.Produto
+                .AsNoTracking()
+                 .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id).Include("GrupoProduto")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Produto
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
-                data = produtos
+                data = data
             });
+
+            
         }
         [HttpGet("filter/grupo")]
 
@@ -69,16 +82,29 @@ namespace PortalGrupoAlyne.Controllers
 
           )
         {
-            //var total = await context.Produto.CountAsync();
-            var produtos = await context.Produto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).Include("GrupoProduto")
-                                      .Where(e=>e.GrupoProdutoId==grupo)
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = produtos.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.Produto
+                .AsNoTracking()
+                 .Where(e => e.GrupoProdutoId == grupo)
+                .OrderBy(e => e.Id).Include("GrupoProduto")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Produto
+                .AsNoTracking()
+                .Where(e => e.GrupoProdutoId == grupo)
+                .CountAsync();
+
             return Ok(new
             {
                 total,
-                data = produtos
+                data = data
             });
+            
         }
 
         [HttpGet("{id}")]

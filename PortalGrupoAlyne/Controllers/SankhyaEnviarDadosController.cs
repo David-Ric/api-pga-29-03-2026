@@ -18,6 +18,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpPost("EnviarDados")]
+        [ApiExplorerSettings(IgnoreApi = true)]
         //[AllowAnonymous]
         public async Task<ActionResult<string>> Processar([FromBody] PedidoVendaRequest pedido)
         {

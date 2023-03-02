@@ -48,16 +48,30 @@ namespace PortalGrupoAlyne.Controllers
         
             )
         {
-            
-            var grupos = await context.GrupoProduto.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina)
-                                      .Where(e => (e.Nome.ToLower().Contains(Nome_Grupo.ToLower()) ))
-                         .OrderBy(e => e.Id).ToListAsync();
-            var total = grupos.Count();
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.GrupoProduto
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(Nome_Grupo.ToLower())))
+                .OrderBy(e => e.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.GrupoProduto
+                .AsNoTracking()
+                .Where(e => (e.Nome.ToLower().Contains(Nome_Grupo.ToLower())))
+                .CountAsync();
+
             return Ok(new
             {
                 total,
-                data = grupos
+                data = data
             });
+
+            
         }
 
 
