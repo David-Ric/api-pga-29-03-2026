@@ -148,7 +148,10 @@ namespace PortalGrupoAlyne.Services
                     DateTime AtualizadoEm;
                     string? sql;
                     string? chave;
-
+                    if (tabela == "Parceiro")
+                    {
+                        limpaTb("Parceiro", " VendedorId = " + vendedorId);
+                    }
                     AtualizadoEm = atualizadoEm(tabela); // último timestamp
                     integracao = obterIntegracaoSankhya(configuration, tabela);
                     sql = integracao.SqlObterSankhya;
@@ -164,6 +167,9 @@ namespace PortalGrupoAlyne.Services
                             sql = sql.Replace("VEN.CODVEND = $VendedorId AND ", "");
                         }
                         sql = sql.Replace("$AtualizadoEm", AtualizadoEm.ToString("yyyyMMdd HH:mm:ss"));
+
+
+
                         await AtualizarTabela(sql, tabela, chave);
                     }
                     // ------------------------ Logout ----------------------------------
@@ -174,6 +180,23 @@ namespace PortalGrupoAlyne.Services
             {
                 Console.WriteLine("error: " + e.Message);
                 return "error: " + e.Message;
+            }
+            return "Sucesso";
+        }
+        public static string limpaTb(string table, string condicao)
+        {
+            try
+            {
+                string MySqlCon = _configuration.GetConnectionString("DefaultConnection");
+                using var con = new MySqlConnection(MySqlCon);
+                con.Open();
+                string sql = $"delete FROM {table} where {condicao}";
+                con.Execute(sql);
+                con.Close();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("error" + e.Message);
             }
             return "Sucesso";
         }

@@ -144,13 +144,14 @@ namespace PortalGrupoAlyne.Services
 
             body = sb.ToString();
 
-            Console.WriteLine(body);
+            //Console.WriteLine(body);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
             request.Content = new StringContent(body, Encoding.Latin1);
             request.Content.Headers.ContentType = new MediaTypeHeaderValue("text/xml");
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jsessionid);
+
 
             HttpResponseMessage response = await client.SendAsync(request);
             response.EnsureSuccessStatusCode();
@@ -163,9 +164,10 @@ namespace PortalGrupoAlyne.Services
 
             string status = responseBody.Substring(responseBody.IndexOf("status"), 9);
             status = status.Substring(8, 1);
-            // ***************************************************************************
+
+            // *************************
             // Se obtiver sucesso ao enviar ao cabeçalho, envia também os itens
-            // ***************************************************************************
+            // *************************
             if (status == "1")
             {
                 //StringBuilder sb = new StringBuilder();
@@ -210,7 +212,7 @@ namespace PortalGrupoAlyne.Services
                 sb.AppendLine("</serviceRequest>");
 
                 body = sb.ToString();
-                Console.WriteLine(body);
+                //Console.WriteLine(body);
 
                 request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
@@ -234,6 +236,24 @@ namespace PortalGrupoAlyne.Services
                     result = "Sucesso";
                 }
             }
+            else
+            {
+                PedidoVendaResponse? pedRes = result2 as PedidoVendaResponse;
+
+                string txtenc = pedRes.statusMessage.ToString();
+
+                byte[] data = Convert.FromBase64String(txtenc);
+                string decotxt = Encoding.UTF8.GetString(data);
+
+                //var conteudoBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(decotxt);
+                //var conteudoString = new StringContent(Encoding.UTF8.GetString(conteudoBytes), Encoding.GetEncoding("ISO-8859-1"), "text/plain");
+
+                //Console.WriteLine(conteudoString);
+
+                result = decotxt;
+            }
+
+
             return result;
         }
 

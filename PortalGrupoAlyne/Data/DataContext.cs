@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
+using System.Security.Cryptography;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace PortalGrupoAlyne.Data
@@ -66,10 +68,43 @@ namespace PortalGrupoAlyne.Data
 
     public DbSet<IntegracaoSankhya> IntegracaoSankhya { get; set; }
 
+        //private byte[] CreateHash(string input)
+        //{
+        //    using var sha256 = SHA256.Create();
+        //    var inputBytes = Encoding.UTF8.GetBytes(input);
+        //    var hashBytes = sha256.ComputeHash(inputBytes);
+        //    return hashBytes;
+        //}
 
+        //private byte[] CreateSalt()
+        //{
+        //    using var rng = new RNGCryptoServiceProvider();
+        //    var salt = new byte[32];
+        //    rng.GetBytes(salt);
+        //    return salt;
+        //}
+        private byte[] CreateHash(string input, byte[] salt)
+        {
+            using var hmac = new HMACSHA512(salt);
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            var hashBytes = hmac.ComputeHash(inputBytes);
+            return hashBytes;
+        }
+
+        private byte[] CreateSalt()
+        {
+            using var rng = new RNGCryptoServiceProvider();
+            var salt = new byte[32];
+            rng.GetBytes(salt);
+            return salt;
+        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            base.OnModelCreating(modelBuilder);
+
+            var password = "Sync550v";
+            var salt = CreateSalt();
+
             modelBuilder.Entity<Usuario>().HasData(
                 new Usuario
                 {
@@ -77,6 +112,8 @@ namespace PortalGrupoAlyne.Data
                     Email = "nfe@grupoalyne.com.br",
                     Username = "admin",
                     NomeCompleto = "Administrador Grupo Alyne",
+                    PasswordHash = CreateHash(password, salt),
+                    PasswordSalt = salt,
                     Status = "1",
                     GrupoId = 1,
                     Funcao = "Administrador do Sistema",
@@ -85,6 +122,7 @@ namespace PortalGrupoAlyne.Data
                     PrimeiroLoginAdm = true
                 }
             );
+            
 
             modelBuilder.Entity<Empresa>().HasData(
                new Empresa
@@ -518,28 +556,7 @@ namespace PortalGrupoAlyne.Data
                    MenuId = 1,
                    SubMenuId = 4,
                },
-                 //new Pagina
-                 //{
-                 //    Id = 14,
-                 //    Codigo = 22,
-                 //    Nome = "Montar Menu",
-                 //    Url = "/montar-menu",
-                 //    Icon = "fa fa-newspaper-o",
-                 //    MenuId = 1,
-                 //    SubMenuId = 4,
-
-                 //},
-                 // new Pagina
-                 // {
-                 //     Id = 15,
-                 //     Codigo = 21,
-                 //     Nome = "Cadastro de Páginas",
-                 //     Url = "/cadastro-de-paginas",
-                 //     Icon = "fa fa-id-card-o",
-                 //     MenuId = 1,
-                 //     SubMenuId = 4,
-
-                 // },
+                 
                   new Pagina
                   {
                       Id = 16,
@@ -678,28 +695,7 @@ namespace PortalGrupoAlyne.Data
                    MenuId = 5,
                    
                },
-                 //new Pagina
-                 //{
-                 //    Id = 29,
-                 //    Codigo = 22,
-                 //    Nome = "Montar Menu",
-                 //    Url = "/montar-menu",
-                 //    Icon = "fa fa-newspaper-o",
-                 //    MenuId = 5,
-                   
-
-                 //},
-                 // new Pagina
-                 // {
-                 //     Id = 30,
-                 //     Codigo = 21,
-                 //     Nome = "Cadastro de Páginas",
-                 //     Url = "/cadastro-de-paginas",
-                 //     Icon = "fa fa-id-card-o",
-                 //     MenuId = 5,
-                   
-
-                 // },
+                 
                   new Pagina
                   {
                       Id = 31,
@@ -792,8 +788,10 @@ namespace PortalGrupoAlyne.Data
                     LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
                     LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
                     LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
-                    WHERE PAR.DTALTER > '$AtualizadoEm'
-                    AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0"
+                    WHERE PAR.CLIENTE = 'S' 
+                    AND PAR.CODPARC > 0 
+                    AND PAR.CODVEND > 0
+                    AND PAR.ATIVO = 'S'"
                },
                new IntegracaoSankhya
                {
@@ -860,7 +858,7 @@ namespace PortalGrupoAlyne.Data
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
-                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
                     ORDER BY TAB.CODTAB, PRO.CODPROD"
                },
                new IntegracaoSankhya
@@ -869,10 +867,16 @@ namespace PortalGrupoAlyne.Data
                    TabelaPortal = "TabelaPrecoParceiro",
                    ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
                    SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
-                    FROM TGFPAR (NOLOCK) PAR 
+                    FROM TGFPAR (NOLOCK) PAR
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'"
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
+                                            AND VEN.CODVEND = $VendedorId 
+                                            AND VEN.TIPVEND = 'R'
+                    WHERE PAR.CLIENTE = 'S' 
+                    AND PAR.CODPARC > 0 
+                    AND PAR.CODVEND > 0
+                    AND PAR.ATIVO = 'S'"
+
                }
 
            );

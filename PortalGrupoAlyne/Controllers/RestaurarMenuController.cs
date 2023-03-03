@@ -9,6 +9,8 @@ using System.Runtime.Intrinsics.Arm;
 using System.Text.Json;
 using Dapper;
 using MySqlConnector;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -23,7 +25,21 @@ namespace PortalGrupoAlyne.Controllers
             _paginaService = paginaService;
             _context = context;
         }
-        
+        private byte[] CreateHash(string input, byte[] salt)
+        {
+            using var hmac = new HMACSHA512(salt);
+            var inputBytes = Encoding.UTF8.GetBytes(input);
+            var hashBytes = hmac.ComputeHash(inputBytes);
+            return hashBytes;
+        }
+
+        private byte[] CreateSalt()
+        {
+            using var rng = new RNGCryptoServiceProvider();
+            var salt = new byte[32];
+            rng.GetBytes(salt);
+            return salt;
+        }
 
         [HttpPost]
         public async Task<ActionResult> DeleteAllPages([FromServices] DataContext context)
@@ -61,12 +77,16 @@ namespace PortalGrupoAlyne.Controllers
                 .FindAsync(1);
                 if (usuario1 == null)
                 {
+                    var password = "Sync550v";
+                    var salt = CreateSalt();
                     var novoUser= new List<Usuario> {
                 new Usuario {
                  Id = 1,
                     Email = "nfe@grupoalyne.com.br",
                     Username = "admin",
                     NomeCompleto = "Administrador Grupo Alyne",
+                    PasswordHash = CreateHash(password, salt),
+                    PasswordSalt = salt,
                     Status = "1",
                     GrupoId = 1,
                     Funcao = "Administrador do Sistema",
@@ -410,8 +430,10 @@ namespace PortalGrupoAlyne.Controllers
                     LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
                     LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
                     LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
-                    WHERE PAR.DTALTER > '$AtualizadoEm'
-                    AND PAR.CLIENTE = 'S' AND PAR.CODPARC > 0 AND PAR.CODVEND > 0"
+                    WHERE PAR.CLIENTE = 'S' 
+                    AND PAR.CODPARC > 0 
+                    AND PAR.CODVEND > 0
+                    AND PAR.ATIVO = 'S'"
                     },
                     new IntegracaoSankhya {
                      Id = 4,
@@ -475,7 +497,7 @@ namespace PortalGrupoAlyne.Controllers
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
-                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
                     ORDER BY TAB.CODTAB, PRO.CODPROD"
                     },
                        new IntegracaoSankhya {
@@ -483,10 +505,15 @@ namespace PortalGrupoAlyne.Controllers
                    TabelaPortal = "TabelaPrecoParceiro",
                    ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
                    SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
-                    FROM TGFPAR (NOLOCK) PAR 
+                    FROM TGFPAR (NOLOCK) PAR
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'"
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
+                                            AND VEN.CODVEND = $VendedorId 
+                                            AND VEN.TIPVEND = 'R'
+                    WHERE PAR.CLIENTE = 'S' 
+                    AND PAR.CODPARC > 0 
+                    AND PAR.CODVEND > 0
+                    AND PAR.ATIVO = 'S'"
                     }
 
                 };
