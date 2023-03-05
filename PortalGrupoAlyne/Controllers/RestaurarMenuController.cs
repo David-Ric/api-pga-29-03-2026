@@ -118,6 +118,7 @@ namespace PortalGrupoAlyne.Controllers
                 new Menu { Id = 4, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus" },
                 new Menu { Id = 5, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup" },
                 new Menu { Id = 10, Codigo = 25, Ordem = 0, Nome = "Configurações",Icon = "fa fa-cogs" }
+               
 
                 };
                 _context.Menu.AddRange(novoMenu);
@@ -128,6 +129,7 @@ namespace PortalGrupoAlyne.Controllers
                     new SubMenu { Id = 3, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus",MenuId=1  },
                     new SubMenu { Id = 4, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup",MenuId=1  },
                     new SubMenu {  Id = 10,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
+                   
 
                 };
                 _context.SubMenu.AddRange(novoSubMenu);
@@ -373,7 +375,27 @@ namespace PortalGrupoAlyne.Controllers
                       Url = "",
                       Icon = "fa fa-refresh",
                       MenuId = 10,
-                     }
+
+                     },
+                  new Pagina
+                  {
+                      Id = 33,
+                      Codigo = 27,
+                      Nome = "Dashboard",
+                      Url = "/dashboard",
+                      Icon = "fa fa-line-chart",
+                      MenuId = 1,
+                  },
+                   new Pagina
+                   {
+                       Id = 34,
+                       Codigo = 27,
+                       Nome = "Dashboard",
+                       Url = "/dashboard",
+                       Icon = "fa fa-line-chart",
+                       MenuId = 3,
+                       SubMenuId = 2,
+                   }
 
 
                 };

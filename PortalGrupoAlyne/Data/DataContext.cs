@@ -568,6 +568,7 @@ namespace PortalGrupoAlyne.Data
                       SubMenuId = 4,
 
                   },
+                   
                     new Pagina
                     {
                         Id = 29,
@@ -717,7 +718,26 @@ namespace PortalGrupoAlyne.Data
                       MenuId = 10,
 
 
-                  }
+                  },
+                  new Pagina
+                  {
+                      Id = 33,
+                      Codigo = 27,
+                      Nome = "Dashboard",
+                      Url = "/dashboard",
+                      Icon = "fa fa-line-chart",
+                      MenuId = 1,
+                  },
+                   new Pagina
+                   {
+                       Id = 34,
+                       Codigo = 27,
+                       Nome = "Dashboard",
+                       Url = "/dashboard",
+                       Icon = "fa fa-line-chart",
+                       MenuId = 3,
+                       SubMenuId = 2,
+                   }
 
           );
             modelBuilder.Entity<GrupoUsuario>().HasData(
