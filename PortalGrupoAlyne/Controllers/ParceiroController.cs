@@ -7,7 +7,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+  //  [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ParceiroController : ControllerBase
@@ -124,7 +124,7 @@ namespace PortalGrupoAlyne.Controllers
             var data = await context.Parceiro
                 .AsNoTracking()
                  .Where(e => e.VendedorId == codVendedor)
-                .OrderBy(e => e.id).Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco")
+                .OrderBy(e => e.id).Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").Include("Titulo")
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
@@ -142,30 +142,23 @@ namespace PortalGrupoAlyne.Controllers
 
           
         }
-
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ActionResult<Parceiro>> GetById(int id)
         {
-            try
-            {
-                var parceiro = await _parceirosService.GetParceirosId(id);
-                if (parceiro == null) return NoContent();
+            var parceiro = await _context.Parceiro
+                .Include(p => p.Titulo)
+                .FirstOrDefaultAsync(p => p.id == id);
 
-                return Ok(parceiro);
-            }
-            catch (Exception ex)
+            if (parceiro == null)
             {
-                return BadRequest("Parceiro não encontrado.");
+                return NotFound();
             }
+
+            return parceiro;
         }
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Parceiros>> Get(int id)
-        //{
-        //    var parceiro = await _context.Parceiros.FindAsync(id);
-        //    if (parceiro == null)
-        //        return BadRequest("Parceiro não encontrado.");
-        //    return Ok(parceiro);
-        //}
+
+       
+
 
         [HttpPost]
         public async Task<ActionResult<List<Parceiro>>> AddParceiros(Parceiro model)

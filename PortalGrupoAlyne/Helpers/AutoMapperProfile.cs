@@ -34,6 +34,7 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<TabelaPrecoParceiro, TabelaPrecoParceiroDto>().ReverseMap();
             CreateMap<CabecalhoPedidoVenda, CabecalhoPedidoVendaDto>().ReverseMap();
             CreateMap<ItemPedidoVenda, ItemPedidoVendaDto>().ReverseMap();
+            CreateMap<Configuracao, ConfiguracaoDto>().ReverseMap();
         }
     }
 }

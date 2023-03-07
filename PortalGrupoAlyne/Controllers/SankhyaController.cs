@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using PortalGrupoAlyne.Services;
+using System.Text.RegularExpressions;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaController : ControllerBase
@@ -38,6 +39,17 @@ namespace PortalGrupoAlyne.Controllers
         {
             if (sql == null) return BadRequest(new { errors = new { sql = "Precisa ser enviado." } });
             var response = await SankhyaService.executeQuery(_configuration, sql);
+            return Ok(response);
+        }
+
+        [HttpPost("DadosDashSankhya")]
+        public async Task<ActionResult<string>> DadosDashSankhya(string sql)
+        {
+
+            var response = await SankhyaService.executeQuery(_configuration, sql);
+
+
+
             return Ok(response);
         }
 

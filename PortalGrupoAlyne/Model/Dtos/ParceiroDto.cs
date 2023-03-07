@@ -82,6 +82,7 @@ namespace PortalGrupoAlyne.Model.Dtos
         public Vendedor? Vendedor { get; set; }
 
         public IEnumerable<TabelaPrecoParceiro>? TabelaPrecoParceiro { get; set; }
+        public IEnumerable<Titulo>? Titulo { get; set; }
         public DateTime? AtualizadoEm { get; set; }
        
     }

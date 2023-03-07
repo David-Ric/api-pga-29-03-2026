@@ -68,21 +68,9 @@ namespace PortalGrupoAlyne.Data
 
     public DbSet<IntegracaoSankhya> IntegracaoSankhya { get; set; }
 
-        //private byte[] CreateHash(string input)
-        //{
-        //    using var sha256 = SHA256.Create();
-        //    var inputBytes = Encoding.UTF8.GetBytes(input);
-        //    var hashBytes = sha256.ComputeHash(inputBytes);
-        //    return hashBytes;
-        //}
+    public DbSet<Titulo> Titulo { get; set; }
 
-        //private byte[] CreateSalt()
-        //{
-        //    using var rng = new RNGCryptoServiceProvider();
-        //    var salt = new byte[32];
-        //    rng.GetBytes(salt);
-        //    return salt;
-        //}
+
         private byte[] CreateHash(string input, byte[] salt)
         {
             using var hmac = new HMACSHA512(salt);
@@ -719,15 +707,15 @@ namespace PortalGrupoAlyne.Data
 
 
                   },
-                  new Pagina
-                  {
-                      Id = 33,
-                      Codigo = 27,
-                      Nome = "Dashboard",
-                      Url = "/dashboard",
-                      Icon = "fa fa-line-chart",
-                      MenuId = 1,
-                  },
+                   new Pagina
+                   {
+                       Id = 33,
+                       Codigo = 27,
+                       Nome = "Dashboard",
+                       Url = "/dashboard",
+                       Icon = "fa fa-line-chart",
+                       MenuId = 3,
+                   },
                    new Pagina
                    {
                        Id = 34,
@@ -735,8 +723,29 @@ namespace PortalGrupoAlyne.Data
                        Nome = "Dashboard",
                        Url = "/dashboard",
                        Icon = "fa fa-line-chart",
-                       MenuId = 3,
+                       MenuId = 1,
                        SubMenuId = 2,
+                   },
+                   new Pagina
+                   {
+                       Id = 35,
+                       Codigo = 28,
+                       Nome = "Configurações Avançadas",
+                       Url = "/configuracoes",
+                       Icon = "fa fa-cogs",
+                       MenuId = 1,
+                       SubMenuId = 10,
+                   }
+                   ,
+                   new Pagina
+                   {
+                       Id = 36,
+                       Codigo = 28,
+                       Nome = "Configurações Avançadas",
+                       Url = "/configuracoes",
+                       Icon = "fa fa-cogs",
+                       MenuId = 10,
+
                    }
 
           );

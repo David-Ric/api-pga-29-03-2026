@@ -589,6 +589,31 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Titulo",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    EmpresaId = table.Column<int>(type: "int", nullable: true),
+                    ParceiroId = table.Column<int>(type: "int", nullable: true),
+                    NuUnico = table.Column<int>(type: "int", nullable: true),
+                    Parcela = table.Column<int>(type: "int", nullable: true),
+                    DataEmissao = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DataVencim = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    Valor = table.Column<decimal>(type: "decimal(65,30)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Titulo", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Titulo_Parceiro_ParceiroId",
+                        column: x => x.ParceiroId,
+                        principalTable: "Parceiro",
+                        principalColumn: "id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SubMenuPermissao",
                 columns: table => new
                 {
@@ -736,7 +761,7 @@ namespace PortalGrupoAlyne.Migrations
                     { 4, null, "Id", "SELECT convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) Id, \r\n                    RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome\r\n                    FROM sankhya.TGFGRU (NOLOCK)\r\n                    WHERE ANALITICO = 'S'\r\n                    and SUBSTRING(RTRIM(CODGRUPOPROD),1,3) = '120'", "GrupoProduto" },
                     { 5, null, "Id", "SELECT PRO.CODPROD Id, \r\n                        PRO.DESCRPROD Nome, \r\n                        convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) GrupoProdutoId,\r\n                        PRO.DTALTER AtualizadoEm,\r\n                        PRO.CODVOL TipoUnid,\r\n                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,\r\n                        ISNULL(VOA.QUANTIDADE,1) Conv\r\n                    FROM sankhya.TGFPRO (NOLOCK) PRO\r\n                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'\r\n                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'\r\n                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')\r\n                    AND PRO.DTALTER > '$AtualizadoEm'", "Produto" },
                     { 6, null, "Id", "SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal \r\n                    FROM TGFNTA (NOLOCK) NTA\r\n                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND \r\n                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'\r\n                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR \r\n                    ORDER BY 1", "TabelaPreco" },
-                    { 7, null, "TabelaPrecoId,IdProd", "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND \r\n                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD", "ItemTabela" },
+                    { 7, null, "TabelaPrecoId,IdProd", "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND \r\n                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD", "ItemTabela" },
                     { 8, null, "ParceiroId,EmpresaId,TabelaPrecoId", "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND\r\n                                            AND VEN.CODVEND = $VendedorId \r\n                                            AND VEN.TIPVEND = 'R'\r\n                    WHERE PAR.CLIENTE = 'S' \r\n                    AND PAR.CODPARC > 0 \r\n                    AND PAR.CODVEND > 0\r\n                    AND PAR.ATIVO = 'S'", "TabelaPrecoParceiro" }
                 });
 
@@ -801,7 +826,9 @@ namespace PortalGrupoAlyne.Migrations
                     { 27, 9, "fa fa-user-circle-o", 5, "Usuarios", null, "/cadastro-usuarios" },
                     { 28, 10, "fa fa-users", 5, "Grupo de Usuarios", null, "/cadastro-grupo-usuarios" },
                     { 31, 24, "fa fa-external-link-square", 5, "Receber dados Sankhya", null, "" },
-                    { 32, 26, "fa fa-refresh", 10, "Restaurar dados sistema", null, "" }
+                    { 32, 26, "fa fa-refresh", 10, "Restaurar dados sistema", null, "" },
+                    { 33, 27, "fa fa-line-chart", 3, "Dashboard", null, "/dashboard" },
+                    { 36, 28, "fa fa-cogs", 10, "Configurações Avançadas", null, "/configuracoes" }
                 });
 
             migrationBuilder.InsertData(
@@ -819,7 +846,7 @@ namespace PortalGrupoAlyne.Migrations
             migrationBuilder.InsertData(
                 table: "Usuario",
                 columns: new[] { "Id", "Email", "Funcao", "GrupoId", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
-                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 65, 76, 46, 73, 158, 136, 251, 113, 43, 59, 112, 250, 203, 197, 60, 193, 59, 119, 217, 153, 145, 207, 117, 161, 113, 212, 252, 159, 183, 123, 31, 2, 196, 185, 73, 26, 81, 178, 33, 81, 196, 167, 169, 115, 135, 255, 243, 167, 252, 128, 228, 253, 141, 117, 141, 174, 246, 225, 153, 85, 165, 51, 160, 223 }, null, new byte[] { 99, 143, 18, 74, 180, 11, 19, 37, 161, 60, 13, 11, 63, 130, 16, 165, 163, 234, 3, 11, 54, 150, 101, 209, 5, 52, 219, 71, 114, 57, 17, 159 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
+                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 45, 81, 111, 37, 67, 74, 128, 26, 119, 74, 48, 209, 244, 126, 138, 236, 147, 144, 127, 238, 49, 11, 208, 206, 250, 171, 153, 236, 37, 161, 101, 173, 42, 119, 75, 214, 230, 103, 88, 175, 96, 12, 101, 48, 81, 109, 14, 43, 51, 234, 241, 23, 218, 141, 195, 234, 192, 142, 55, 173, 65, 197, 54, 177 }, null, new byte[] { 27, 67, 0, 98, 161, 61, 212, 145, 30, 80, 57, 30, 245, 150, 199, 15, 154, 71, 41, 242, 25, 44, 239, 229, 109, 12, 238, 214, 233, 22, 178, 245 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
                 table: "Pagina",
@@ -839,7 +866,9 @@ namespace PortalGrupoAlyne.Migrations
                     { 12, 9, "fa fa-user-circle-o", 1, "Usuarios", 4, "/cadastro-usuarios" },
                     { 13, 10, "fa fa-users", 1, "Grupo de Usuarios", 4, "/cadastro-grupo-usuarios" },
                     { 16, 24, "fa fa-external-link-square", 1, "Receber dados Sankhya", 4, "" },
-                    { 29, 26, "fa fa-refresh", 1, "Restaurar dados sistema", 10, "" }
+                    { 29, 26, "fa fa-refresh", 1, "Restaurar dados sistema", 10, "" },
+                    { 34, 27, "fa fa-line-chart", 1, "Dashboard", 2, "/dashboard" },
+                    { 35, 28, "fa fa-cogs", 1, "Configurações Avançadas", 10, "/configuracoes" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -968,6 +997,11 @@ namespace PortalGrupoAlyne.Migrations
                 column: "TabelaPrecoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Titulo_ParceiroId",
+                table: "Titulo",
+                column: "ParceiroId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Usuario_GrupoId",
                 table: "Usuario",
                 column: "GrupoId");
@@ -1004,6 +1038,9 @@ namespace PortalGrupoAlyne.Migrations
 
             migrationBuilder.DropTable(
                 name: "TabelaPrecoParceiro");
+
+            migrationBuilder.DropTable(
+                name: "Titulo");
 
             migrationBuilder.DropTable(
                 name: "CabecalhoPedidoVenda");

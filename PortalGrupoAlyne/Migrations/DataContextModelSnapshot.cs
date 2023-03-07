@@ -276,7 +276,7 @@ namespace PortalGrupoAlyne.Migrations
                         {
                             Id = 7,
                             ChaveTabelaPortal = "TabelaPrecoId,IdProd",
-                            SqlObterSankhya = "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND \r\n                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD",
+                            SqlObterSankhya = "SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, \r\n                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm\r\n                    FROM TGFTAB TAB\r\n                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB\r\n                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB\r\n                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD\r\n                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB \r\n                                            FROM TGFNTA (NOLOCK) NTA\r\n                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB\r\n                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC\r\n						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND \r\n                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' \r\n                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))\r\n                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB\r\n                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())\r\n                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)\r\n                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'\r\n                    ORDER BY TAB.CODTAB, PRO.CODPROD",
                             TabelaPortal = "ItemTabela"
                         },
                         new
@@ -766,6 +766,44 @@ namespace PortalGrupoAlyne.Migrations
                             MenuId = 10,
                             Nome = "Restaurar dados sistema",
                             Url = ""
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Codigo = 27,
+                            Icon = "fa fa-line-chart",
+                            MenuId = 3,
+                            Nome = "Dashboard",
+                            Url = "/dashboard"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Codigo = 27,
+                            Icon = "fa fa-line-chart",
+                            MenuId = 1,
+                            Nome = "Dashboard",
+                            SubMenuId = 2,
+                            Url = "/dashboard"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Codigo = 28,
+                            Icon = "fa fa-cogs",
+                            MenuId = 1,
+                            Nome = "Configurações Avançadas",
+                            SubMenuId = 10,
+                            Url = "/configuracoes"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Codigo = 28,
+                            Icon = "fa fa-cogs",
+                            MenuId = 10,
+                            Nome = "Configurações Avançadas",
+                            Url = "/configuracoes"
                         });
                 });
 
@@ -1411,6 +1449,40 @@ namespace PortalGrupoAlyne.Migrations
                     b.ToTable("TipoNegociacao");
                 });
 
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Titulo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DataEmissao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DataVencim")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("EmpresaId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("NuUnico")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ParceiroId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Parcela")
+                        .HasColumnType("int");
+
+                    b.Property<decimal?>("Valor")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParceiroId");
+
+                    b.ToTable("Titulo");
+                });
+
             modelBuilder.Entity("PortalGrupoAlyne.Model.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -1499,8 +1571,8 @@ namespace PortalGrupoAlyne.Migrations
                             GrupoId = 1,
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 65, 76, 46, 73, 158, 136, 251, 113, 43, 59, 112, 250, 203, 197, 60, 193, 59, 119, 217, 153, 145, 207, 117, 161, 113, 212, 252, 159, 183, 123, 31, 2, 196, 185, 73, 26, 81, 178, 33, 81, 196, 167, 169, 115, 135, 255, 243, 167, 252, 128, 228, 253, 141, 117, 141, 174, 246, 225, 153, 85, 165, 51, 160, 223 },
-                            PasswordSalt = new byte[] { 99, 143, 18, 74, 180, 11, 19, 37, 161, 60, 13, 11, 63, 130, 16, 165, 163, 234, 3, 11, 54, 150, 101, 209, 5, 52, 219, 71, 114, 57, 17, 159 },
+                            PasswordHash = new byte[] { 45, 81, 111, 37, 67, 74, 128, 26, 119, 74, 48, 209, 244, 126, 138, 236, 147, 144, 127, 238, 49, 11, 208, 206, 250, 171, 153, 236, 37, 161, 101, 173, 42, 119, 75, 214, 230, 103, 88, 175, 96, 12, 101, 48, 81, 109, 14, 43, 51, 234, 241, 23, 218, 141, 195, 234, 192, 142, 55, 173, 65, 197, 54, 177 },
+                            PasswordSalt = new byte[] { 27, 67, 0, 98, 161, 61, 212, 145, 30, 80, 57, 30, 245, 150, 199, 15, 154, 71, 41, 242, 25, 44, 239, 229, 109, 12, 238, 214, 233, 22, 178, 245 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",
@@ -1731,6 +1803,13 @@ namespace PortalGrupoAlyne.Migrations
                     b.Navigation("TabelaPreco");
                 });
 
+            modelBuilder.Entity("PortalGrupoAlyne.Model.Titulo", b =>
+                {
+                    b.HasOne("PortalGrupoAlyne.Model.Parceiro", null)
+                        .WithMany("Titulo")
+                        .HasForeignKey("ParceiroId");
+                });
+
             modelBuilder.Entity("PortalGrupoAlyne.Model.Usuario", b =>
                 {
                     b.HasOne("PortalGrupoAlyne.Model.GrupoUsuario", "GrupoUsuario")
@@ -1771,6 +1850,8 @@ namespace PortalGrupoAlyne.Migrations
             modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
                 {
                     b.Navigation("TabelaPrecoParceiro");
+
+                    b.Navigation("Titulo");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.SubMenu", b =>

@@ -99,7 +99,19 @@ namespace PortalGrupoAlyne.Controllers
                     _context.Usuario.AddRange(novoUser);
                 }
 
+                var configura = await context.Configuracao.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
+                _context.Configuracao.RemoveRange(configura);
 
+                var novaConfigura = new List<Configuracao>
+                {
+                    new Configuracao  {
+                     Id = 1,
+                     SankhyaServidor = "http://10.0.0.254:8280/",
+                     SankhyaUsuario = "ADMIN",
+                     SankhyaSenha = "SYNC550V"
+                 }
+                };
+                _context.Configuracao.AddRange(novaConfigura);
 
                 var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
                 if (paginas == null) return NoContent();
@@ -128,7 +140,7 @@ namespace PortalGrupoAlyne.Controllers
                     new SubMenu { Id = 2, Codigo = 3, Ordem = 0,  Nome = "Movimentos", Icon = "fa fa-map-o",MenuId=1  },
                     new SubMenu { Id = 3, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus",MenuId=1  },
                     new SubMenu { Id = 4, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup",MenuId=1  },
-                    new SubMenu {  Id = 10,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
+                    new SubMenu { Id = 10,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
                    
 
                 };
@@ -384,7 +396,7 @@ namespace PortalGrupoAlyne.Controllers
                       Nome = "Dashboard",
                       Url = "/dashboard",
                       Icon = "fa fa-line-chart",
-                      MenuId = 1,
+                      MenuId = 3,
                   },
                    new Pagina
                    {
@@ -393,8 +405,29 @@ namespace PortalGrupoAlyne.Controllers
                        Nome = "Dashboard",
                        Url = "/dashboard",
                        Icon = "fa fa-line-chart",
-                       MenuId = 3,
+                       MenuId = 1,
                        SubMenuId = 2,
+                   },
+                   new Pagina
+                   {
+                       Id = 35,
+                       Codigo = 28,
+                       Nome = "Configurações Avançadas",
+                       Url = "/configuracoes",
+                       Icon = "fa fa-cogs",
+                       MenuId = 1,
+                       SubMenuId = 10,
+                   }
+                   ,
+                   new Pagina
+                   {
+                       Id = 36,
+                       Codigo = 28,
+                       Nome = "Configurações Avançadas",
+                       Url = "/configuracoes",
+                       Icon = "fa fa-cogs",
+                       MenuId = 10,
+                       
                    }
 
 
