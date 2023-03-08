@@ -142,22 +142,36 @@ namespace PortalGrupoAlyne.Controllers
 
           
         }
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<Parceiro>> GetById(int id)
+        //{
+        //    var parceiro = await _context.Parceiro
+        //        .Include(p => p.Titulo)
+        //        .FirstOrDefaultAsync(p => p.id == id);
+
+        //    if (parceiro == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return parceiro;
+        //}
+
         [HttpGet("{id}")]
-        public async Task<ActionResult<Parceiro>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var parceiro = await _context.Parceiro
-                .Include(p => p.Titulo)
-                .FirstOrDefaultAsync(p => p.id == id);
-
-            if (parceiro == null)
+            try
             {
-                return NotFound();
+                var parceiro = await _parceirosService.GetParceirosId(id);
+                if (parceiro == null) return NoContent();
+
+                return Ok(parceiro);
             }
-
-            return parceiro;
+            catch (Exception ex)
+            {
+                return BadRequest("Parceiro não encontrado.");
+            }
         }
-
-       
 
 
         [HttpPost]
