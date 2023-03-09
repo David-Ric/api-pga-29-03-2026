@@ -11,7 +11,7 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230307171706_Initial")]
+    [Migration("20230309115140_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -250,7 +250,7 @@ namespace PortalGrupoAlyne.Migrations
                         {
                             Id = 3,
                             ChaveTabelaPortal = "Id",
-                            SqlObterSankhya = "SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, \r\n                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, \r\n                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, \r\n                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, \r\n                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,\r\n                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,\r\n                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, \r\n                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, \r\n                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' \r\n                                            AND VEN.CODVEND = $VendedorId\r\n                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID\r\n                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF\r\n                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC\r\n                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND\r\n                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI\r\n                    WHERE PAR.CLIENTE = 'S' \r\n                    AND PAR.CODPARC > 0 \r\n                    AND PAR.CODVEND > 0\r\n                    AND PAR.ATIVO = 'S'",
+                            SqlObterSankhya = "SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, \r\n                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, \r\n                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, \r\n                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, \r\n                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,\r\n                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,\r\n                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, \r\n                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, \r\n                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm\r\n                        , ISNULL(PAR.LIMCRED,0) as LC\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' \r\n                                            AND VEN.CODVEND = $VendedorId\r\n                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID\r\n                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF\r\n                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC\r\n                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND\r\n                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI\r\n                    WHERE PAR.CLIENTE = 'S' \r\n                    AND PAR.CODPARC > 0 \r\n                    AND PAR.CODVEND > 0\r\n                    AND PAR.ATIVO = 'S'",
                             TabelaPortal = "Parceiro"
                         },
                         new
@@ -287,6 +287,13 @@ namespace PortalGrupoAlyne.Migrations
                             ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
                             SqlObterSankhya = "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                    FROM TGFPAR (NOLOCK) PAR\r\n                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND\r\n                                            AND VEN.CODVEND = $VendedorId \r\n                                            AND VEN.TIPVEND = 'R'\r\n                    WHERE PAR.CLIENTE = 'S' \r\n                    AND PAR.CODPARC > 0 \r\n                    AND PAR.CODVEND > 0\r\n                    AND PAR.ATIVO = 'S'",
                             TabelaPortal = "TabelaPrecoParceiro"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            ChaveTabelaPortal = "EmpresaId,ParceiroId,NuUnico",
+                            SqlObterSankhya = "SELECT FIN.CODEMP as EmpresaId\r\n	                , FIN.CODPARC as ParceiroId\r\n	                , FIN.NUNOTA as NuUnico\r\n	                , FIN.DESDOBRAMENTO as Parcela\r\n	                , CONVERT(DATE,FIN.DTNEG) as DataEmissao\r\n	                , CONVERT(DATE,FIN.DTVENC) as DataVencim\r\n	                , FIN.VLRDESDOB as Valor\r\n	\r\n	                FROM TGFFIN FIN \r\n	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA\r\n	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0\r\n		                AND PROVISAO = 'N'\r\n		                AND FIN.RECDESP = 1\r\n		                AND FIN.DHBAIXA IS NULL\r\n		                AND FIN.CODTIPTIT IN (0,4)\r\n		                AND FIN.CODTIPOPER NOT IN (1020,5016,5019,5029)\r\n		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))\r\n		                AND FIN.CODVEND = $VendedorId \r\n		                AND FIN.CODPARC NOT IN (471,512,589,1293)",
+                            TabelaPortal = "Titulo"
                         });
                 });
 
@@ -1573,8 +1580,8 @@ namespace PortalGrupoAlyne.Migrations
                             GrupoId = 1,
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 45, 81, 111, 37, 67, 74, 128, 26, 119, 74, 48, 209, 244, 126, 138, 236, 147, 144, 127, 238, 49, 11, 208, 206, 250, 171, 153, 236, 37, 161, 101, 173, 42, 119, 75, 214, 230, 103, 88, 175, 96, 12, 101, 48, 81, 109, 14, 43, 51, 234, 241, 23, 218, 141, 195, 234, 192, 142, 55, 173, 65, 197, 54, 177 },
-                            PasswordSalt = new byte[] { 27, 67, 0, 98, 161, 61, 212, 145, 30, 80, 57, 30, 245, 150, 199, 15, 154, 71, 41, 242, 25, 44, 239, 229, 109, 12, 238, 214, 233, 22, 178, 245 },
+                            PasswordHash = new byte[] { 184, 32, 86, 255, 201, 2, 114, 128, 76, 107, 107, 81, 172, 115, 182, 212, 245, 152, 45, 245, 145, 163, 185, 172, 134, 122, 40, 217, 143, 159, 216, 223, 90, 8, 75, 157, 249, 106, 147, 40, 31, 211, 229, 86, 23, 90, 162, 188, 207, 36, 75, 190, 44, 199, 199, 218, 51, 90, 182, 108, 131, 58, 47, 175 },
+                            PasswordSalt = new byte[] { 149, 117, 134, 111, 23, 78, 183, 149, 107, 251, 67, 190, 131, 242, 119, 119, 107, 80, 234, 32, 1, 36, 160, 106, 47, 142, 207, 146, 68, 92, 95, 239 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

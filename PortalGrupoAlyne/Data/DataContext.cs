@@ -809,6 +809,7 @@ namespace PortalGrupoAlyne.Data
                         REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
                         PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
                         PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
+                        , ISNULL(PAR.LIMCRED,0) as LC
                     FROM TGFPAR (NOLOCK) PAR
 					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
                                             AND VEN.CODVEND = $VendedorId
@@ -905,6 +906,32 @@ namespace PortalGrupoAlyne.Data
                     AND PAR.CODPARC > 0 
                     AND PAR.CODVEND > 0
                     AND PAR.ATIVO = 'S'"
+
+               },
+               new IntegracaoSankhya
+               {
+                   Id = 9,
+                   TabelaPortal = "Titulo",
+                   ChaveTabelaPortal = "EmpresaId,ParceiroId,NuUnico",
+                   SqlObterSankhya = @"SELECT FIN.CODEMP as EmpresaId
+	                , FIN.CODPARC as ParceiroId
+	                , FIN.NUNOTA as NuUnico
+	                , FIN.DESDOBRAMENTO as Parcela
+	                , CONVERT(DATE,FIN.DTNEG) as DataEmissao
+	                , CONVERT(DATE,FIN.DTVENC) as DataVencim
+	                , FIN.VLRDESDOB as Valor
+	
+	                FROM TGFFIN FIN 
+	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA
+	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0
+		                AND PROVISAO = 'N'
+		                AND FIN.RECDESP = 1
+		                AND FIN.DHBAIXA IS NULL
+		                AND FIN.CODTIPTIT IN (0,4)
+		                AND FIN.CODTIPOPER NOT IN (1020,5016,5019,5029)
+		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
+		                AND FIN.CODVEND = $VendedorId 
+		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
 
                }
 
