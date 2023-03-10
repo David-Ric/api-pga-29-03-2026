@@ -428,6 +428,25 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "fa fa-cogs",
                        MenuId = 10,
                        
+                   },
+                   new Pagina
+                   {
+                       Id = 37,
+                       Codigo = 29,
+                       Nome = "Relatório Vendedor",
+                       Url = "/relatorio-vendedor",
+                       Icon = "fa fa-file-word-o",
+                       MenuId = 1,
+                       SubMenuId = 3,
+                   }, new Pagina
+                   {
+                       Id = 38,
+                       Codigo = 29,
+                       Nome = "Relatório Vendedor",
+                       Url = "/relatorio-vendedor",
+                       Icon = "fa fa-file-word-o",
+                       MenuId = 4,
+
                    }
 
 

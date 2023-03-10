@@ -128,14 +128,16 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(ItemPedidoVenda item)
         {
 
+            if (item.Quant <= 0)
+            {
+                return BadRequest("A propriedade Quant não pode ser menor ou igual a zero.");
+            }
+
             if (_context.ItemPedidoVenda.Any(u => u.Id == item.Id))
             {
                 return BadRequest("Item do pedido de venda ja existe na base de dados.");
             }
-            if (_context.ItemPedidoVenda.Any(u => u.PalMPV == item.PalMPV && u.ProdutoId==item.ProdutoId))
-            {
-                return BadRequest("Item ja foi adicionado ao pedido.");
-            }
+          
 
             _context.ItemPedidoVenda.Add(item);
             await _context.SaveChangesAsync();
