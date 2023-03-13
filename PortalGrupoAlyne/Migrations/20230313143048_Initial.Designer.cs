@@ -11,7 +11,7 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230309115140_Initial")]
+    [Migration("20230313143048_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -204,6 +204,11 @@ namespace PortalGrupoAlyne.Migrations
                         {
                             Id = 1,
                             Nome = "Administrativo"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nome = "Representante"
                         });
                 });
 
@@ -307,9 +312,6 @@ namespace PortalGrupoAlyne.Migrations
                         .HasMaxLength(4)
                         .HasColumnType("varchar(4)");
 
-                    b.Property<int>("CabecalhoPedidoVendaId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Filial")
                         .HasMaxLength(2)
                         .HasColumnType("varchar(2)");
@@ -334,8 +336,6 @@ namespace PortalGrupoAlyne.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CabecalhoPedidoVendaId");
 
                     b.HasIndex("ProdutoId");
 
@@ -813,6 +813,25 @@ namespace PortalGrupoAlyne.Migrations
                             MenuId = 10,
                             Nome = "Configurações Avançadas",
                             Url = "/configuracoes"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Codigo = 29,
+                            Icon = "fa fa-file-word-o",
+                            MenuId = 1,
+                            Nome = "Relatório Vendedor",
+                            SubMenuId = 3,
+                            Url = "/relatorio-vendedor"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Codigo = 29,
+                            Icon = "fa fa-file-word-o",
+                            MenuId = 4,
+                            Nome = "Relatório Vendedor",
+                            Url = "/relatorio-vendedor"
                         });
                 });
 
@@ -1580,8 +1599,8 @@ namespace PortalGrupoAlyne.Migrations
                             GrupoId = 1,
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 184, 32, 86, 255, 201, 2, 114, 128, 76, 107, 107, 81, 172, 115, 182, 212, 245, 152, 45, 245, 145, 163, 185, 172, 134, 122, 40, 217, 143, 159, 216, 223, 90, 8, 75, 157, 249, 106, 147, 40, 31, 211, 229, 86, 23, 90, 162, 188, 207, 36, 75, 190, 44, 199, 199, 218, 51, 90, 182, 108, 131, 58, 47, 175 },
-                            PasswordSalt = new byte[] { 149, 117, 134, 111, 23, 78, 183, 149, 107, 251, 67, 190, 131, 242, 119, 119, 107, 80, 234, 32, 1, 36, 160, 106, 47, 142, 207, 146, 68, 92, 95, 239 },
+                            PasswordHash = new byte[] { 93, 5, 153, 16, 126, 139, 159, 130, 220, 119, 77, 20, 250, 32, 182, 200, 228, 241, 124, 188, 143, 159, 130, 98, 133, 132, 100, 93, 164, 24, 103, 246, 94, 212, 33, 100, 27, 224, 244, 130, 187, 52, 107, 144, 174, 37, 55, 148, 66, 33, 203, 38, 133, 19, 92, 201, 150, 178, 96, 26, 83, 178, 40, 208 },
+                            PasswordSalt = new byte[] { 222, 25, 38, 32, 47, 252, 144, 208, 41, 132, 142, 131, 93, 141, 151, 52, 164, 200, 151, 200, 18, 160, 195, 10, 187, 130, 85, 165, 182, 105, 228, 71 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",
@@ -1658,12 +1677,6 @@ namespace PortalGrupoAlyne.Migrations
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.ItemPedidoVenda", b =>
                 {
-                    b.HasOne("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", null)
-                        .WithMany("ItemPedidoVenda")
-                        .HasForeignKey("CabecalhoPedidoVendaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("PortalGrupoAlyne.Model.Produto", "Produto")
                         .WithMany()
                         .HasForeignKey("ProdutoId")
@@ -1826,11 +1839,6 @@ namespace PortalGrupoAlyne.Migrations
                         .HasForeignKey("GrupoId");
 
                     b.Navigation("GrupoUsuario");
-                });
-
-            modelBuilder.Entity("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", b =>
-                {
-                    b.Navigation("ItemPedidoVenda");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.GrupoUsuario", b =>

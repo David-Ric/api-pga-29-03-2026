@@ -76,7 +76,7 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<IActionResult> GetAllFilterPedidoId([FromServices] DataContext context,
           [FromQuery] int pagina,
            [FromQuery] int totalpagina,
-           [FromQuery] int pedidoId
+           [FromQuery] string pedidoId
 
           )
         {
@@ -85,7 +85,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var data = await context.ItemPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.CabecalhoPedidoVendaId == pedidoId)
+                .Where(e => e.PalMPV== pedidoId)
                 .OrderBy(e => e.Id).Include("Vendedor").Include("Produto")
                 .Skip(skip)
                 .Take(take)
@@ -93,7 +93,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var total = await context.ItemPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.CabecalhoPedidoVendaId == pedidoId)
+                .Where(e => e.PalMPV == pedidoId)
                 .CountAsync();
 
             return Ok(new
@@ -125,25 +125,52 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(ItemPedidoVenda item)
+        public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(List<ItemPedidoVendaDto> itens)
         {
-
-            if (item.Quant <= 0)
+            try
             {
-                return BadRequest("A propriedade Quant não pode ser menor ou igual a zero.");
-            }
+                List<ItemPedidoVenda> itemPedidoVendaList = new List<ItemPedidoVenda>();
 
-            if (_context.ItemPedidoVenda.Any(u => u.Id == item.Id))
+                foreach (var item in itens)
+                {
+                    if (item.Quant <= 0)
+                    {
+                        return BadRequest("A Quantidade não pode ser menor ou igual a zero.");
+                    }
+
+                    var itemPedidoVenda = new ItemPedidoVenda
+                    {
+                        Filial = item.Filial,
+                        VendedorId = item.VendedorId,
+                        PalMPV = item.PalMPV,
+                        ProdutoId = item.ProdutoId,
+                        Quant = item.Quant,
+                        ValUnit = item.ValUnit,
+                        ValTotal = item.ValTotal,
+                        Baixado = item.Baixado
+                    };
+
+                    if (_context.ItemPedidoVenda.Any(u => u.Id == itemPedidoVenda.Id))
+                    {
+                        return BadRequest("Item do pedido de venda já existe na base de dados.");
+                    }
+
+                    itemPedidoVendaList.Add(itemPedidoVenda);
+                }
+
+                _context.ItemPedidoVenda.AddRange(itemPedidoVendaList);
+
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Pedido de Venda criado com sucesso." });
+            }
+            catch (Exception ex)
             {
-                return BadRequest("Item do pedido de venda ja existe na base de dados.");
+                return BadRequest("Erro ao criar pedido de venda.");
             }
-          
-
-            _context.ItemPedidoVenda.Add(item);
-            await _context.SaveChangesAsync();
-
-            return Ok((new { message = "Pedido de Venda criado com sucesso." }));
         }
+
+
 
         [HttpPut("{id}")]
 

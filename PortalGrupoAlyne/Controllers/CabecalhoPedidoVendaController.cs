@@ -8,7 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CabecalhoPedidoVendaController : ControllerBase
@@ -30,7 +30,7 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.CabecalhoPedidoVenda.CountAsync();
-            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
             return Ok(new
             {
@@ -47,7 +47,7 @@ namespace PortalGrupoAlyne.Controllers
            )
         {
             
-            var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").Include("ItemPedidoVenda").Include("ItemPedidoVenda.Produto").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("Parceiro").Include("TipoNegociacao").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
             var total = data.Count();
             return Ok(new
             {
@@ -81,7 +81,12 @@ namespace PortalGrupoAlyne.Controllers
             {
                 return BadRequest("Pedido de Venda ja existe na base de dados.");
             }
-            
+
+            if (_context.CabecalhoPedidoVenda.Any(u => u.PalMPV == tabela.PalMPV))
+            {
+                return BadRequest("Pedido de Venda ja existe na base de dados.");
+            }
+
             _context.CabecalhoPedidoVenda.Add(tabela);
             await _context.SaveChangesAsync();
 

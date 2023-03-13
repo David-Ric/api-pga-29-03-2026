@@ -11,7 +11,6 @@
     public class ItemPedidoVenda
     {
         public int Id { get; set; }
-        public int CabecalhoPedidoVendaId { get; set; }
         public string? Filial { get; set; }
         public int VendedorId { get; set; }
         public string? PalMPV { get; set; }

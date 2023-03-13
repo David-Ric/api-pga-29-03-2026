@@ -414,6 +414,42 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ItemPedidoVenda",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Filial = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VendedorId = table.Column<int>(type: "int", nullable: false),
+                    PalMPV = table.Column<string>(type: "varchar(18)", maxLength: 18, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ProdutoId = table.Column<int>(type: "int", nullable: false),
+                    Quant = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    ValUnit = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    ValTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    Baixado = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemPedidoVenda", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemPedidoVenda_Produto_ProdutoId",
+                        column: x => x.ProdutoId,
+                        principalTable: "Produto",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ItemPedidoVenda_Vendedor_VendedorId",
+                        column: x => x.VendedorId,
+                        principalTable: "Vendedor",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "ItemTabela",
                 columns: table => new
                 {
@@ -649,49 +685,6 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "ItemPedidoVenda",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Filial = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CabecalhoPedidoVendaId = table.Column<int>(type: "int", nullable: false),
-                    VendedorId = table.Column<int>(type: "int", nullable: false),
-                    PalMPV = table.Column<string>(type: "varchar(18)", maxLength: 18, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    ProdutoId = table.Column<int>(type: "int", nullable: false),
-                    Quant = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    ValUnit = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    ValTotal = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    Baixado = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4")
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemPedidoVenda", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemPedidoVenda_CabecalhoPedidoVenda_CabecalhoPedidoVendaId",
-                        column: x => x.CabecalhoPedidoVendaId,
-                        principalTable: "CabecalhoPedidoVenda",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ItemPedidoVenda_Produto_ProdutoId",
-                        column: x => x.ProdutoId,
-                        principalTable: "Produto",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ItemPedidoVenda_Vendedor_VendedorId",
-                        column: x => x.VendedorId,
-                        principalTable: "Vendedor",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "PaginaPermissao",
                 columns: table => new
                 {
@@ -748,7 +741,11 @@ namespace PortalGrupoAlyne.Migrations
             migrationBuilder.InsertData(
                 table: "GrupoUsuario",
                 columns: new[] { "Id", "Nome" },
-                values: new object[] { 1, "Administrativo" });
+                values: new object[,]
+                {
+                    { 1, "Administrativo" },
+                    { 2, "Representante" }
+                });
 
             migrationBuilder.InsertData(
                 table: "IntegracaoSankhya",
@@ -829,7 +826,8 @@ namespace PortalGrupoAlyne.Migrations
                     { 31, 24, "fa fa-external-link-square", 5, "Receber dados Sankhya", null, "" },
                     { 32, 26, "fa fa-refresh", 10, "Restaurar dados sistema", null, "" },
                     { 33, 27, "fa fa-line-chart", 3, "Dashboard", null, "/dashboard" },
-                    { 36, 28, "fa fa-cogs", 10, "Configurações Avançadas", null, "/configuracoes" }
+                    { 36, 28, "fa fa-cogs", 10, "Configurações Avançadas", null, "/configuracoes" },
+                    { 38, 29, "fa fa-file-word-o", 4, "Relatório Vendedor", null, "/relatorio-vendedor" }
                 });
 
             migrationBuilder.InsertData(
@@ -847,7 +845,7 @@ namespace PortalGrupoAlyne.Migrations
             migrationBuilder.InsertData(
                 table: "Usuario",
                 columns: new[] { "Id", "Email", "Funcao", "GrupoId", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
-                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 184, 32, 86, 255, 201, 2, 114, 128, 76, 107, 107, 81, 172, 115, 182, 212, 245, 152, 45, 245, 145, 163, 185, 172, 134, 122, 40, 217, 143, 159, 216, 223, 90, 8, 75, 157, 249, 106, 147, 40, 31, 211, 229, 86, 23, 90, 162, 188, 207, 36, 75, 190, 44, 199, 199, 218, 51, 90, 182, 108, 131, 58, 47, 175 }, null, new byte[] { 149, 117, 134, 111, 23, 78, 183, 149, 107, 251, 67, 190, 131, 242, 119, 119, 107, 80, 234, 32, 1, 36, 160, 106, 47, 142, 207, 146, 68, 92, 95, 239 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
+                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 93, 5, 153, 16, 126, 139, 159, 130, 220, 119, 77, 20, 250, 32, 182, 200, 228, 241, 124, 188, 143, 159, 130, 98, 133, 132, 100, 93, 164, 24, 103, 246, 94, 212, 33, 100, 27, 224, 244, 130, 187, 52, 107, 144, 174, 37, 55, 148, 66, 33, 203, 38, 133, 19, 92, 201, 150, 178, 96, 26, 83, 178, 40, 208 }, null, new byte[] { 222, 25, 38, 32, 47, 252, 144, 208, 41, 132, 142, 131, 93, 141, 151, 52, 164, 200, 151, 200, 18, 160, 195, 10, 187, 130, 85, 165, 182, 105, 228, 71 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
                 table: "Pagina",
@@ -869,7 +867,8 @@ namespace PortalGrupoAlyne.Migrations
                     { 16, 24, "fa fa-external-link-square", 1, "Receber dados Sankhya", 4, "" },
                     { 29, 26, "fa fa-refresh", 1, "Restaurar dados sistema", 10, "" },
                     { 34, 27, "fa fa-line-chart", 1, "Dashboard", 2, "/dashboard" },
-                    { 35, 28, "fa fa-cogs", 1, "Configurações Avançadas", 10, "/configuracoes" }
+                    { 35, 28, "fa fa-cogs", 1, "Configurações Avançadas", 10, "/configuracoes" },
+                    { 37, 29, "fa fa-file-word-o", 1, "Relatório Vendedor", 3, "/relatorio-vendedor" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -886,11 +885,6 @@ namespace PortalGrupoAlyne.Migrations
                 name: "IX_CabecalhoPedidoVenda_VendedorId",
                 table: "CabecalhoPedidoVenda",
                 column: "VendedorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemPedidoVenda_CabecalhoPedidoVendaId",
-                table: "ItemPedidoVenda",
-                column: "CabecalhoPedidoVendaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemPedidoVenda_ProdutoId",
@@ -1011,6 +1005,9 @@ namespace PortalGrupoAlyne.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "CabecalhoPedidoVenda");
+
+            migrationBuilder.DropTable(
                 name: "Concorrente");
 
             migrationBuilder.DropTable(
@@ -1044,7 +1041,7 @@ namespace PortalGrupoAlyne.Migrations
                 name: "Titulo");
 
             migrationBuilder.DropTable(
-                name: "CabecalhoPedidoVenda");
+                name: "TipoNegociacao");
 
             migrationBuilder.DropTable(
                 name: "Produto");
@@ -1063,9 +1060,6 @@ namespace PortalGrupoAlyne.Migrations
 
             migrationBuilder.DropTable(
                 name: "Parceiro");
-
-            migrationBuilder.DropTable(
-                name: "TipoNegociacao");
 
             migrationBuilder.DropTable(
                 name: "GrupoProduto");

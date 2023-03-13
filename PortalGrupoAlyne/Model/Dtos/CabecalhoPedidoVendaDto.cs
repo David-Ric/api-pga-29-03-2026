@@ -47,7 +47,7 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         [StringLength(40, ErrorMessage = "inserir no máximo 40 caracteres")]
         public string? Status { get; set; }
-        public IEnumerable<ItemPedidoVenda>? ItemPedidoVenda { get; set; }
+       
     }
     
 }

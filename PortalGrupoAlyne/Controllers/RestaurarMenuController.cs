@@ -70,7 +70,9 @@ namespace PortalGrupoAlyne.Controllers
                 if (grupoUsuario == null)
                 {
                     var novoUsuario = new List<GrupoUsuario> {
-                new GrupoUsuario { Id = 1, Nome = "Administrativo"} };
+                new GrupoUsuario { Id = 1, Nome = "Administrativo"},
+                new GrupoUsuario { Id = 2, Nome = "Representante"}
+                    };
                     _context.GrupoUsuario.AddRange(novoUsuario);
                 }
                 var usuario1 = await _context.Usuario
@@ -109,7 +111,7 @@ namespace PortalGrupoAlyne.Controllers
                      SankhyaServidor = "http://10.0.0.254:8280/",
                      SankhyaUsuario = "ADMIN",
                      SankhyaSenha = "SYNC550V"
-                 }
+                    }
                 };
                 _context.Configuracao.AddRange(novaConfigura);
 

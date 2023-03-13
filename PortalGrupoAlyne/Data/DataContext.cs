@@ -774,7 +774,13 @@ namespace PortalGrupoAlyne.Data
                    Id = 1,
                    Nome = "Administrativo"
 
-               }
+               },
+                new GrupoUsuario
+                {
+                    Id = 2,
+                    Nome = "Representante"
+
+                }
            );
 
             modelBuilder.Entity<Configuracao>().HasData(

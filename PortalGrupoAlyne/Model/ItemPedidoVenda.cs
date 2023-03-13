@@ -11,9 +11,6 @@ namespace PortalGrupoAlyne.Model
         [StringLength(2, ErrorMessage = "inserir no máximo 2 caracteres")]
         public string? Filial { get; set; }
 
-        [ForeignKey("CabecalhoPedidoVenda")]
-        public int CabecalhoPedidoVendaId { get; set; }
-
         [ForeignKey("Vendedor")]
         public int VendedorId { get; set; }
         public Vendedor? Vendedor { get; set; }

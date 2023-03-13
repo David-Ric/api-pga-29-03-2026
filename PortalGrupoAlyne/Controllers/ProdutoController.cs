@@ -127,10 +127,14 @@ namespace PortalGrupoAlyne.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Produto>>> AddProduto(Produto produto)
         {
-           
+            if (_context.Produto.Any(u => u.Id == produto.Id))
+            {
+                return BadRequest("Código do produto ja existe na base de dados.");
+            }
+
             if (_context.Produto.Any(u => u.Nome == produto.Nome))
             {
-                return BadRequest("Produto ja existe na base de dados.");
+                return BadRequest("Nome do produto ja existe na base de dados.");
             }
             _context.Produto.Add(produto);
             await _context.SaveChangesAsync();

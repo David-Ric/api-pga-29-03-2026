@@ -6,6 +6,7 @@ using PortalGrupoAlyne.Model.Dtos.Sankhya;
 using static System.Net.Mime.MediaTypeNames;
 using System.Security.Policy;
 using PortalGrupoAlyne.Model;
+using PortalGrupoAlyne.Model.Dtos;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -32,63 +33,14 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(configuracao);
         }
 
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> Update(int id, Configuracao configuracao)
-        //{
-        //    if (id != configuracao.Id)
-        //    {
-        //        return BadRequest();
-        //    }
-        //    _context.Entry(configuracao).State = EntityState.Modified;
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!_context.Configuracao.Any(e => e.Id == id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        throw;
-        //    }
-        //    return NoContent();
-        //}
-
-        [HttpPut("{id}/{tipoConfig}")]
-        public async Task<IActionResult> Update(int id, string tipoConfig, Configuracao configuracao)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, Configuracao configuracao)
         {
-            Configuracao configToUpdate = null;
-
-            if (tipoConfig == "T")
+            if (id != configuracao.Id)
             {
-                configToUpdate = new Configuracao
-                {
-                    Id = 1,
-                    SankhyaServidor = "http://10.0.0.254:8280/",
-                    SankhyaUsuario = "ADMIN",
-                    SankhyaSenha = "SYNC550V"
-                };
-                
+               return BadRequest();
             }
-            else if (tipoConfig == "P")
-            {
-                configToUpdate = new Configuracao
-                {
-                    Id = 1,
-                    SankhyaServidor = "http://10.0.0.253:8180/",
-                    SankhyaUsuario = "ADMIN",
-                    SankhyaSenha = "SYNC550V"
-                };
-               
-            }
-            else
-            {
-                return BadRequest("tipoConfig deve ser 'T' ou 'P'");
-            }
-
-            configToUpdate.Id = id;
-            _context.Entry(configToUpdate).State = EntityState.Modified;
+            _context.Entry(configuracao).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
@@ -103,6 +55,63 @@ namespace PortalGrupoAlyne.Controllers
             }
             return NoContent();
         }
-    }
 
+
+        
+        //[HttpPut("{id}/{tipoConfig}")]
+        //public async Task<IActionResult> Update(int id, string tipoConfig, string urlApontamento, Configuracao configuracao)
+        //{
+        //    Configuracao configToUpdate = null;
+
+        //    if (tipoConfig == "T")
+        //    {
+        //        configToUpdate = new Configuracao
+        //        {
+        //            Id = 1,
+        //            SankhyaServidor = "http://10.0.0.254:8280/",
+        //            SankhyaUsuario = "ADMIN",
+        //            SankhyaSenha = "SYNC550V",
+        //            UrlApontamento = urlApontamento
+        //        };
+
+        //    }
+        //    else if (tipoConfig == "P")
+        //    {
+        //        configToUpdate = new Configuracao
+        //        {
+        //            Id = 1,
+        //            SankhyaServidor = "http://10.0.0.253:8180/",
+        //            SankhyaUsuario = "ADMIN",
+        //            SankhyaSenha = "SYNC550V",
+        //            UrlApontamento = urlApontamento
+        //        };
+
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("tipoConfig deve ser 'T' ou 'P'");
+        //    }
+
+        //    configToUpdate.Id = id;
+        //    _context.Entry(configToUpdate).State = EntityState.Modified;
+
+        //    try
+        //    {
+        //        await _context.SaveChangesAsync();
+        //    }
+
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        if (!_context.Configuracao.Any(e => e.Id == id))
+        //        {
+        //            return NotFound();
+        //        }
+        //        throw;
+        //    }
+        //    return NoContent();
+        //}
+    }
 }
+
+
+
