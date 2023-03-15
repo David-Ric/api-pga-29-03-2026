@@ -303,6 +303,7 @@ namespace PortalGrupoAlyne.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ImagemURL = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Imagem = table.Column<byte[]>(type: "longblob", nullable: false),
                     PrimeiroLoginAdm = table.Column<bool>(type: "tinyint(1)", nullable: true)
                 },
                 constraints: table =>
@@ -844,8 +845,8 @@ namespace PortalGrupoAlyne.Migrations
 
             migrationBuilder.InsertData(
                 table: "Usuario",
-                columns: new[] { "Id", "Email", "Funcao", "GrupoId", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
-                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, "", "Administrador Grupo Alyne", new byte[] { 93, 5, 153, 16, 126, 139, 159, 130, 220, 119, 77, 20, 250, 32, 182, 200, 228, 241, 124, 188, 143, 159, 130, 98, 133, 132, 100, 93, 164, 24, 103, 246, 94, 212, 33, 100, 27, 224, 244, 130, 187, 52, 107, 144, 174, 37, 55, 148, 66, 33, 203, 38, 133, 19, 92, 201, 150, 178, 96, 26, 83, 178, 40, 208 }, null, new byte[] { 222, 25, 38, 32, 47, 252, 144, 208, 41, 132, 142, 131, 93, 141, 151, 52, 164, 200, 151, 200, 18, 160, 195, 10, 187, 130, 85, 165, 182, 105, 228, 71 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
+                columns: new[] { "Id", "Email", "Funcao", "GrupoId", "Imagem", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
+                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, new byte[0], "", "Administrador Grupo Alyne", new byte[] { 115, 13, 15, 253, 86, 164, 82, 18, 178, 77, 144, 190, 135, 135, 49, 242, 153, 180, 142, 246, 140, 205, 239, 220, 73, 76, 213, 81, 54, 162, 185, 125, 123, 165, 19, 128, 141, 198, 167, 195, 241, 172, 221, 197, 236, 41, 129, 235, 183, 128, 94, 96, 236, 176, 125, 74, 110, 107, 74, 197, 44, 235, 22, 183 }, null, new byte[] { 126, 127, 35, 91, 213, 208, 132, 236, 18, 108, 62, 110, 102, 140, 85, 171, 20, 17, 224, 55, 183, 72, 212, 55, 55, 24, 14, 25, 223, 88, 151, 235 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
                 table: "Pagina",

@@ -15,6 +15,7 @@ using Microsoft.Extensions.FileProviders;
 using PortalGrupoAlyne.Helpers;
 using PortalGrupoAlyne.Persist.Contratos;
 using PortalGrupoAlyne.Persist;
+using System.Net;
 
 namespace PortalGrupoAlyne
 {
@@ -34,6 +35,11 @@ namespace PortalGrupoAlyne
                 options.UseMySql(mySqlConnection,
                       ServerVersion.AutoDetect(mySqlConnection)));
 
+            builder.Services.Configure<ForwardedHeadersOptions>(opttions =>
+            {
+                opttions.KnownProxies.Add(IPAddress.Parse("191.252.194.145:8095"));
+            }
+                );
             //builder.Services.AddDbContext<ProEventosContext>(
             //    context => context.UseSqlite(Configuration.GetConnectionString("Default"))
             //);
@@ -157,5 +163,13 @@ namespace PortalGrupoAlyne
 
             app.Run();
         }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseKestrel()
+                .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://*:8095");
+            });
     }
 }

@@ -7,6 +7,7 @@ using PortalGrupoAlyne.Extension;
 using PortalGrupoAlyne.Extension.Helpers;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using PortalGrupoAlyne.Services;
+using static System.Net.WebRequestMethods;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -117,28 +118,84 @@ namespace PortalGrupoAlyne.Controllers
             });
 
         }
-
-
         [HttpGet("userName")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllName([FromServices] DataContext context,
- 
-           [FromQuery] string name
-           
-           )
+
+          [FromQuery] string name
+
+          )
         {
 
-            var users = await context.Usuario.AsNoTracking().Where(e => (e.Username.ToLower().Contains(name.ToLower()) 
+            var users = await context.Usuario.AsNoTracking().Where(e => (e.Username.ToLower().Contains(name.ToLower())
                                      ))
                          .OrderBy(e => e.Id).ToListAsync();
-            users.ForEach(item =>
-            {
-                item.ImagemURL = GetImagebyUser(item.Username);
-            });
+          
             return Ok(users);
         }
 
-       
+        [HttpGet("imagem/{username}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetImagem([FromServices] DataContext context, string username)
+        {
+            var user = await context.Usuario.FirstOrDefaultAsync(u => u.Username.ToLower() == username.ToLower());
+
+            if (user?.Imagem == null)
+            {
+                return NotFound();
+            }
+
+            return File(user.Imagem, "image/jpeg");
+        }
+
+
+
+        [HttpPost("{userName}/imagem")]
+        [AllowAnonymous]
+        public async Task<IActionResult> UploadImage([FromServices] DataContext context, string userName, IFormFileCollection files)
+        {
+            var user = await context.Usuario.FirstOrDefaultAsync(e => e.Username.ToLower() == userName.ToLower());
+
+            if (user == null)
+            {
+                // handle error
+                return NotFound();
+            }
+
+            var file = files.FirstOrDefault();
+
+            if (file == null)
+            {
+                // handle error
+                return BadRequest("Nenhum arquivo enviado");
+            }
+
+            var imageBytes = await ReadFully(file.OpenReadStream());
+            user.Imagem = imageBytes;
+
+            await context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                user.Id,
+                user.Username,
+                ImagemURL = $"/api/usuarios/imagem/{user.Username}"
+            });
+        }
+
+        private async Task<byte[]> ReadFully(Stream input)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                await input.CopyToAsync(ms);
+                return ms.ToArray();
+            }
+        }
+
+
+
+
+
 
         [HttpGet("{id}")]
       //  [AllowAnonymous]
@@ -169,72 +226,59 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost("UploadImage")]
-       // [AllowAnonymous]
-        public async Task<ActionResult> UploadImage([FromQuery]
-        string name)
-        
+        public async Task<ActionResult<string>> UploadImage([FromQuery] string name)
         {
-            bool Results = false;
             try
             {
-                var _uploadedfiles = Request.Form.Files;
-                foreach (IFormFile source in _uploadedfiles)
+                var uploadedFile = Request.Form.Files.FirstOrDefault();
+                if (uploadedFile != null)
                 {
-                    string Filename = name;
-                    string Filepath = GetFilePath(Filename);
+                    byte[] imageData = null;
 
-                    if (!System.IO.Directory.Exists(Filepath))
+                    using (var binaryReader = new BinaryReader(uploadedFile.OpenReadStream()))
                     {
-                        System.IO.Directory.CreateDirectory(Filepath);
+                        imageData = binaryReader.ReadBytes((int)uploadedFile.Length);
                     }
 
-                    string imagepath = Filepath + "\\image.png";
-
-                    if (System.IO.File.Exists(imagepath))
+                    var user = await _context.Usuario.FirstOrDefaultAsync(u => u.Username == name);
+                    if (user != null)
                     {
-                        System.IO.File.Delete(imagepath);
-                    }
+                        user.Imagem = imageData;
 
-                    using (FileStream stream = System.IO.File.Create(imagepath))
-                    {
-                        await source.CopyToAsync(stream);
-                        Results = true;
+                        // Build the image URL based on the current request URL.
+                        var urlBase = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}";
+                        var imageUrl = $"{urlBase}/images/{user.Username}.png";
+
+                        // Update the user with the image URL.
+                        user.ImagemURL = imageUrl;
+                        await _context.SaveChangesAsync();
+
+                        return Ok(imageUrl);
                     }
                 }
             }
             catch (Exception ex)
             {
+                // log the exception
+            }
 
-                throw;
-            }
-            return Ok(Results);
+            return BadRequest();
         }
-        [NonAction]
-       // [AllowAnonymous]
-        private string GetFilePath(string UserName)
-        {
-            return this._environment.WebRootPath + "\\Uploads\\Usuarios\\" + UserName;
-        }
-        [NonAction]
-      //  [AllowAnonymous]
-        private string GetImagebyUser(string userName)
-        {
-            string ImageUrl = string.Empty;
-            //string HostUrl = "https://10.0.0.158:8095/";
-            string HostUrl = "https://localhost:8095/";
-            string Filepath = GetFilePath(userName);
-            string Imagepath = Filepath + "\\image.png";
-            if (!System.IO.File.Exists(Imagepath))
-            {
-                ImageUrl = HostUrl + "/uploads/common/noimage.png";
-            }
-            else
-            {
-                ImageUrl = HostUrl + "/uploads/Usuarios/" + userName + "/image.png";
-            }
-            return ImageUrl;
 
+        [NonAction]
+        private async Task<FileContentResult> GetImagebyUser(string userName)
+        {
+            var user = await _context.Usuario.FirstOrDefaultAsync(u => u.Username == userName);
+            if (user != null && user.Imagem != null && !string.IsNullOrEmpty(user.ImagemURL))
+            {
+                return new FileContentResult(user.Imagem, "image/png");
+            }
+
+            var noImage = System.IO.File.ReadAllBytes("noimage.png");
+            return new FileContentResult(noImage, "image/png");
         }
+
+
         [HttpDelete("{id}")]
       //  [AllowAnonymous]
         public async Task<ActionResult<List<Usuario>>> Delete(int id)

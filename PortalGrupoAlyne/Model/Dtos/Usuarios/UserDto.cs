@@ -32,6 +32,7 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
 
         [StringLength(200, ErrorMessage = "inserir no máximo 200 caracteres")]
         public string? ImagemURL { get; set; }
+        public byte[] Imagem { get; set; } = new byte[0];
         public bool? PrimeiroLoginAdm { get; set; }
         public IEnumerable<MenuPermissao>? MenuPermissao { get; set; }
         public IEnumerable<SubMenuPermissao>? SubMenuPermissao { get; set; }
