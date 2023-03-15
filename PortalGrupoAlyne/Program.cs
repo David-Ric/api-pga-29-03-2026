@@ -16,6 +16,8 @@ using PortalGrupoAlyne.Helpers;
 using PortalGrupoAlyne.Persist.Contratos;
 using PortalGrupoAlyne.Persist;
 using System.Net;
+using Microsoft.AspNetCore.Hosting;
+using System.Security.Cryptography.X509Certificates;
 
 namespace PortalGrupoAlyne
 {
@@ -39,7 +41,7 @@ namespace PortalGrupoAlyne
             {
                 opttions.KnownProxies.Add(IPAddress.Parse("191.252.194.145:8095"));
             }
-                );
+               );
             //builder.Services.AddDbContext<ProEventosContext>(
             //    context => context.UseSqlite(Configuration.GetConnectionString("Default"))
             //);
@@ -72,6 +74,8 @@ namespace PortalGrupoAlyne
                 });
 
             });
+
+           
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -162,14 +166,26 @@ namespace PortalGrupoAlyne
             app.MapControllers();
 
             app.Run();
+
+            
         }
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseUrls("http://*:8095");
-            });
+              Host.CreateDefaultBuilder(args)
+                  .ConfigureWebHostDefaults(webBuilder =>
+                  {
+ 
+                      webBuilder.UseKestrel(options =>
+                      {
+                          options.ListenAnyIP(443, listenOptions =>
+                          {
+                              var cert = new X509Certificate2(
+                                  Path.Combine("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem"),
+                                  "",
+                                  X509KeyStorageFlags.MachineKeySet
+                              );
+                              listenOptions.UseHttps(cert);
+                          });
+                      });
+                  });
     }
 }
