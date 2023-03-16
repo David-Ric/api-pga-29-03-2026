@@ -37,11 +37,7 @@ namespace PortalGrupoAlyne
                 options.UseMySql(mySqlConnection,
                       ServerVersion.AutoDetect(mySqlConnection)));
 
-            builder.Services.Configure<ForwardedHeadersOptions>(opttions =>
-            {
-                opttions.KnownProxies.Add(IPAddress.Parse("191.252.194.145:8095"));
-            }
-               );
+          
             //builder.Services.AddDbContext<ProEventosContext>(
             //    context => context.UseSqlite(Configuration.GetConnectionString("Default"))
             //);
@@ -170,22 +166,17 @@ namespace PortalGrupoAlyne
             
         }
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-              Host.CreateDefaultBuilder(args)
-                  .ConfigureWebHostDefaults(webBuilder =>
-                  {
- 
-                      webBuilder.UseKestrel(options =>
-                      {
-                          options.ListenAnyIP(443, listenOptions =>
-                          {
-                              var cert = new X509Certificate2(
-                                  Path.Combine("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem"),
-                                  "",
-                                  X509KeyStorageFlags.MachineKeySet
-                              );
-                              listenOptions.UseHttps(cert);
-                          });
-                      });
-                  });
+         Host.CreateDefaultBuilder(args)
+             .ConfigureWebHostDefaults(webBuilder =>
+             {
+                 webBuilder.ConfigureKestrel(serverOptions =>
+                 {
+                     serverOptions.ListenAnyIP(443, listenOptions =>
+                     {
+                         listenOptions.UseHttps("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem", null);
+                     });
+                 });
+             });
+
     }
 }
