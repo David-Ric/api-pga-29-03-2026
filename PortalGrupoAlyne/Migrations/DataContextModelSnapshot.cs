@@ -83,7 +83,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("CabecalhoPedidoVenda", (string)null);
+                    b.ToTable("CabecalhoPedidoVenda");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Comunicado", b =>
@@ -107,7 +107,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Comunicado", (string)null);
+                    b.ToTable("Comunicado");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Concorrente", b =>
@@ -125,7 +125,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Concorrente", (string)null);
+                    b.ToTable("Concorrente");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Configuracao", b =>
@@ -151,7 +151,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Configuracao", (string)null);
+                    b.ToTable("Configuracao");
 
                     b.HasData(
                         new
@@ -178,7 +178,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Empresa", (string)null);
+                    b.ToTable("Empresa");
 
                     b.HasData(
                         new
@@ -208,7 +208,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GrupoProduto", (string)null);
+                    b.ToTable("GrupoProduto");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.GrupoUsuario", b =>
@@ -223,7 +223,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("GrupoUsuario", (string)null);
+                    b.ToTable("GrupoUsuario");
 
                     b.HasData(
                         new
@@ -260,7 +260,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("IntegracaoSankhya", (string)null);
+                    b.ToTable("IntegracaoSankhya");
 
                     b.HasData(
                         new
@@ -367,7 +367,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("ItemPedidoVenda", (string)null);
+                    b.ToTable("ItemPedidoVenda");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.ItemTabela", b =>
@@ -394,7 +394,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("TabelaPrecoId");
 
-                    b.ToTable("ItemTabela", (string)null);
+                    b.ToTable("ItemTabela");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Menu", b =>
@@ -419,7 +419,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Menu", (string)null);
+                    b.ToTable("Menu");
 
                     b.HasData(
                         new
@@ -497,7 +497,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("MenuPermissao", (string)null);
+                    b.ToTable("MenuPermissao");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Pagina", b =>
@@ -533,7 +533,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("SubMenuId");
 
-                    b.ToTable("Pagina", (string)null);
+                    b.ToTable("Pagina");
 
                     b.HasData(
                         new
@@ -903,7 +903,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PaginaBase", (string)null);
+                    b.ToTable("PaginaBase");
 
                     b.HasData(
                         new
@@ -1127,7 +1127,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("PaginaPermissao", (string)null);
+                    b.ToTable("PaginaPermissao");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
@@ -1260,7 +1260,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("VendedorId");
 
-                    b.ToTable("Parceiro", (string)null);
+                    b.ToTable("Parceiro");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Produto", b =>
@@ -1294,7 +1294,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("GrupoProdutoId");
 
-                    b.ToTable("Produto", (string)null);
+                    b.ToTable("Produto");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.ProdutoConcorrente", b =>
@@ -1332,7 +1332,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ProdutoConcorrente", (string)null);
+                    b.ToTable("ProdutoConcorrente");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.SubMenu", b =>
@@ -1362,7 +1362,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("MenuId");
 
-                    b.ToTable("SubMenu", (string)null);
+                    b.ToTable("SubMenu");
 
                     b.HasData(
                         new
@@ -1442,7 +1442,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("SubMenuPermissao", (string)null);
+                    b.ToTable("SubMenuPermissao");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPreco", b =>
@@ -1469,7 +1469,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TabelaPreco", (string)null);
+                    b.ToTable("TabelaPreco");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.TabelaPrecoParceiro", b =>
@@ -1498,7 +1498,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("TabelaPrecoId");
 
-                    b.ToTable("TabelaPrecoParceiro", (string)null);
+                    b.ToTable("TabelaPrecoParceiro");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.TipoNegociacao", b =>
@@ -1519,7 +1519,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoNegociacao", (string)null);
+                    b.ToTable("TipoNegociacao");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Titulo", b =>
@@ -1553,7 +1553,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("ParceiroId");
 
-                    b.ToTable("Titulo", (string)null);
+                    b.ToTable("Titulo");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Usuario", b =>
@@ -1637,7 +1637,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasIndex("GrupoId");
 
-                    b.ToTable("Usuario", (string)null);
+                    b.ToTable("Usuario");
 
                     b.HasData(
                         new
@@ -1649,8 +1649,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 78, 42, 82, 150, 28, 96, 1, 143, 18, 67, 220, 54, 205, 70, 29, 56, 210, 146, 221, 25, 11, 228, 139, 121, 229, 48, 85, 139, 96, 122, 3, 203, 70, 32, 223, 92, 168, 105, 0, 153, 19, 101, 250, 69, 69, 151, 122, 252, 109, 87, 85, 205, 200, 206, 38, 43, 56, 250, 67, 253, 14, 5, 78, 195 },
-                            PasswordSalt = new byte[] { 146, 251, 225, 208, 119, 177, 232, 210, 1, 13, 85, 240, 35, 229, 53, 151, 203, 214, 231, 123, 37, 58, 246, 1, 62, 155, 226, 100, 206, 252, 132, 186 },
+                            PasswordHash = new byte[] { 2, 45, 218, 76, 77, 54, 230, 174, 190, 178, 182, 173, 235, 121, 225, 189, 238, 64, 229, 226, 162, 1, 22, 41, 56, 191, 242, 212, 68, 173, 148, 15, 97, 231, 59, 216, 117, 88, 192, 144, 172, 20, 193, 226, 121, 135, 201, 209, 218, 121, 46, 121, 53, 111, 250, 140, 155, 166, 82, 103, 251, 67, 39, 186 },
+                            PasswordSalt = new byte[] { 59, 47, 220, 208, 105, 21, 194, 255, 208, 238, 185, 68, 240, 107, 213, 72, 227, 59, 250, 123, 217, 251, 247, 90, 148, 159, 249, 206, 198, 207, 175, 220 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",
@@ -1695,7 +1695,7 @@ namespace PortalGrupoAlyne.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Vendedor", (string)null);
+                    b.ToTable("Vendedor");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.CabecalhoPedidoVenda", b =>

@@ -165,17 +165,17 @@ namespace PortalGrupoAlyne
 
 
         }
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-         Host.CreateDefaultBuilder(args)
-             .ConfigureWebHostDefaults(webBuilder =>
-             {
-                 webBuilder.ConfigureKestrel(serverOptions =>
-                 {
-                     serverOptions.ListenAnyIP(443, listenOptions =>
-                     {
-                         listenOptions.UseHttps("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem", null);
-                     });
-                 });
-             });
+        //public static IHostBuilder CreateHostBuilder(string[] args) =>
+        // Host.CreateDefaultBuilder(args)
+        //     .ConfigureWebHostDefaults(webBuilder =>
+        //     {
+        //         webBuilder.ConfigureKestrel(serverOptions =>
+        //         {
+        //             serverOptions.ListenAnyIP(443, listenOptions =>
+        //             {
+        //                 listenOptions.UseHttps("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem", null);
+        //             });
+        //         });
+        //     });
     }
 }

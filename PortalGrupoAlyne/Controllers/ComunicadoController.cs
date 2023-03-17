@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PortalGrupoAlyne.Model.Dtos;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace PortalGrupoAlyne.Controllers
@@ -17,10 +18,41 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Comunicado>> Get()
+        public async Task<ActionResult<IEnumerable<ComunicadoDto>>> GetComunicados()
         {
-            return await _context.Comunicado.OrderByDescending(c => c.Id).ToListAsync();
+            var comunicados = await _context.Comunicado.ToListAsync();
+
+            if (comunicados == null || !comunicados.Any())
+            {
+                return NotFound();
+            }
+
+            var comunicadosDTO = new List<ComunicadoDto>();
+
+            foreach (var comunicado in comunicados)
+            {
+                var imagemBase64 = Convert.ToBase64String(comunicado.Imagem);
+
+                comunicadosDTO.Add(new ComunicadoDto
+                {
+                    Id = comunicado.Id,
+                    Titulo = comunicado.Titulo,
+                    ImagemURL = $"/api/comunicado/imagem/{comunicado.Id}",
+                    Texto = comunicado.Texto,
+                    ImagemBase64 = imagemBase64
+                });
+            }
+
+            return comunicadosDTO;
         }
+
+
+
+        //[HttpGet]
+        //public async Task<IEnumerable<Comunicado>> Get()
+        //{
+        //    return await _context.Comunicado.OrderByDescending(c => c.Id).ToListAsync();
+        //}
 
 
         [HttpGet("{id}")]

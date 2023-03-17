@@ -11,8 +11,8 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20230317170536_AlteracaoPedido")]
-    partial class AlteracaoPedido
+    [Migration("20230317195424_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -1651,8 +1651,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 78, 42, 82, 150, 28, 96, 1, 143, 18, 67, 220, 54, 205, 70, 29, 56, 210, 146, 221, 25, 11, 228, 139, 121, 229, 48, 85, 139, 96, 122, 3, 203, 70, 32, 223, 92, 168, 105, 0, 153, 19, 101, 250, 69, 69, 151, 122, 252, 109, 87, 85, 205, 200, 206, 38, 43, 56, 250, 67, 253, 14, 5, 78, 195 },
-                            PasswordSalt = new byte[] { 146, 251, 225, 208, 119, 177, 232, 210, 1, 13, 85, 240, 35, 229, 53, 151, 203, 214, 231, 123, 37, 58, 246, 1, 62, 155, 226, 100, 206, 252, 132, 186 },
+                            PasswordHash = new byte[] { 2, 45, 218, 76, 77, 54, 230, 174, 190, 178, 182, 173, 235, 121, 225, 189, 238, 64, 229, 226, 162, 1, 22, 41, 56, 191, 242, 212, 68, 173, 148, 15, 97, 231, 59, 216, 117, 88, 192, 144, 172, 20, 193, 226, 121, 135, 201, 209, 218, 121, 46, 121, 53, 111, 250, 140, 155, 166, 82, 103, 251, 67, 39, 186 },
+                            PasswordSalt = new byte[] { 59, 47, 220, 208, 105, 21, 194, 255, 208, 238, 185, 68, 240, 107, 213, 72, 227, 59, 250, 123, 217, 251, 247, 90, 148, 159, 249, 206, 198, 207, 175, 220 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

@@ -10,5 +10,6 @@ namespace PortalGrupoAlyne.Model.Dtos
         public string? ImagemURL { get; set; }
         public byte[] Imagem { get; set; } = new byte[0];
         public string? Texto { get; set; }
+        public string? ImagemBase64 { get; set; }
     }
 }
