@@ -449,6 +449,25 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "fa fa-file-word-o",
                        MenuId = 4,
 
+                   },
+                    new Pagina
+                   {
+                       Id = 39,
+                       Codigo = 30,
+                       Nome = "Acompanhamento de Pedidos",
+                       Url = "/acompanhamento-de-pedidos",
+                       Icon = "fa fa-file-o",
+                       MenuId = 1,
+                       SubMenuId = 3,
+                   }, new Pagina
+                   {
+                       Id = 40,
+                       Codigo = 30,
+                       Nome = "Acompanhamento de Pedidos",
+                       Url = "/acompanhamento-de-pedidos",
+                       Icon = "fa fa-file-o",
+                       MenuId = 4,
+
                    }
 
 
@@ -606,7 +625,9 @@ namespace PortalGrupoAlyne.Controllers
 	
 	                FROM TGFFIN FIN 
 	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA
+                        JOIN TGFPAR PAR ON FIN.CODPARC = PAR.CODPARC
 	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0
+                                AND PAR.ATIVO = 'S'
 		                AND PROVISAO = 'N'
 		                AND FIN.RECDESP = 1
 		                AND FIN.DHBAIXA IS NULL

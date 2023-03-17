@@ -82,10 +82,6 @@ namespace PortalGrupoAlyne.Controllers
                 return BadRequest("Pedido de Venda ja existe na base de dados.");
             }
 
-            if (_context.CabecalhoPedidoVenda.Any(u => u.PalMPV == tabela.PalMPV))
-            {
-                return BadRequest("Pedido de Venda ja existe na base de dados.");
-            }
 
             _context.CabecalhoPedidoVenda.Add(tabela);
             await _context.SaveChangesAsync();

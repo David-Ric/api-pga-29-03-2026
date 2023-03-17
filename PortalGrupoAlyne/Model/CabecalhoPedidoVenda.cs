@@ -47,7 +47,10 @@ namespace PortalGrupoAlyne.Model
 
         [StringLength(40, ErrorMessage = "inserir no máximo 40 caracteres")]
         public string? Status { get; set; }
-       
+
+        [StringLength(2, ErrorMessage = "inserir no máximo 2 caracteres")]
+        public string? TipPed { get; set; }
+
 
     }
 }

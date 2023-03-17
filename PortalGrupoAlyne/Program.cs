@@ -37,7 +37,7 @@ namespace PortalGrupoAlyne
                 options.UseMySql(mySqlConnection,
                       ServerVersion.AutoDetect(mySqlConnection)));
 
-          
+
             //builder.Services.AddDbContext<ProEventosContext>(
             //    context => context.UseSqlite(Configuration.GetConnectionString("Default"))
             //);
@@ -71,7 +71,7 @@ namespace PortalGrupoAlyne
 
             });
 
-           
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -107,7 +107,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<ISubMenuService, SubMenuService>();
             builder.Services.AddScoped<ISubMenuPermissaoService, SubMenuPermissaoService>();
             builder.Services.AddScoped<IUserGrupoService, GrupoUsuarioService>();
-            builder.Services.AddScoped<IMenuPermissoesService,MenuPermissaoService>();
+            builder.Services.AddScoped<IMenuPermissoesService, MenuPermissaoService>();
             builder.Services.AddScoped<ITabelaPrecoParceiroService, TabelaPrecoParceiroService>();
             builder.Services.AddScoped<ICabecalhoPedidoVendaService, CabecalhoPedidoVendaService>();
             builder.Services.AddScoped<IItemPedidoVendaService, ItemPedidoVendaService>();
@@ -117,15 +117,15 @@ namespace PortalGrupoAlyne
 
             builder.Services.AddScoped<ITabelaPrecoPersist, TabelaPrecoPersist>();
             builder.Services.AddScoped<IItemTabelaPersist, ItemTabelaPersist>();
-            builder.Services.AddScoped<IParceirosPersist,ParceirosPersist>();
+            builder.Services.AddScoped<IParceirosPersist, ParceirosPersist>();
             builder.Services.AddScoped<IGeralPersist, GeralPersist>();
             builder.Services.AddScoped<IVendedorPersist, VendedorPersist>();
             builder.Services.AddScoped<IPaginaPermissaoPersist, PaginaPermissaoPersist>();
-            builder.Services.AddScoped<IUsuarioPersist,UsuarioPersist>();
-            builder.Services.AddScoped<IMenuPersist,MenuPersist>();
-            builder.Services.AddScoped<ISubMenuPersist,SubMenuPersist>();
-            builder.Services.AddScoped<ISubMenuPermissaoPersist,SubMenuPermissaoPersist>();
-            builder.Services.AddScoped<IUserGrupoPersist,GrupoUsuarioPersist>();
+            builder.Services.AddScoped<IUsuarioPersist, UsuarioPersist>();
+            builder.Services.AddScoped<IMenuPersist, MenuPersist>();
+            builder.Services.AddScoped<ISubMenuPersist, SubMenuPersist>();
+            builder.Services.AddScoped<ISubMenuPermissaoPersist, SubMenuPermissaoPersist>();
+            builder.Services.AddScoped<IUserGrupoPersist, GrupoUsuarioPersist>();
             builder.Services.AddScoped<IPaginaPersist, PaginaPersist>();
             builder.Services.AddScoped<IMenuPermissoesPersist, MenuPermissaoPersist>();
             builder.Services.AddScoped<IProdutoPersist, ProdutoPersist>();
@@ -134,7 +134,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IItemPedidoVendaPersist, ItemPedidoVendaPersist>();
 
             var app = builder.Build();
-           
+
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -157,13 +157,13 @@ namespace PortalGrupoAlyne
                               .AllowAnyMethod()
                               .AllowAnyOrigin());
 
-            
+
 
             app.MapControllers();
 
             app.Run();
 
-            
+
         }
         public static IHostBuilder CreateHostBuilder(string[] args) =>
          Host.CreateDefaultBuilder(args)
@@ -177,6 +177,5 @@ namespace PortalGrupoAlyne
                      });
                  });
              });
-
     }
 }

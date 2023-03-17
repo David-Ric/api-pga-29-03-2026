@@ -87,7 +87,7 @@ namespace PortalGrupoAlyne.Controllers
 
             if (!VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
             {
-                return BadRequest("E-mail ou senha incorretos.");
+                return BadRequest("Usuario ou senha incorretos.");
             }
 
             string token = CreateToken(user);

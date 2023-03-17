@@ -128,6 +128,7 @@ namespace PortalGrupoAlyne.Services
             sb.AppendLine("             <localFields>");
             sb.AppendLine($"                 <PALMPV><![CDATA[{pedido.CabecalhoPedidoVenda.PalmPV}]]></PALMPV>");
             sb.AppendLine($"                 <EMP>{pedido.CabecalhoPedidoVenda.Filial}</EMP>");
+            sb.AppendLine($"                 <TIPPED>{pedido.CabecalhoPedidoVenda.TipPed}</TIPPED>");
             sb.AppendLine($"                 <VEND>{pedido.CabecalhoPedidoVenda.VendedorId.ToString()}</VEND>");
             sb.AppendLine($"                 <CLIENT>{pedido.CabecalhoPedidoVenda.ParceiroId.ToString()}</CLIENT>");
             sb.AppendLine($"                 <COND>{pedido.CabecalhoPedidoVenda.TipoNegociacaoId.ToString()}</COND>");

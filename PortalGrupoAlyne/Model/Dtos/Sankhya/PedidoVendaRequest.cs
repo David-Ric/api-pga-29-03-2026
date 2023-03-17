@@ -1,4 +1,6 @@
-﻿namespace PortalGrupoAlyne.Model.Dtos.Sankhya
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PortalGrupoAlyne.Model.Dtos.Sankhya
 {
     public class PedidoVendaRequest
     {
@@ -36,6 +38,7 @@
         public string? Baixado { get; set; }
         public string? pedido { get; set; }
         public string? Status { get; set; }
+        public string? TipPed { get; set; }
     }
 
 }
