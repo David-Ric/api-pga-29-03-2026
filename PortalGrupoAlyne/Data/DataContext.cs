@@ -70,7 +70,11 @@ namespace PortalGrupoAlyne.Data
 
     public DbSet<Titulo> Titulo { get; set; }
 
-        public DbSet<Comunicado> Comunicado { get; set; }
+    public DbSet<Comunicado> Comunicado { get; set; }
+    public DbSet<PostLido> PostLido { get; set; }
+
+    public DbSet<PreferenciasUsuario> PreferenciasUsuario { get; set; }
+
 
 
         private byte[] CreateHash(string input, byte[] salt)
@@ -786,7 +790,26 @@ namespace PortalGrupoAlyne.Data
                         Icon = "fa fa-file-o",
                         MenuId = 4,
 
-                    }
+                    },
+                     new Pagina
+                     {
+                         Id = 41,
+                         Codigo = 31,
+                         Nome = "Comunicação Interna",
+                         Url = "/comunicacao-interna",
+                         Icon = "fa fa-comments-o",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     }, new Pagina
+                     {
+                         Id = 42,
+                         Codigo = 31,
+                         Nome = "Comunicação Interna",
+                         Url = "/comunicacao-interna",
+                         Icon = "fa fa-comments-o",
+                         MenuId = 5,
+
+                     }
 
           );
             modelBuilder.Entity<GrupoUsuario>().HasData(

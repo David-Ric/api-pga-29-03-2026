@@ -27,6 +27,8 @@ namespace PortalGrupoAlyne.Controllers
                 return NotFound();
             }
 
+            comunicados.Reverse(); // Inverte a lista de comunicados
+
             var comunicadosDTO = new List<ComunicadoDto>();
 
             foreach (var comunicado in comunicados)
@@ -47,12 +49,22 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
+        [HttpGet("Lista")]
+        public async Task<IActionResult> GetAll([FromServices] DataContext context,
+          [FromQuery] int pagina,
+           [FromQuery] int totalpagina
+          )
+        {
+            var total = await context.Comunicado.CountAsync();
+            var data = await context.Comunicado.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
 
-        //[HttpGet]
-        //public async Task<IEnumerable<Comunicado>> Get()
-        //{
-        //    return await _context.Comunicado.OrderByDescending(c => c.Id).ToListAsync();
-        //}
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
 
 
         [HttpGet("{id}")]
@@ -78,8 +90,10 @@ namespace PortalGrupoAlyne.Controllers
             _context.Comunicado.Add(comunicado);
             await _context.SaveChangesAsync();
 
-            return Ok((new { message = "Comunicado criado com sucesso" }));
+            return Ok((new { data= comunicado.Id,
+                message = "Comunicado criado com sucesso" }));
         }
+
 
         [HttpGet("imagem/{id}")]
         [AllowAnonymous]
@@ -95,11 +109,15 @@ namespace PortalGrupoAlyne.Controllers
             return File(user.Imagem, "image/jpeg");
         }
 
-        [HttpPost("{id}/imagem")]
+
+       
+
+
+            [HttpPost("{id}/imagem")]
         [AllowAnonymous]
         public async Task<IActionResult> UploadImage([FromServices] DataContext context, int id, IFormFileCollection files)
         {
-            var img = await context.Comunicado.FirstOrDefaultAsync(e => e.Id== id);
+            var img = await context.Comunicado.FirstOrDefaultAsync(e => e.Id == id);
 
             if (img == null)
             {
@@ -107,13 +125,13 @@ namespace PortalGrupoAlyne.Controllers
                 return NotFound();
             }
 
-            var file = files.FirstOrDefault();
-
-            if (file == null)
+            if (files == null || files.Count == 0)
             {
                 // handle error
                 return BadRequest("Nenhum arquivo enviado");
             }
+
+            var file = files.FirstOrDefault();
 
             var imageBytes = await ReadFully(file.OpenReadStream());
             img.Imagem = imageBytes;
@@ -128,6 +146,7 @@ namespace PortalGrupoAlyne.Controllers
                 ImagemURL = $"/api/comunicado/imagem/{img.Id}"
             });
         }
+
         private async Task<byte[]> ReadFully(Stream input)
         {
             using (var ms = new MemoryStream())
@@ -136,6 +155,36 @@ namespace PortalGrupoAlyne.Controllers
                 return ms.ToArray();
             }
         }
+
+        [HttpPost("comunicado-com-imagem")]
+        [AllowAnonymous]
+        public async Task<IActionResult> AddComunicadoComImagem([FromServices] DataContext context, [FromForm(Name = "titulo")] string titulo, [FromForm(Name = "texto")] string texto, [FromForm(Name = "imagem")] IFormFile imagem)
+        {
+            if (imagem == null)
+            {
+                // handle error
+                return BadRequest("Nenhuma imagem enviada");
+            }
+
+            var comunicado = new Comunicado { Titulo = titulo, Texto = texto };
+
+            var imageBytes = await ReadFully(imagem.OpenReadStream());
+            comunicado.Imagem = imageBytes;
+
+            context.Comunicado.Add(comunicado);
+            await context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                comunicado.Id,
+                comunicado.Titulo,
+                comunicado.Texto,
+                ImagemURL = $"/api/comunicado/imagem/{comunicado.Id}"
+            });
+        }
+
+
+
         //[HttpPost]
         //public async Task<IActionResult> Post([FromBody] Comunicado comunicado, IFormFile file)
         //{

@@ -468,6 +468,25 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "fa fa-file-o",
                        MenuId = 4,
 
+                   },
+                     new Pagina
+                   {
+                       Id = 41,
+                       Codigo = 31,
+                       Nome = "Comunicação Interna",
+                       Url = "/comunicacao-interna",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 1,
+                       SubMenuId = 4,
+                   }, new Pagina
+                   {
+                       Id = 42,
+                       Codigo = 31,
+                       Nome = "Comunicação Interna",
+                       Url = "/comunicacao-interna",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 5,
+
                    }
 
 

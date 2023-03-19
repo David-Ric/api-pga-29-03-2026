@@ -11,7 +11,7 @@ using static System.Net.WebRequestMethods;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   [Authorize]
+  // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
