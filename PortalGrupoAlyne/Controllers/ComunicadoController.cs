@@ -184,25 +184,6 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-
-        //[HttpPost]
-        //public async Task<IActionResult> Post([FromBody] Comunicado comunicado, IFormFile file)
-        //{
-        //    if (file != null && file.Length > 0)
-        //    {
-        //        using (var ms = new MemoryStream())
-        //        {
-        //            await file.CopyToAsync(ms);
-        //            comunicado.Imagem = ms.ToArray();
-        //        }
-        //    }
-
-        //    await _context.Comunicado.AddAsync(comunicado);
-        //    await _context.SaveChangesAsync();
-
-        //    return CreatedAtAction(nameof(GetById), new { id = comunicado.Id }, comunicado);
-        //}
-
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(int id, [FromForm] Comunicado comunicadoAtualizado, IFormFile file)
         {

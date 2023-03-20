@@ -487,8 +487,26 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "fa fa-comments-o",
                        MenuId = 5,
 
-                   }
+                   },
+                     new Pagina
+                   {
+                       Id = 43,
+                       Codigo = 32,
+                       Nome = "Espaço Colaborador",
+                       Url = "/espaco-colaborador",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 1,
+                       SubMenuId = 4,
+                   }, new Pagina
+                   {
+                       Id = 44,
+                       Codigo = 32,
+                       Nome = "Espaço Colaborador",
+                       Url = "/espaco-colaborador",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 5,
 
+                   }
 
                 };
                 _context.Pagina.AddRange(novaPagina);

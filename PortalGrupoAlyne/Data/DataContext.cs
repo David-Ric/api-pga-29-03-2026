@@ -75,6 +75,8 @@ namespace PortalGrupoAlyne.Data
 
     public DbSet<PreferenciasUsuario> PreferenciasUsuario { get; set; }
 
+     public DbSet<PermissaoRH> PermissaoRH { get; set; }
+
 
 
         private byte[] CreateHash(string input, byte[] salt)
@@ -809,7 +811,26 @@ namespace PortalGrupoAlyne.Data
                          Icon = "fa fa-comments-o",
                          MenuId = 5,
 
-                     }
+                     },
+                     new Pagina
+                   {
+                       Id = 43,
+                       Codigo = 32,
+                       Nome = "Espaço Colaborador",
+                       Url = "/espaco-colaborador",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 1,
+                       SubMenuId = 4,
+                   }, new Pagina
+                   {
+                       Id = 44,
+                       Codigo = 32,
+                       Nome = "Espaço Colaborador",
+                       Url = "/espaco-colaborador",
+                       Icon = "fa fa-comments-o",
+                       MenuId = 5,
+
+                   }
 
           );
             modelBuilder.Entity<GrupoUsuario>().HasData(
