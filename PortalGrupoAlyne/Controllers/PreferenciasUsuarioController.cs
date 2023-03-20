@@ -6,6 +6,7 @@ using PortalGrupoAlyne.Model.Dtos;
 
 namespace PortalGrupoAlyne.Controllers
 {
+    [ApiExplorerSettings(IgnoreApi = true)]
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]

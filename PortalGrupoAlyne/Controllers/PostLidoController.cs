@@ -24,12 +24,12 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<PostLidoDto>> GetAll()
+        public async Task<IActionResult> GetAll([FromServices] DataContext context)
         {
-            var postLidos = _context.PostLido.AsNoTracking();
-            var postLidosDTO = _mapper.Map<IEnumerable<PostLidoDto>>(postLidos);
+         
+            var data = await context.PostLido.AsNoTracking().ToListAsync();
 
-            return Ok(postLidosDTO);
+            return Ok(data);
         }
 
         [HttpPost]
