@@ -77,6 +77,9 @@ namespace PortalGrupoAlyne.Data
 
      public DbSet<PermissaoRH> PermissaoRH { get; set; }
 
+        public DbSet<ComunicadoComercial> ComunicadoComercial { get; set; }
+        public DbSet<ComunicadoLido> ComunicadoLido { get; set; }
+
 
 
         private byte[] CreateHash(string input, byte[] salt)
@@ -722,7 +725,7 @@ namespace PortalGrupoAlyne.Data
                        Nome = "Dashboard",
                        Url = "/dashboard",
                        Icon = "fa fa-line-chart",
-                       MenuId = 3,
+                       MenuId = 4,
                    },
                    new Pagina
                    {
@@ -732,7 +735,7 @@ namespace PortalGrupoAlyne.Data
                        Url = "/dashboard",
                        Icon = "fa fa-line-chart",
                        MenuId = 1,
-                       SubMenuId = 2,
+                       SubMenuId = 3,
                    },
                    new Pagina
                    {
@@ -793,44 +796,82 @@ namespace PortalGrupoAlyne.Data
                         MenuId = 4,
 
                     },
+                        new Pagina
+                        {
+                            Id = 41,
+                            Codigo = 31,
+                            Nome = "CI - RH",
+                            Url = "/comunicacao-interna",
+                            Icon = "fa fa-comments-o",
+                            MenuId = 1,
+                            SubMenuId = 4,
+                        }, new Pagina
+                        {
+                            Id = 42,
+                            Codigo = 31,
+                            Nome = "CI - RH",
+                            Url = "/comunicacao-interna",
+                            Icon = "fa fa-comments-o",
+                            MenuId = 5,
+
+                        },
                      new Pagina
                      {
-                         Id = 41,
-                         Codigo = 31,
-                         Nome = "Comunicação Interna",
-                         Url = "/comunicacao-interna",
+                         Id = 43,
+                         Codigo = 32,
+                         Nome = "Espaço Colaborador",
+                         Url = "/espaco-colaborador",
                          Icon = "fa fa-comments-o",
                          MenuId = 1,
                          SubMenuId = 4,
                      }, new Pagina
                      {
-                         Id = 42,
-                         Codigo = 31,
-                         Nome = "Comunicação Interna",
-                         Url = "/comunicacao-interna",
+                         Id = 44,
+                         Codigo = 32,
+                         Nome = "Espaço Colaborador",
+                         Url = "/espaco-colaborador",
                          Icon = "fa fa-comments-o",
                          MenuId = 5,
 
                      },
                      new Pagina
-                   {
-                       Id = 43,
-                       Codigo = 32,
-                       Nome = "Espaço Colaborador",
-                       Url = "/espaco-colaborador",
-                       Icon = "fa fa-comments-o",
-                       MenuId = 1,
-                       SubMenuId = 4,
-                   }, new Pagina
-                   {
-                       Id = 44,
-                       Codigo = 32,
-                       Nome = "Espaço Colaborador",
-                       Url = "/espaco-colaborador",
-                       Icon = "fa fa-comments-o",
-                       MenuId = 5,
+                     {
+                         Id = 45,
+                         Codigo = 33,
+                         Nome = "CI - Comercial",
+                         Url = "/comunicacao-interna-comercial",
+                         Icon = "fa fa-commenting",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     }, new Pagina
+                     {
+                         Id = 46,
+                         Codigo = 33,
+                         Nome = "CI - Comercial",
+                         Url = "/comunicacao-interna-comercial",
+                         Icon = "fa fa-commenting",
+                         MenuId = 5,
 
-                   }
+                     },
+                     new Pagina
+                     {
+                         Id = 47,
+                         Codigo = 34,
+                         Nome = "Comissões",
+                         Url = "/comissoes",
+                         Icon = "fa fa-money",
+                         MenuId = 1,
+                         SubMenuId = 3,
+                     }, new Pagina
+                     {
+                         Id = 48,
+                         Codigo = 34,
+                         Nome = "Comissões",
+                         Url = "/comissoes",
+                         Icon = "fa fa-money",
+                         MenuId = 4,
+
+                     }
 
           );
             modelBuilder.Entity<GrupoUsuario>().HasData(

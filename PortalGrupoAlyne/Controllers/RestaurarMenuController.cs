@@ -398,7 +398,7 @@ namespace PortalGrupoAlyne.Controllers
                       Nome = "Dashboard",
                       Url = "/dashboard",
                       Icon = "fa fa-line-chart",
-                      MenuId = 3,
+                      MenuId = 4,
                   },
                    new Pagina
                    {
@@ -408,7 +408,7 @@ namespace PortalGrupoAlyne.Controllers
                        Url = "/dashboard",
                        Icon = "fa fa-line-chart",
                        MenuId = 1,
-                       SubMenuId = 2,
+                       SubMenuId = 3,
                    },
                    new Pagina
                    {
@@ -473,7 +473,7 @@ namespace PortalGrupoAlyne.Controllers
                    {
                        Id = 41,
                        Codigo = 31,
-                       Nome = "Comunicação Interna",
+                       Nome = "CI - RH",
                        Url = "/comunicacao-interna",
                        Icon = "fa fa-comments-o",
                        MenuId = 1,
@@ -482,7 +482,7 @@ namespace PortalGrupoAlyne.Controllers
                    {
                        Id = 42,
                        Codigo = 31,
-                       Nome = "Comunicação Interna",
+                       Nome = "CI - RH",
                        Url = "/comunicacao-interna",
                        Icon = "fa fa-comments-o",
                        MenuId = 5,
@@ -505,6 +505,44 @@ namespace PortalGrupoAlyne.Controllers
                        Url = "/espaco-colaborador",
                        Icon = "fa fa-comments-o",
                        MenuId = 5,
+
+                   },
+                     new Pagina
+                   {
+                       Id = 45,
+                       Codigo = 33,
+                       Nome = "CI - Comercial",
+                       Url = "/comunicacao-interna-comercial",
+                       Icon = "fa fa-commenting",
+                       MenuId = 1,
+                       SubMenuId = 4,
+                   }, new Pagina
+                   {
+                       Id = 46,
+                       Codigo = 33,
+                       Nome = "CI - Comercial",
+                       Url = "/comunicacao-interna-comercial",
+                       Icon = "fa fa-commenting",
+                       MenuId = 5,
+
+                   },
+                     new Pagina
+                   {
+                       Id = 47,
+                       Codigo = 34,
+                       Nome = "Comissões",
+                       Url = "/comissoes",
+                       Icon = "fa fa-money",
+                       MenuId = 1,
+                       SubMenuId = 3,
+                   }, new Pagina
+                   {
+                       Id = 48,
+                       Codigo = 34,
+                       Nome = "Comissões",
+                       Url = "/comissoes",
+                       Icon = "fa fa-money",
+                       MenuId = 4,
 
                    }
 
