@@ -108,7 +108,7 @@ namespace PortalGrupoAlyne.Controllers
                 {
                     new Configuracao  {
                      Id = 1,
-                     SankhyaServidor = "http://10.0.0.254:8280/",
+                     SankhyaServidor = "http://179.185.45.146:8180/",
                      SankhyaUsuario = "ADMIN",
                      SankhyaSenha = "SYNC550V"
                     }
