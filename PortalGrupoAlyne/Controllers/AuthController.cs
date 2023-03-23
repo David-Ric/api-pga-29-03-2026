@@ -14,30 +14,33 @@ using System.Text.RegularExpressions;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
+using PortalGrupoAlyne.Infra.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+   
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
         public static Usuario user = new Usuario();
         private readonly IConfiguration _configuration;
-       // private readonly IUserService _userService;
+        // private readonly IUserService _userService;
         private readonly DataContext _context;
+        private readonly IMailService _mailService;
 
-        public AuthController(IConfiguration configuration,  DataContext context)
+        public AuthController(IConfiguration configuration, IMailService mailService, DataContext context)
         {
             _context = context;
             _configuration = configuration;
-          //  _userService = userService;
+            _mailService = mailService;
+            //  _userService = userService;
         }
-        
+
 
 
         [HttpPost("register")]
-       // [AllowAnonymous]
+        // [AllowAnonymous]
         public async Task<IActionResult> Register(UserRegisterRequest request)
         {
             if (_context.Usuario.Any(u => u.Email == request.Email))
@@ -64,15 +67,15 @@ namespace PortalGrupoAlyne.Controllers
                 Telefone = request.Telefone,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-               // VerificationToken = CreateRandomToken()
+                // VerificationToken = CreateRandomToken()
             };
 
             _context.Usuario.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { data= user.Id,
-                            grupo=user.GrupoId,
-                resposta="Usuário criado com sucesso!" });
+            return Ok(new { data = user.Id,
+                grupo = user.GrupoId,
+                resposta = "Usuário criado com sucesso!" });
         }
 
         [HttpPost("login")]
@@ -96,7 +99,7 @@ namespace PortalGrupoAlyne.Controllers
             //SetRefreshToken(refreshToken);
 
             return Ok(new
-                {
+            {
                 id = user.Id,
                 Username = user.Username,
                 NomeCompleto = user.NomeCompleto,
@@ -105,9 +108,9 @@ namespace PortalGrupoAlyne.Controllers
                 Email = user.Email,
                 ImagemURL = user.ImagemURL,
                 Telefone = user.Telefone,
-                token 
-                });
-             }
+                token
+            });
+        }
 
         [HttpPost("refresh-token")]
         [AllowAnonymous]
@@ -134,7 +137,7 @@ namespace PortalGrupoAlyne.Controllers
 
         [HttpPost("forgot-password")]
         [AllowAnonymous]
-        public async Task<IActionResult> ForgotPassword(string email)
+        public async Task<IActionResult> ForgotPassword(string email, string baseUrl)
         {
             var user = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
@@ -145,19 +148,58 @@ namespace PortalGrupoAlyne.Controllers
             user.PasswordResetToken = CreateRandomToken();
             user.ResetTokenExpires = DateTime.Now.AddDays(1);
             await _context.SaveChangesAsync();
+            //  var host = HttpContext.Request.Host;
 
-            return Ok(user.PasswordResetToken);
+            var resetPasswordLink = baseUrl + "/pga/redefinir-senha?token=" + user.PasswordResetToken;
+
+            // Cria o corpo do email
+            var emailBody = $@"<div><h2>Falta pouco para redefinir sua senha!!!<a href=""{resetPasswordLink}""> Clique aqui para redefinir...</a></h2></br></br>
+        </br></br></br></br>
+        <h2></h2></br></br>
+        <img style=""marginTop:20"" src=""https://grupoalynecosmeticos.com.br/wp-content/uploads/2021/03/grupoalyne.png"" width=""200"">";
+
+            // Envia o email
+            var emailSend = new SendMailViewModel
+            {
+                Emails = new List<string> { user.Email }.ToArray(),
+                Subject = "Redefinição de senha - Grupo Alyne",
+                Body = emailBody,
+                IsHtml = true
+            };
+
+            await _mailService.SendMailAsync(emailSend);
+
+            return Ok("Email enviado com sucesso!");
         }
+    
+
+
+        //[HttpPost("forgot-password")]
+        //[AllowAnonymous]
+        //public async Task<IActionResult> ForgotPassword(string email)
+        //{
+        //    var user = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
+        //    if (user == null)
+        //    {
+        //        return BadRequest("Usuário não encontrado.");
+        //    }
+
+        //    user.PasswordResetToken = CreateRandomToken();
+        //    user.ResetTokenExpires = DateTime.Now.AddDays(1);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok(user.PasswordResetToken);
+        //}
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
         public async Task<IActionResult> ResettPassword(ResetPasswordRequest request)
         {
             var user = await _context.Usuario.FirstOrDefaultAsync(u => u.PasswordResetToken == request.Token);
-            if (user == null || user.ResetTokenExpires < DateTime.Now)
-            {
-                return BadRequest("Token inválido.");
-            }
+            //if (user == null || user.ResetTokenExpires < DateTime.Now)
+            //{
+            //    return BadRequest("Token inválido.");
+            //}
 
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 

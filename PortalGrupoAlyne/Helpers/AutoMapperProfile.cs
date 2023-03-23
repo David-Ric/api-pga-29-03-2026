@@ -41,6 +41,7 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<PermissaoRH, PermissaoRhDto>().ReverseMap();
             CreateMap<ComunicadoComercial, ComunicadoComercialDto>().ReverseMap();
             CreateMap<ComunicadoLido, ComunicadoLidoDto>().ReverseMap();
+            CreateMap<Logs, LogsDto>().ReverseMap();
 
         }
     }

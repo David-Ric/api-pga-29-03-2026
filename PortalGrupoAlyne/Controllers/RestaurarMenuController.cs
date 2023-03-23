@@ -64,6 +64,28 @@ namespace PortalGrupoAlyne.Controllers
                 new Empresa { Id = 2, Descricao = "Distribuidora"} };
                     _context.Empresa.AddRange(novaEmpresa2);
                 }
+                
+                var novoLog = new List<Logs> {
+                new Logs { Id = 1, VersaoApi = "1.0.0", AtualizadoEm = DateTime.Now },
+                };
+                var logsNoBanco = await _context.Logs.ToListAsync();
+                foreach (var log in novoLog)
+                {
+                    var existeLog = await _context.Logs.AnyAsync(l => l.Id == log.Id);
+
+                    if (!existeLog)
+                    {
+                        _context.Logs.Add(log);
+                    }
+                    else
+                    {
+                       
+                    }
+                }
+
+              //  await _context.SaveChangesAsync();
+
+
 
                 var grupoUsuario = await _context.GrupoUsuario
                 .FindAsync(1);

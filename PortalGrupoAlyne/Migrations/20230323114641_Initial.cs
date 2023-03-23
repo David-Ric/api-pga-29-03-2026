@@ -34,6 +34,41 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ComunicadoComercial",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Titulo = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Texto = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    GrupoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComunicadoComercial", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "ComunicadoLido",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Titulo = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LidoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    UsuarioID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComunicadoLido", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Concorrente",
                 columns: table => new
                 {
@@ -137,6 +172,22 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VersaoApi = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    AtualizadoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Menu",
                 columns: table => new
                 {
@@ -172,6 +223,56 @@ namespace PortalGrupoAlyne.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PaginaBase", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PermissaoRH",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    GrupoId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PermissaoRH", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "PreferenciasUsuario",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Display = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico1 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico2 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico3 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico4 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico5 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico6 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico7 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico8 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico9 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Grafico10 = table.Column<string>(type: "varchar(2)", maxLength: 2, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UsuarioID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PreferenciasUsuario", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -528,6 +629,28 @@ namespace PortalGrupoAlyne.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "PostLido",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Titulo = table.Column<string>(type: "varchar(60)", maxLength: 60, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LidoEm = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    UsuarioID = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostLido", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PostLido_Usuario_UsuarioID",
+                        column: x => x.UsuarioID,
+                        principalTable: "Usuario",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Pagina",
                 columns: table => new
                 {
@@ -848,10 +971,14 @@ namespace PortalGrupoAlyne.Migrations
                     { 28, 10, "fa fa-users", 5, "Grupo de Usuarios", null, "/cadastro-grupo-usuarios" },
                     { 31, 24, "fa fa-external-link-square", 5, "Receber dados Sankhya", null, "" },
                     { 32, 26, "fa fa-refresh", 10, "Restaurar dados sistema", null, "" },
-                    { 33, 27, "fa fa-line-chart", 3, "Dashboard", null, "/dashboard" },
+                    { 33, 27, "fa fa-line-chart", 4, "Dashboard", null, "/dashboard" },
                     { 36, 28, "fa fa-cogs", 10, "Configurações Avançadas", null, "/configuracoes" },
                     { 38, 29, "fa fa-file-word-o", 4, "Relatório Vendedor", null, "/relatorio-vendedor" },
-                    { 40, 30, "fa fa-file-o", 4, "Acompanhamento de Pedidos", null, "/acompanhamento-de-pedidos" }
+                    { 40, 30, "fa fa-file-o", 4, "Acompanhamento de Pedidos", null, "/acompanhamento-de-pedidos" },
+                    { 42, 31, "fa fa-comments-o", 5, "CI - RH", null, "/comunicacao-interna" },
+                    { 44, 32, "fa fa-comments-o", 5, "Espaço Colaborador", null, "/espaco-colaborador" },
+                    { 46, 33, "fa fa-commenting", 5, "CI - Comercial", null, "/comunicacao-interna-comercial" },
+                    { 48, 34, "fa fa-money", 4, "Comissões", null, "/comissoes" }
                 });
 
             migrationBuilder.InsertData(
@@ -869,7 +996,7 @@ namespace PortalGrupoAlyne.Migrations
             migrationBuilder.InsertData(
                 table: "Usuario",
                 columns: new[] { "Id", "Email", "Funcao", "GrupoId", "Imagem", "ImagemURL", "NomeCompleto", "PasswordHash", "PasswordResetToken", "PasswordSalt", "PrimeiroLoginAdm", "RefreshToken", "ResetTokenExpires", "Status", "Telefone", "TokenCreated", "TokenExpires", "Username", "VerificationToken", "VerifiedAt" },
-                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, new byte[0], "", "Administrador Grupo Alyne", new byte[] { 2, 45, 218, 76, 77, 54, 230, 174, 190, 178, 182, 173, 235, 121, 225, 189, 238, 64, 229, 226, 162, 1, 22, 41, 56, 191, 242, 212, 68, 173, 148, 15, 97, 231, 59, 216, 117, 88, 192, 144, 172, 20, 193, 226, 121, 135, 201, 209, 218, 121, 46, 121, 53, 111, 250, 140, 155, 166, 82, 103, 251, 67, 39, 186 }, null, new byte[] { 59, 47, 220, 208, 105, 21, 194, 255, 208, 238, 185, 68, 240, 107, 213, 72, 227, 59, 250, 123, 217, 251, 247, 90, 148, 159, 249, 206, 198, 207, 175, 220 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
+                values: new object[] { 1, "nfe@grupoalyne.com.br", "Administrador do Sistema", 1, new byte[0], "", "Administrador Grupo Alyne", new byte[] { 182, 245, 153, 41, 252, 215, 140, 112, 158, 132, 250, 133, 29, 253, 107, 94, 210, 10, 145, 205, 75, 96, 19, 184, 69, 31, 98, 214, 139, 120, 155, 0, 84, 90, 87, 105, 153, 165, 232, 247, 107, 80, 211, 160, 124, 220, 220, 49, 94, 124, 155, 170, 65, 45, 195, 209, 77, 107, 57, 3, 0, 192, 20, 31 }, null, new byte[] { 255, 137, 71, 136, 142, 216, 112, 147, 92, 148, 94, 254, 125, 144, 0, 95, 129, 98, 61, 79, 246, 226, 235, 131, 218, 110, 199, 90, 193, 47, 37, 37 }, true, "", null, "1", "(85) 3521-8888", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "admin", null, null });
 
             migrationBuilder.InsertData(
                 table: "Pagina",
@@ -890,10 +1017,14 @@ namespace PortalGrupoAlyne.Migrations
                     { 13, 10, "fa fa-users", 1, "Grupo de Usuarios", 4, "/cadastro-grupo-usuarios" },
                     { 16, 24, "fa fa-external-link-square", 1, "Receber dados Sankhya", 4, "" },
                     { 29, 26, "fa fa-refresh", 1, "Restaurar dados sistema", 10, "" },
-                    { 34, 27, "fa fa-line-chart", 1, "Dashboard", 2, "/dashboard" },
+                    { 34, 27, "fa fa-line-chart", 1, "Dashboard", 3, "/dashboard" },
                     { 35, 28, "fa fa-cogs", 1, "Configurações Avançadas", 10, "/configuracoes" },
                     { 37, 29, "fa fa-file-word-o", 1, "Relatório Vendedor", 3, "/relatorio-vendedor" },
-                    { 39, 30, "fa fa-file-o", 1, "Acompanhamento de Pedidos", 3, "/acompanhamento-de-pedidos" }
+                    { 39, 30, "fa fa-file-o", 1, "Acompanhamento de Pedidos", 3, "/acompanhamento-de-pedidos" },
+                    { 41, 31, "fa fa-comments-o", 1, "CI - RH", 4, "/comunicacao-interna" },
+                    { 43, 32, "fa fa-comments-o", 1, "Espaço Colaborador", 4, "/espaco-colaborador" },
+                    { 45, 33, "fa fa-commenting", 1, "CI - Comercial", 4, "/comunicacao-interna-comercial" },
+                    { 47, 34, "fa fa-money", 1, "Comissões", 3, "/comissoes" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -977,6 +1108,11 @@ namespace PortalGrupoAlyne.Migrations
                 column: "VendedorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_PostLido_UsuarioID",
+                table: "PostLido",
+                column: "UsuarioID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Produto_GrupoProdutoId",
                 table: "Produto",
                 column: "GrupoProdutoId");
@@ -1036,6 +1172,12 @@ namespace PortalGrupoAlyne.Migrations
                 name: "Comunicado");
 
             migrationBuilder.DropTable(
+                name: "ComunicadoComercial");
+
+            migrationBuilder.DropTable(
+                name: "ComunicadoLido");
+
+            migrationBuilder.DropTable(
                 name: "Concorrente");
 
             migrationBuilder.DropTable(
@@ -1051,6 +1193,9 @@ namespace PortalGrupoAlyne.Migrations
                 name: "ItemTabela");
 
             migrationBuilder.DropTable(
+                name: "Logs");
+
+            migrationBuilder.DropTable(
                 name: "Pagina");
 
             migrationBuilder.DropTable(
@@ -1058,6 +1203,15 @@ namespace PortalGrupoAlyne.Migrations
 
             migrationBuilder.DropTable(
                 name: "PaginaPermissao");
+
+            migrationBuilder.DropTable(
+                name: "PermissaoRH");
+
+            migrationBuilder.DropTable(
+                name: "PostLido");
+
+            migrationBuilder.DropTable(
+                name: "PreferenciasUsuario");
 
             migrationBuilder.DropTable(
                 name: "ProdutoConcorrente");

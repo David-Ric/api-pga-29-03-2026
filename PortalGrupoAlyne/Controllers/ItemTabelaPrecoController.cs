@@ -27,24 +27,48 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet]
-
-        public async Task<IActionResult> GetAll([FromServices] DataContext context,
-           [FromQuery] int pagina,
-            [FromQuery] int totalpagina
-           )
+        public async Task<IActionResult> GetAll(
+    [FromServices] DataContext context,
+    [FromQuery] int pagina,
+    [FromQuery] int totalpagina
+)
         {
-
             var total = await context.ItemTabela.CountAsync();
-            var data = await context.ItemTabela.AsNoTracking().Include(i => i.Produtos).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+            var data = await context.ItemTabela
+                .AsNoTracking()
+                .Include(i => i.Produtos)
+                .OrderBy(p => p.Produtos.Nome)
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina)
+                .ToListAsync();
 
             return Ok(new
             {
                 total,
-                data = data
+                data
             });
         }
 
-        
+        //[HttpGet]
+
+        //public async Task<IActionResult> GetAll([FromServices] DataContext context,
+        //   [FromQuery] int pagina,
+        //    [FromQuery] int totalpagina
+        //   )
+        //{
+
+        //    var total = await context.ItemTabela.CountAsync();
+        //    var data = await context.ItemTabela.AsNoTracking().Include(i => i.Produtos).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+        //}
+
+
 
         [HttpGet("codTabela/codProduto")]
         public async Task<IActionResult> GetAllFilteritemcodProd([FromServices] DataContext context,
@@ -164,7 +188,7 @@ namespace PortalGrupoAlyne.Controllers
             var data = await context.ItemTabela
                 .AsNoTracking()
               .Where(e => (e.TabelaPrecoId == codTabela))
-                .OrderBy(e => e.Id).Include(e => e.Produtos)
+                .OrderBy(p => p.Produtos.Nome).Include(e => e.Produtos)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

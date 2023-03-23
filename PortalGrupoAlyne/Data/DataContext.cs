@@ -1,5 +1,4 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using System.Security.Cryptography;
@@ -14,71 +13,72 @@ namespace PortalGrupoAlyne.Data
         {
 
         }
-       
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
-        //optionsBuilder
-        //    .UseMySql("server=localhost;database=GrupoAlyne;user=root;password=root");
-    }
-    public DbSet<Usuario> Usuario => Set<Usuario>();
-    public DbSet<GrupoProduto> GrupoProduto { get; set; }
-   
-    public DbSet<Vendedor> Vendedor { get; set; }
 
-    public DbSet<Produto> Produto { get; set; }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            //optionsBuilder
+            //    .UseMySql("server=localhost;database=GrupoAlyne;user=root;password=root");
+        }
+        public DbSet<Usuario> Usuario => Set<Usuario>();
+        public DbSet<GrupoProduto> GrupoProduto { get; set; }
 
-    public DbSet<Concorrente> Concorrente { get; set; }
+        public DbSet<Vendedor> Vendedor { get; set; }
 
-    public DbSet<ProdutoConcorrente> ProdutoConcorrente { get; set; }
+        public DbSet<Produto> Produto { get; set; }
 
-    public DbSet<Parceiro> Parceiro { get; set;}
+        public DbSet<Concorrente> Concorrente { get; set; }
 
-    public DbSet<TipoNegociacao> TipoNegociacao { get;set; }
+        public DbSet<ProdutoConcorrente> ProdutoConcorrente { get; set; }
 
-    public DbSet<TabelaPreco> TabelaPreco { get;set; }
+        public DbSet<Parceiro> Parceiro { get; set; }
 
-    public DbSet<ItemTabela> ItemTabela { get; set; }
-    public DbSet<Empresa> Empresa { get; set; }
+        public DbSet<TipoNegociacao> TipoNegociacao { get; set; }
+
+        public DbSet<TabelaPreco> TabelaPreco { get; set; }
+
+        public DbSet<ItemTabela> ItemTabela { get; set; }
+        public DbSet<Empresa> Empresa { get; set; }
 
 
 
-    public DbSet<Pagina> Pagina { get; set; }
-    public DbSet<PaginaBase> PaginaBase { get; set; }
-    
-    public DbSet<Menu> Menu { get; set; }
+        public DbSet<Pagina> Pagina { get; set; }
+        public DbSet<PaginaBase> PaginaBase { get; set; }
 
-    public DbSet<SubMenu> SubMenu { get; set; }
+        public DbSet<Menu> Menu { get; set; }
 
-    public DbSet<GrupoUsuario> GrupoUsuario { get; set;}
+        public DbSet<SubMenu> SubMenu { get; set; }
 
-    public DbSet<MenuPermissao> MenuPermissao { get; set; }
+        public DbSet<GrupoUsuario> GrupoUsuario { get; set; }
 
-    public DbSet<SubMenuPermissao> SubMenuPermissao { get; set; }
+        public DbSet<MenuPermissao> MenuPermissao { get; set; }
 
-    public DbSet<PaginaPermissao> PaginaPermissao { get; set;}
+        public DbSet<SubMenuPermissao> SubMenuPermissao { get; set; }
 
-    public DbSet<TabelaPrecoParceiro> TabelaPrecoParceiro { get; set; }
+        public DbSet<PaginaPermissao> PaginaPermissao { get; set; }
 
-    public DbSet<CabecalhoPedidoVenda> CabecalhoPedidoVenda { get; set; }
+        public DbSet<TabelaPrecoParceiro> TabelaPrecoParceiro { get; set; }
 
-    public DbSet<ItemPedidoVenda> ItemPedidoVenda { get; set; }
-    
-    public DbSet<Configuracao> Configuracao { get; set; }
+        public DbSet<CabecalhoPedidoVenda> CabecalhoPedidoVenda { get; set; }
 
-    public DbSet<IntegracaoSankhya> IntegracaoSankhya { get; set; }
+        public DbSet<ItemPedidoVenda> ItemPedidoVenda { get; set; }
 
-    public DbSet<Titulo> Titulo { get; set; }
+        public DbSet<Configuracao> Configuracao { get; set; }
 
-    public DbSet<Comunicado> Comunicado { get; set; }
-    public DbSet<PostLido> PostLido { get; set; }
+        public DbSet<IntegracaoSankhya> IntegracaoSankhya { get; set; }
 
-    public DbSet<PreferenciasUsuario> PreferenciasUsuario { get; set; }
+        public DbSet<Titulo> Titulo { get; set; }
 
-     public DbSet<PermissaoRH> PermissaoRH { get; set; }
+        public DbSet<Comunicado> Comunicado { get; set; }
+        public DbSet<PostLido> PostLido { get; set; }
+
+        public DbSet<PreferenciasUsuario> PreferenciasUsuario { get; set; }
+
+        public DbSet<PermissaoRH> PermissaoRH { get; set; }
 
         public DbSet<ComunicadoComercial> ComunicadoComercial { get; set; }
         public DbSet<ComunicadoLido> ComunicadoLido { get; set; }
+        public DbSet<Logs> Logs { get; set; }
 
 
 
@@ -121,14 +121,14 @@ namespace PortalGrupoAlyne.Data
                     PrimeiroLoginAdm = true
                 }
             );
-            
+
 
             modelBuilder.Entity<Empresa>().HasData(
                new Empresa
                {
                    Id = 1,
                    Descricao = "Industria"
-                   
+
                },
                new Empresa
                {
@@ -141,10 +141,10 @@ namespace PortalGrupoAlyne.Data
               new PaginaBase
               {
                   Id = 1,
-                 Codigo = 1,
-                 Nome = "Administrativo",
-                 Url = "",
-                 Icon = "fa fa-bank"
+                  Codigo = 1,
+                  Nome = "Administrativo",
+                  Url = "",
+                  Icon = "fa fa-bank"
               },
               new PaginaBase
               {
@@ -290,7 +290,7 @@ namespace PortalGrupoAlyne.Data
                      Url = "/tabela-de-preco",
                      Icon = "fa fa-calculator"
                  },
-                 
+
                  new PaginaBase
                  {
                      Id = 21,
@@ -355,7 +355,7 @@ namespace PortalGrupoAlyne.Data
                    Nome = "Movimentos",
                    Icon = "fa fa-map-o",
 
-               }, 
+               },
                new Menu
                {
                    Id = 4,
@@ -375,12 +375,12 @@ namespace PortalGrupoAlyne.Data
 
                 },
                 new Menu
-                { 
-                    Id = 10, 
-                    Codigo = 25, 
-                    Ordem = 0, 
-                    Nome = "Configurações", 
-                    Icon = "fa fa-cogs" 
+                {
+                    Id = 10,
+                    Codigo = 25,
+                    Ordem = 0,
+                    Nome = "Configurações",
+                    Icon = "fa fa-cogs"
                 }
           );
 
@@ -392,7 +392,7 @@ namespace PortalGrupoAlyne.Data
                  Ordem = 0,
                  Nome = "Cadastros",
                  Icon = "fa fa-address-card",
-                 MenuId= 1
+                 MenuId = 1
              },
               new SubMenu
               {
@@ -440,7 +440,7 @@ namespace PortalGrupoAlyne.Data
                      Url = "/cadastro-tipo-empresa",
                      Icon = "fa fa-briefcase",
                      MenuId = 1,
-                     SubMenuId=1,
+                     SubMenuId = 1,
 
 
                  },
@@ -513,7 +513,7 @@ namespace PortalGrupoAlyne.Data
                       Icon = "fa fa-user-times",
                       MenuId = 1,
                       SubMenuId = 1,
-                  }, 
+                  },
                   new Pagina
                   {
                       Id = 9,
@@ -524,7 +524,7 @@ namespace PortalGrupoAlyne.Data
                       MenuId = 1,
                       SubMenuId = 1,
                   },
-                
+
                   new Pagina
                   {
                       Id = 11,
@@ -555,7 +555,7 @@ namespace PortalGrupoAlyne.Data
                    MenuId = 1,
                    SubMenuId = 4,
                },
-                 
+
                   new Pagina
                   {
                       Id = 16,
@@ -567,7 +567,7 @@ namespace PortalGrupoAlyne.Data
                       SubMenuId = 4,
 
                   },
-                   
+
                     new Pagina
                     {
                         Id = 29,
@@ -597,7 +597,7 @@ namespace PortalGrupoAlyne.Data
                       Url = "/cadastro-vendedores",
                       Icon = "fa fa-user-plus",
                       MenuId = 2,
-                      
+
 
                   }, new Pagina
                   {
@@ -607,7 +607,7 @@ namespace PortalGrupoAlyne.Data
                       Url = "/cadastro-tipo-negociacao",
                       Icon = "fa fa-credit-card",
                       MenuId = 2,
-                      
+
                   },
                   new Pagina
                   {
@@ -673,7 +673,7 @@ namespace PortalGrupoAlyne.Data
                       Url = "/pedido_vendas",
                       Icon = "fa fa-line-chart",
                       MenuId = 3,
-                      
+
                   },
               new Pagina
               {
@@ -683,7 +683,7 @@ namespace PortalGrupoAlyne.Data
                   Url = "/cadastro-usuarios",
                   Icon = "fa fa-user-circle-o",
                   MenuId = 5,
-                  
+
               },
                new Pagina
                {
@@ -693,9 +693,9 @@ namespace PortalGrupoAlyne.Data
                    Url = "/cadastro-grupo-usuarios",
                    Icon = "fa fa-users",
                    MenuId = 5,
-                   
+
                },
-                 
+
                   new Pagina
                   {
                       Id = 31,
@@ -704,7 +704,7 @@ namespace PortalGrupoAlyne.Data
                       Url = "",
                       Icon = "fa fa-external-link-square",
                       MenuId = 5,
-                     
+
 
                   },
                   new Pagina

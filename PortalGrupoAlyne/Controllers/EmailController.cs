@@ -17,8 +17,8 @@ namespace PortalGrupoAlyne.Controllers
         [HttpPost]
         public IActionResult SendMail([FromBody] SendMailViewModel sendMailViewModel)
         {
-            _mailService.SendMail(sendMailViewModel.Emails, sendMailViewModel.Subject, sendMailViewModel.Body,
-                sendMailViewModel.IsHtml);
+            //_mailService.SendMail(sendMailViewModel.Emails, sendMailViewModel.Subject, sendMailViewModel.Body,
+            //    sendMailViewModel.IsHtml);
 
             return Ok("portalgrupoalyne");
         }

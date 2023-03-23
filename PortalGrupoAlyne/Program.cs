@@ -158,7 +158,6 @@ namespace PortalGrupoAlyne
                               .AllowAnyOrigin());
 
 
-
             app.MapControllers();
 
             app.Run();
@@ -174,6 +173,16 @@ namespace PortalGrupoAlyne
         //             serverOptions.ListenAnyIP(443, listenOptions =>
         //             {
         //                 listenOptions.UseHttps("/etc/letsencrypt/live/pga.cigel.com.br/fullchain.pem", null);
+        //             });
+        //         });
+        //         webBuilder.ConfigureServices(services =>
+        //         {
+        //             services.AddCors(options =>
+        //             {
+        //                 options.AddDefaultPolicy(builder =>
+        //                 {
+        //                     builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod();
+        //                 });
         //             });
         //         });
         //     });
