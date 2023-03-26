@@ -50,6 +50,7 @@ namespace PortalGrupoAlyne.Model
         public IEnumerable<SubMenuPermissao>? SubMenuPermissao { get; set; }
         public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
         public IEnumerable<PostLido>? PostLido { get; set; }
+        public IEnumerable<ComunicadoLido>? ComunicadoLido { get; set; }
 
 
     }

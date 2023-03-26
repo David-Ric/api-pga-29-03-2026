@@ -109,5 +109,19 @@ namespace PortalGrupoAlyne.Controllers
 
             return Ok("Pedido de Venda excluído com sucesso!");
         }
+
+        [HttpDelete("palmpv/{palmpv}")]
+        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> DeleteByPalMPV(string palmpv)
+        {
+            var pedido = await _context.CabecalhoPedidoVenda.FirstOrDefaultAsync(p => p.PalMPV == palmpv);
+            if (pedido == null)
+                return BadRequest("Pedido não encontrado");
+
+            _context.CabecalhoPedidoVenda.Remove(pedido);
+            await _context.SaveChangesAsync();
+
+            return Ok("Pedido de Venda excluído com sucesso!");
+        }
+
     }
 }

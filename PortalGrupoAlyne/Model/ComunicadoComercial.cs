@@ -8,7 +8,7 @@ namespace PortalGrupoAlyne.Model
         public int Id { get; set; }
         public string? Titulo { get; set; }
         public string? Texto { get; set; }
-
         public int? GrupoId { get; set; }
+        public DateTime? CriadoEm { get; set; }
     }
 }

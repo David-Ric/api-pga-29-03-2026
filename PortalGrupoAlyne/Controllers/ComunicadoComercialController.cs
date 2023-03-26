@@ -33,7 +33,11 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.ComunicadoComercial.CountAsync();
-            var data = await context.ComunicadoComercial.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.ComunicadoComercial
+                .AsNoTracking()
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina)
+                .ToListAsync();
 
             return Ok(new
             {
@@ -109,26 +113,34 @@ namespace PortalGrupoAlyne.Controllers
 
         }
 
-        [HttpPost]
-        public IActionResult Post([FromBody] IEnumerable<ComunicadoComercialDto> postLidosDTO)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById([FromServices] DataContext context, int id)
         {
-            try
+            var comunicado = await context.ComunicadoComercial
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (comunicado == null)
             {
-                var postLidos = _mapper.Map<IEnumerable<ComunicadoComercial>>(postLidosDTO);
-
-                foreach (var postLido in postLidos)
-                {
-                    _context.ComunicadoComercial.Add(postLido);
-                }
-
-                _context.SaveChanges();
-
-                return Ok("Comunicado adicionado com sucesso!");
+                return NotFound();
             }
-            catch (Exception ex)
+
+            return Ok(comunicado);
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult<List<ComunicadoComercial>>> AddComunicado(ComunicadoComercial comunicado)
+        {
+
+            if (_context.ComunicadoComercial.Any(u => u.Id == comunicado.Id))
             {
-                return BadRequest($"Erro ao adicionar Posts Lidos: {ex.Message}");
+                return BadRequest("Este comunicado ja existe na base de dados.");
             }
+            _context.ComunicadoComercial.Add(comunicado);
+            await _context.SaveChangesAsync();
+
+            return Ok((new { message = "Comunicado criado com sucesso." }));
         }
 
         [HttpPut("{id}")]

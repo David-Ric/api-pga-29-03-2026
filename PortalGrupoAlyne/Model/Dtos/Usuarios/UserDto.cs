@@ -39,5 +39,7 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
 
         public IEnumerable<PostLido>? PostLido { get; set; }
+
+        public IEnumerable<ComunicadoLido>? ComunicadoLido { get; set; }
     }
 }

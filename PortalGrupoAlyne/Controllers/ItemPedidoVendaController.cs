@@ -192,5 +192,20 @@ namespace PortalGrupoAlyne.Controllers
 
             return Ok("Item do pedido de venda excluído com sucesso!");
         }
+
+        [HttpDelete("palmpv/{palmpv}")]
+        public async Task<ActionResult<List<ItemPedidoVenda>>> DeleteByPalMPV(string palmpv)
+        {
+            var itens = await _context.ItemPedidoVenda.Where(i => i.PalMPV == palmpv).ToListAsync();
+            if (itens.Count == 0)
+                return BadRequest("Itens do pedido de venda não encontrados");
+
+            _context.ItemPedidoVenda.RemoveRange(itens);
+            await _context.SaveChangesAsync();
+
+            return Ok("Itens do pedido de venda excluídos com sucesso!");
+        }
+
+
     }
 }
