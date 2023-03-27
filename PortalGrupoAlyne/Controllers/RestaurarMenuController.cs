@@ -67,6 +67,7 @@ namespace PortalGrupoAlyne.Controllers
                 
                 var novoLog = new List<Logs> {
                 new Logs { Id = 1, VersaoApi = "1.0.0", AtualizadoEm = DateTime.Now },
+                 new Logs { Id = 2, VersaoApi = "1.0.1", AtualizadoEm = DateTime.Now },
                 };
                 var logsNoBanco = await _context.Logs.ToListAsync();
                 foreach (var log in novoLog)
