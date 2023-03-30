@@ -25,7 +25,9 @@ namespace PortalGrupoAlyne.Persist
                 .Include("PaginaPermissao")
                 .Include("GrupoUsuario")
                 .Include("PostLido")
-                .Include("ComunicadoLido"); 
+                .Include("ComunicadoLido")
+                .Include("MensagensRecebidas")
+                .Include("MensagensEnviadas");
 
             query = query.AsNoTracking().OrderBy(e => e.Id).Where(e => e.Id == id);
 

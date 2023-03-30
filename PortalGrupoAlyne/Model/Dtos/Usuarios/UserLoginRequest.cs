@@ -9,5 +9,7 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
 
         [Required]
         public string Password { get; set; } = string.Empty;
+
+        public bool? Conectado { get; set; }
     }
 }

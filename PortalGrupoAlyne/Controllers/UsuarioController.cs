@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PortalGrupoAlyne.Extension;
 using PortalGrupoAlyne.Extension.Helpers;
+using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using PortalGrupoAlyne.Services;
 using static System.Net.WebRequestMethods;
@@ -192,6 +193,93 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
 
+        [HttpGet("conectados")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosConectados()
+        {
+            var usuariosConectados = await _context.Usuario.OrderBy(u => u.NomeCompleto).ToListAsync();
+
+            if (usuariosConectados == null || !usuariosConectados.Any())
+            {
+                return NotFound();
+            }
+
+            var usuariosDTO = new List<UserDto>();
+
+            foreach (var usuario in usuariosConectados)
+            {
+                var imagemBase64 = Convert.ToBase64String(usuario.Imagem);
+                usuariosDTO.Add(new UserDto
+                {
+                    Id = usuario.Id,
+                    Username = usuario.Username,
+                    NomeCompleto = usuario.NomeCompleto,
+                    ImagemURL = usuario.ImagemURL,
+                    Conectado = usuario.Conectado,
+                    ImagemBase64 = imagemBase64,
+
+                });
+            }
+
+            return usuariosDTO;
+        }
+
+
+        [HttpGet("por-nome/{nome}")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosPorNome(string nome)
+        {
+            var usuarios = await _context.Usuario
+                .Where(u => u.NomeCompleto.ToLower().Contains(nome.ToLower()))
+                .ToListAsync();
+
+            if (usuarios == null || !usuarios.Any())
+            {
+                return NotFound();
+            }
+
+            var usuariosDTO = new List<UserDto>();
+
+            foreach (var usuario in usuarios)
+            {
+                var imagemBase64 = Convert.ToBase64String(usuario.Imagem);
+                usuariosDTO.Add(new UserDto
+                {
+                    Id = usuario.Id,
+                    Username = usuario.Username,
+                    NomeCompleto = usuario.NomeCompleto,
+                    ImagemURL = usuario.ImagemURL,
+                    Conectado = usuario.Conectado,
+                    ImagemBase64 = imagemBase64,
+                });
+            }
+
+            return usuariosDTO;
+        }
+
+
+        [HttpGet("conectado/{id}")]
+        public async Task<ActionResult<UserDto>> GetUserById(int id)
+        {
+            var usuario = await _context.Usuario.FindAsync(id);
+
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var imagemBase64 = Convert.ToBase64String(usuario.Imagem);
+
+            var usuarioDTO = new UserDto
+            {
+                Id = usuario.Id,
+                Username = usuario.Username,
+                NomeCompleto = usuario.NomeCompleto,
+                ImagemURL = usuario.ImagemURL,
+                Conectado = usuario.Conectado,
+                ImagemBase64 = imagemBase64,
+            };
+
+            return usuarioDTO;
+        }
 
 
 

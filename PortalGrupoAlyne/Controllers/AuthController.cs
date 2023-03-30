@@ -93,6 +93,10 @@ namespace PortalGrupoAlyne.Controllers
                 return BadRequest("Usuario ou senha incorretos.");
             }
 
+
+            user.Conectado = true;
+            await _context.SaveChangesAsync();
+
             string token = CreateToken(user);
 
             //var refreshToken = GenerateRefreshToken();
@@ -108,9 +112,26 @@ namespace PortalGrupoAlyne.Controllers
                 Email = user.Email,
                 ImagemURL = user.ImagemURL,
                 Telefone = user.Telefone,
+                logado = user.Conectado,
                 token
             });
         }
+
+        [HttpPost("logout/{id}")]
+        public async Task<ActionResult> Logout(int id)
+        {
+            var user = await _context.Usuario.FindAsync(id);
+            if (user == null)
+            {
+                return BadRequest("Usuário não encontrado.");
+            }
+
+            user.Conectado = false;
+            await _context.SaveChangesAsync(); //salva as alterações no banco de dados
+
+            return Ok();
+        }
+
 
         [HttpPost("refresh-token")]
         [AllowAnonymous]

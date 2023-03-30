@@ -51,6 +51,9 @@ namespace PortalGrupoAlyne.Model
         public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
         public IEnumerable<PostLido>? PostLido { get; set; }
         public IEnumerable<ComunicadoLido>? ComunicadoLido { get; set; }
+        public bool? Conectado { get; set; }
+        public List<Message> MensagensRecebidas { get; set; }
+        public List<Message> MensagensEnviadas { get; set; }
 
 
     }

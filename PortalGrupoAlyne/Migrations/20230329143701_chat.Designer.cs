@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230329143701_chat")]
+    partial class chat
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -583,11 +585,13 @@ namespace PortalGrupoAlyne.Migrations
                     b.Property<bool>("Lida")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.Property<int?>("UsuarioId")
                         .HasColumnType("int");
@@ -1930,8 +1934,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 72, 94, 117, 155, 246, 160, 21, 166, 46, 105, 254, 157, 178, 110, 148, 128, 192, 87, 138, 81, 232, 19, 228, 56, 182, 203, 168, 211, 41, 183, 144, 65, 166, 117, 195, 157, 183, 116, 176, 241, 226, 106, 36, 204, 240, 94, 212, 83, 103, 110, 144, 81, 30, 124, 233, 52, 208, 246, 128, 189, 198, 124, 84, 24 },
-                            PasswordSalt = new byte[] { 169, 87, 41, 254, 206, 108, 147, 10, 110, 84, 149, 173, 113, 9, 64, 239, 126, 197, 152, 132, 176, 8, 26, 12, 1, 129, 55, 92, 33, 115, 77, 181 },
+                            PasswordHash = new byte[] { 69, 239, 34, 245, 78, 19, 100, 150, 227, 182, 90, 27, 120, 136, 64, 17, 230, 163, 203, 57, 178, 15, 195, 12, 152, 96, 185, 34, 216, 149, 153, 156, 162, 214, 221, 19, 15, 75, 73, 104, 244, 173, 37, 157, 41, 198, 111, 98, 227, 55, 125, 114, 250, 105, 41, 46, 175, 52, 158, 145, 211, 187, 247, 102 },
+                            PasswordSalt = new byte[] { 3, 214, 246, 164, 46, 71, 12, 180, 122, 16, 215, 177, 183, 231, 161, 124, 210, 33, 231, 9, 163, 54, 197, 73, 133, 216, 238, 227, 24, 40, 106, 215 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

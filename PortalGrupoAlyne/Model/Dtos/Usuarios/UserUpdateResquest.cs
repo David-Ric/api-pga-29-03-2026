@@ -14,14 +14,15 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         [ForeignKey("GrupoUsuario")]
         public int? GrupoId { get; set; }
 
-        public GrupoUsuario? GrupoUsuario { get; set; }
+        //public GrupoUsuario? GrupoUsuario { get; set; }
         public string? Funcao { get; set; }
         public string? Telefone { get; set; }
         public string? ImagemURL { get; set; }
         public bool? PrimeiroLoginAdm { get; set; }
-        public IEnumerable<MenuPermissao>? MenuPermissao { get; set; }
-        public IEnumerable<SubMenuPermissao>? SubMenuPermissao { get; set; }
-        public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
+        public bool? Conectado { get; set; }
+        //public IEnumerable<MenuPermissao>? MenuPermissao { get; set; }
+        //public IEnumerable<SubMenuPermissao>? SubMenuPermissao { get; set; }
+        //public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
 
     }
 }

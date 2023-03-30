@@ -1,4 +1,3 @@
-
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.OpenApi.Models;
 global using PortalGrupoAlyne.Model;

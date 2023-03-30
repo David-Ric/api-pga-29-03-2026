@@ -41,5 +41,10 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public IEnumerable<PostLido>? PostLido { get; set; }
 
         public IEnumerable<ComunicadoLido>? ComunicadoLido { get; set; }
+
+        public bool? Conectado { get; set; }
+        public string? ImagemBase64 { get; set; }
+        public List<Message> MensagensRecebidas { get; set; }
+        public List<Message> MensagensEnviadas { get; set; }
     }
 }

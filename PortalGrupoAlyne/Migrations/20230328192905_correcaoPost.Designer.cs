@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230328192905_correcaoPost")]
+    partial class correcaoPost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -565,43 +567,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("MenuPermissao");
-                });
-
-            modelBuilder.Entity("PortalGrupoAlyne.Model.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Body")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<bool>("Lida")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UsuarioId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UsuarioId1")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.HasIndex("UsuarioId1");
-
-                    b.ToTable("Message");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Pagina", b =>
@@ -1840,9 +1805,6 @@ namespace PortalGrupoAlyne.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<bool?>("Conectado")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(300)
@@ -1930,8 +1892,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 72, 94, 117, 155, 246, 160, 21, 166, 46, 105, 254, 157, 178, 110, 148, 128, 192, 87, 138, 81, 232, 19, 228, 56, 182, 203, 168, 211, 41, 183, 144, 65, 166, 117, 195, 157, 183, 116, 176, 241, 226, 106, 36, 204, 240, 94, 212, 83, 103, 110, 144, 81, 30, 124, 233, 52, 208, 246, 128, 189, 198, 124, 84, 24 },
-                            PasswordSalt = new byte[] { 169, 87, 41, 254, 206, 108, 147, 10, 110, 84, 149, 173, 113, 9, 64, 239, 126, 197, 152, 132, 176, 8, 26, 12, 1, 129, 55, 92, 33, 115, 77, 181 },
+                            PasswordHash = new byte[] { 122, 201, 206, 232, 216, 116, 112, 175, 27, 35, 134, 229, 41, 150, 219, 172, 234, 108, 237, 168, 25, 88, 245, 229, 237, 159, 76, 254, 86, 87, 72, 22, 109, 197, 61, 53, 86, 180, 78, 186, 164, 226, 60, 192, 249, 144, 19, 74, 231, 144, 197, 45, 125, 171, 74, 167, 151, 252, 148, 135, 84, 180, 25, 237 },
+                            PasswordSalt = new byte[] { 152, 7, 188, 202, 89, 91, 3, 241, 80, 79, 11, 116, 245, 155, 195, 152, 164, 217, 62, 171, 163, 155, 79, 235, 36, 50, 248, 224, 197, 245, 43, 119 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",
@@ -2058,17 +2020,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasOne("PortalGrupoAlyne.Model.Usuario", null)
                         .WithMany("MenuPermissao")
                         .HasForeignKey("UsuarioId");
-                });
-
-            modelBuilder.Entity("PortalGrupoAlyne.Model.Message", b =>
-                {
-                    b.HasOne("PortalGrupoAlyne.Model.Usuario", null)
-                        .WithMany("MensagensEnviadas")
-                        .HasForeignKey("UsuarioId");
-
-                    b.HasOne("PortalGrupoAlyne.Model.Usuario", null)
-                        .WithMany("MensagensRecebidas")
-                        .HasForeignKey("UsuarioId1");
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Pagina", b =>
@@ -2245,10 +2196,6 @@ namespace PortalGrupoAlyne.Migrations
             modelBuilder.Entity("PortalGrupoAlyne.Model.Usuario", b =>
                 {
                     b.Navigation("ComunicadoLido");
-
-                    b.Navigation("MensagensEnviadas");
-
-                    b.Navigation("MensagensRecebidas");
 
                     b.Navigation("MenuPermissao");
 

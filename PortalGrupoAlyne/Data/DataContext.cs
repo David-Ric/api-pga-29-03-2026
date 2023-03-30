@@ -80,6 +80,8 @@ namespace PortalGrupoAlyne.Data
         public DbSet<ComunicadoLido> ComunicadoLido { get; set; }
         public DbSet<Logs> Logs { get; set; }
 
+        public DbSet<Message> Message { get; set; }
+
 
 
         private byte[] CreateHash(string input, byte[] salt)

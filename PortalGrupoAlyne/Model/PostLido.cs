@@ -8,6 +8,8 @@ namespace PortalGrupoAlyne.Model
         [Key]
         public int Id { get; set; }
 
+        public int ComunicadoId { get; set; }
+
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
         public string? Titulo { get; set; }
         public DateTime? LidoEm { get; set; }
