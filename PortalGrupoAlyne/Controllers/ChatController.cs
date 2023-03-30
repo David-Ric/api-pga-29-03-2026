@@ -2,7 +2,8 @@
 
 namespace PortalGrupoAlyne.Controllers
 {
-    
+    [Route("api/[controller]")]
+    [ApiController]
     public class ChatController : Controller
     {
         private readonly DataContext _context;
@@ -25,6 +26,15 @@ namespace PortalGrupoAlyne.Controllers
             // Retorna as mensagens em arrays separados
             return Ok(new { Recebidas = mensagensRecebidas, Enviadas = mensagensEnviadas });
         }
+        [HttpGet("mensagens/{id}")]
+        public IActionResult MinhasMensagensTotais(int id)
+        {
+            // Busca as mensagens em que o usuário é o remetente ou destinatário
+            var mensagens = _context.Message.ToList();
+
+            // Retorna as mensagens em arrays separados
+            return Ok( mensagens);
+        }
 
         [HttpPost]
         public async Task<ActionResult> PostMessage(Message message)
@@ -42,6 +52,7 @@ namespace PortalGrupoAlyne.Controllers
 
             return Ok();
         }
+
 
 
 

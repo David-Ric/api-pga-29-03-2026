@@ -585,22 +585,22 @@ namespace PortalGrupoAlyne.Controllers
                     TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
                     FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId AND DTALTER > '$AtualizadoEm'"
                          },
-                    new IntegracaoSankhya {
+                     new IntegracaoSankhya {
                      Id = 2,
                    TabelaPortal = "TipoNegociacao",
                    ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT DISTINCT TPV.CODTIPVENDA Id, 
-                        RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao,
-                        TPV.DHALTER AtualizadoEm
-                    FROM TGFTPV (NOLOCK) TPV
-                    JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA
-                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'
-                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
-                                            AND VEN.CODVEND = $VendedorId
-                    WHERE TPV.CODTIPVENDA > 0
-                    AND DHALTER > '$AtualizadoEm'
-                    ORDER BY 1"
+                   SqlObterSankhya = @"SELECT CPL.SUGTIPNEGSAID 
+                        , RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao
+                        , TPV.DHALTER AtualizadoEm
+					FROM TGFCPL CPL
+					JOIN TGFTPV TPV ON TPV.CODTIPVENDA = CPL.SUGTIPNEGSAID
+					JOIN TGFPAR PAR ON PAR.CODPARC = CPL.CODPARC
+					WHERE PAR.CODVEND = $VendedorId
+						AND PAR.ATIVO = 'S'
+						AND PAR.CLIENTE = 'S'
+					GROUP BY CPL.SUGTIPNEGSAID 
+						, RTRIM(LTRIM(TPV.DESCRTIPVENDA))
+						, TPV.DHALTER"
                     },
                     new IntegracaoSankhya {
                     Id = 3,
@@ -723,9 +723,7 @@ namespace PortalGrupoAlyne.Controllers
 	
 	                FROM TGFFIN FIN 
 	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA
-                        JOIN TGFPAR PAR ON FIN.CODPARC = PAR.CODPARC
 	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0
-                                AND PAR.ATIVO = 'S'
 		                AND PROVISAO = 'N'
 		                AND FIN.RECDESP = 1
 		                AND FIN.DHBAIXA IS NULL
@@ -733,7 +731,9 @@ namespace PortalGrupoAlyne.Controllers
 		                AND FIN.CODTIPOPER NOT IN (1020,5016,5019,5029)
 		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
 		                AND FIN.CODVEND = $VendedorId 
-		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
+		                AND FIN.CODPARC NOT IN (471,512,589,1293)
+						AND PAR.ATIVO = 'S'
+						AND PAR.CLIENTE = 'S'"
                         }
                 };
                 _context.IntegracaoSankhya.AddRange(restauraIntegracao);

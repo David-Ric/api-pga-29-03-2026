@@ -152,6 +152,10 @@ namespace PortalGrupoAlyne.Services
                     {
                         limpaTb("Parceiro", " VendedorId = " + vendedorId);
                     }
+                    if (tabela == "Titulo")
+                    {
+                        limpaTb("Titulo", " Id in (select id from Parceiro where VendedorId = "+ vendedorId + ")");
+                    }
                     AtualizadoEm = atualizadoEm(tabela); // último timestamp
                     integracao = obterIntegracaoSankhya(configuration, tabela);
                     sql = integracao.SqlObterSankhya;
