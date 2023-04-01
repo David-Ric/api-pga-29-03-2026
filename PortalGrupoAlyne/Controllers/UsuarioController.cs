@@ -224,6 +224,42 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
+        [HttpGet("buscaUsuarios")]
+
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosConectados([FromQuery] string searchTerm)
+        {
+            var usuariosConectados = _context.Usuario.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                usuariosConectados = usuariosConectados.Where(u =>
+                    u.NomeCompleto.Contains(searchTerm) ||
+                    u.Username.Contains(searchTerm));
+            }
+
+            usuariosConectados = usuariosConectados.OrderBy(u => u.NomeCompleto);
+
+            var usuariosDTO = await usuariosConectados.Select(usuario => new UserDto
+            {
+                Id = usuario.Id,
+                Username = usuario.Username,
+                NomeCompleto = usuario.NomeCompleto,
+                ImagemURL = usuario.ImagemURL,
+                Conectado = usuario.Conectado,
+                ImagemBase64 = Convert.ToBase64String(usuario.Imagem),
+            }).ToListAsync();
+
+            if (usuariosDTO == null || !usuariosDTO.Any())
+            {
+                return NotFound();
+            }
+
+            return usuariosDTO;
+        }
+
+
+
+
         [HttpGet("por-nome/{nome}")]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosPorNome(string nome)
         {

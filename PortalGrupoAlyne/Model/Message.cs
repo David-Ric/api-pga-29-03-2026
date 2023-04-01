@@ -1,6 +1,10 @@
-﻿namespace PortalGrupoAlyne.Model
+﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace PortalGrupoAlyne.Model
 {
-     public class Message
+    public class Message
     {
         public int Id { get; set; }
         public int SenderId { get; set; }
@@ -17,6 +21,17 @@
             Date = DateTime.Now;
             Lida = false;
         }
-    }
 
+        [NotMapped]
+        public int NaoLidas { get; set; }
+        [NotMapped]
+        public string NomeCompletoSender { get; set; }
+        [NotMapped]
+        public string UsernameSender { get; set; }
+        [NotMapped]
+        public string NomeCompletoReceiver { get; set; }
+        [NotMapped]
+        public string UsernameReceiver { get; set; }
+    }
 }
+

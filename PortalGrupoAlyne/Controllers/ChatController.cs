@@ -27,7 +27,29 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { Recebidas = mensagensRecebidas, Enviadas = mensagensEnviadas });
         }
 
-      
+        //[HttpGet("mensagens/{id}")]
+        //public IActionResult MinhasMensagensTotais(int id)
+        //{
+        //    // Busca as mensagens em que o usuário é o remetente ou destinatário com base no ID
+        //    var mensagens = _context.Message.Where(m => m.ReceiverId == id || m.SenderId == id).ToList();
+
+        //    // Obtém os senderIds únicos
+        //    var senderIds = mensagens.Select(m => m.SenderId).Distinct().ToList();
+
+        //    // Itera por cada senderId e calcula o número de mensagens não lidas para ele
+        //    foreach (var senderId in senderIds)
+        //    {
+        //        var naoLidas = _context.Message.Count(m => m.SenderId == senderId && m.ReceiverId == id && m.Lida == false);
+        //        // Atualiza o valor de NaoLidas para todas as mensagens com o senderId atual
+        //        foreach (var mensagem in mensagens.Where(m => m.SenderId == senderId))
+        //        {
+        //            mensagem.NaoLidas = naoLidas;
+        //        }
+        //    }
+
+        //    // Retorna as mensagens atualizadas
+        //    return Ok(mensagens);
+        //}
 
 
         [HttpGet("mensagens/{id}")]
@@ -36,15 +58,111 @@ namespace PortalGrupoAlyne.Controllers
             // Busca as mensagens em que o usuário é o remetente ou destinatário com base no ID
             var mensagens = _context.Message.Where(m => m.ReceiverId == id || m.SenderId == id).ToList();
 
-            // Retorna as mensagens em arrays separados
+            // Obtém os senderIds e receiverIds únicos
+            var senderIds = mensagens.Select(m => m.SenderId).Distinct().ToList();
+            var receiverIds = mensagens.Select(m => m.ReceiverId).Distinct().ToList();
+            var userIds = senderIds.Concat(receiverIds).Distinct().ToList();
+
+            // Cria um dicionário com os usuários correspondentes a cada id de usuário
+            var usuarios = new Dictionary<int, Usuario>();
+            foreach (var userId in userIds)
+            {
+                var usuario = _context.Usuario.FirstOrDefault(u => u.Id == userId);
+                usuarios.Add(userId, usuario);
+            }
+
+            // Itera por cada mensagem e adiciona as informações do outro usuário correspondente
+            foreach (var mensagem in mensagens)
+            {
+                if (mensagem.SenderId == id)
+                {
+                    mensagem.NomeCompletoReceiver = usuarios[mensagem.ReceiverId].NomeCompleto;
+                    mensagem.UsernameReceiver = usuarios[mensagem.ReceiverId].Username;
+                }
+                else
+                {
+                    mensagem.NomeCompletoSender = usuarios[mensagem.SenderId].NomeCompleto;
+                    mensagem.UsernameSender = usuarios[mensagem.SenderId].Username;
+                }
+            }
+
+            // Obtém o número de mensagens não lidas para cada remetente
+            foreach (var senderId in senderIds)
+            {
+                var naoLidas = _context.Message.Count(m => m.SenderId == senderId && m.ReceiverId == id && !m.Lida);
+                foreach (var mensagem in mensagens.Where(m => m.SenderId == senderId))
+                {
+                    mensagem.NaoLidas = naoLidas;
+                }
+            }
+
+            // Retorna as mensagens atualizadas
             return Ok(mensagens);
         }
 
-        [HttpGet("mensagens-recebidad/{id}")]
-        public async Task<IActionResult> MinhasMensagensRecebidas(int id)
+
+        [HttpGet("mensagens/busca")]
+        public IActionResult BuscaMensagensPorRemetente(string busca, int id)
+        {
+            // Busca as mensagens em que o usuário é o remetente ou destinatário com base no ID
+            var mensagens = _context.Message.Where(m => m.ReceiverId == id || m.SenderId == id).ToList();
+
+            // Obtém os senderIds e receiverIds únicos
+            var senderIds = mensagens.Select(m => m.SenderId).Distinct().ToList();
+            var receiverIds = mensagens.Select(m => m.ReceiverId).Distinct().ToList();
+            var userIds = senderIds.Concat(receiverIds).Distinct().ToList();
+
+            // Cria um dicionário com os usuários correspondentes a cada id de usuário
+            var usuarios = new Dictionary<int, Usuario>();
+            foreach (var userId in userIds)
+            {
+                var usuario = _context.Usuario.FirstOrDefault(u => u.Id == userId);
+                usuarios.Add(userId, usuario);
+            }
+
+            // Itera por cada mensagem e adiciona as informações do outro usuário correspondente
+            foreach (var mensagem in mensagens)
+            {
+                if (mensagem.SenderId == id)
+                {
+                    mensagem.NomeCompletoReceiver = usuarios[mensagem.ReceiverId].NomeCompleto;
+                    mensagem.UsernameReceiver = usuarios[mensagem.ReceiverId].Username;
+                }
+                else
+                {
+                    mensagem.NomeCompletoSender = usuarios[mensagem.SenderId].NomeCompleto;
+                    mensagem.UsernameSender = usuarios[mensagem.SenderId].Username;
+                }
+            }
+
+            // Obtém o número de mensagens não lidas para cada remetente
+            foreach (var senderId in senderIds)
+            {
+                var naoLidas = _context.Message.Count(m => m.SenderId == senderId && m.ReceiverId == id && !m.Lida);
+                foreach (var mensagem in mensagens.Where(m => m.SenderId == senderId))
+                {
+                    mensagem.NaoLidas = naoLidas;
+                }
+            }
+
+            // Retorna as mensagens atualizadas filtrando pelo nome completo ou username do remetente
+            var mensagensFiltradas = mensagens.Where(m =>
+                (usuarios[m.SenderId].NomeCompleto.Contains(busca) || usuarios[m.SenderId].Username.Contains(busca))
+                && m.SenderId != id);
+
+            return Ok(mensagensFiltradas);
+        }
+
+
+
+
+
+
+        [HttpGet("mensagens-recebidas")]
+        public async Task<IActionResult> MinhasMensagensRecebidas(int id, int senderId)
         {
             // Busca as mensagens em que o usuário é o destinatário com base no ID
-            var mensagens = await _context.Message.Where(m => m.ReceiverId == id).ToListAsync();
+            var mensagens = await _context.Message.Where(m => m.ReceiverId == id && m.SenderId == senderId).ToListAsync();
 
             // Define a propriedade Lida como true e salva as mudanças no banco de dados
             mensagens.ForEach(m => m.Lida = true);
@@ -69,22 +187,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-        //[HttpPost]
-        //public async Task<ActionResult> PostMessage(Message message)
-        //{
-        //    // Verifica se o destinatário está conectado
-        //    var receiver = await _context.Usuario.FindAsync(message.ReceiverId);
-        //    bool isReceiverConnected = receiver?.Conectado ?? false;
-
-        //    // Define a propriedade Lida com base na conectividade do destinatário
-        //    message.Lida = isReceiverConnected;
-
-        //    // Salva a mensagem no banco de dados
-        //    _context.Message.Add(message);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok();
-        //}
+      
         [HttpPost]
         public async Task<ActionResult> PostMessage(Message message)
         {
