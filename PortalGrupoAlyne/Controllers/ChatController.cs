@@ -145,10 +145,12 @@ namespace PortalGrupoAlyne.Controllers
                 }
             }
 
-            // Retorna as mensagens atualizadas filtrando pelo nome completo ou username do remetente
+            
             var mensagensFiltradas = mensagens.Where(m =>
-                (usuarios[m.SenderId].NomeCompleto.Contains(busca) || usuarios[m.SenderId].Username.Contains(busca))
-                && m.SenderId != id);
+     ((usuarios[m.SenderId].NomeCompleto.ToLower().Contains(busca.ToLower()) || usuarios[m.SenderId].Username.ToLower().Contains(busca.ToLower())) && m.SenderId != id) ||
+     ((usuarios[m.ReceiverId].NomeCompleto.ToLower().Contains(busca.ToLower()) || usuarios[m.ReceiverId].Username.ToLower().Contains(busca.ToLower())) && m.ReceiverId != id)
+        );
+
 
             return Ok(mensagensFiltradas);
         }

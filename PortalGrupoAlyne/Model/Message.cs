@@ -23,15 +23,15 @@ namespace PortalGrupoAlyne.Model
         }
 
         [NotMapped]
-        public int NaoLidas { get; set; }
+        public int? NaoLidas { get; set; }
         [NotMapped]
-        public string NomeCompletoSender { get; set; }
+        public string? NomeCompletoSender { get; set; }
         [NotMapped]
-        public string UsernameSender { get; set; }
+        public string? UsernameSender { get; set; }
         [NotMapped]
-        public string NomeCompletoReceiver { get; set; }
+        public string? NomeCompletoReceiver { get; set; }
         [NotMapped]
-        public string UsernameReceiver { get; set; }
+        public string? UsernameReceiver { get; set; }
     }
 }
 
