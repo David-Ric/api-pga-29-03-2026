@@ -723,7 +723,9 @@ namespace PortalGrupoAlyne.Controllers
 	
 	                FROM TGFFIN FIN 
 	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA
+                        JOIN TGFPAR PAR ON FIN.CODPARC = PAR.CODPARC
 	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0
+                                AND PAR.ATIVO = 'S'
 		                AND PROVISAO = 'N'
 		                AND FIN.RECDESP = 1
 		                AND FIN.DHBAIXA IS NULL
@@ -731,9 +733,7 @@ namespace PortalGrupoAlyne.Controllers
 		                AND FIN.CODTIPOPER NOT IN (1020,5016,5019,5029)
 		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
 		                AND FIN.CODVEND = $VendedorId 
-		                AND FIN.CODPARC NOT IN (471,512,589,1293)
-						AND PAR.ATIVO = 'S'
-						AND PAR.CLIENTE = 'S'"
+		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
                         }
                 };
                 _context.IntegracaoSankhya.AddRange(restauraIntegracao);

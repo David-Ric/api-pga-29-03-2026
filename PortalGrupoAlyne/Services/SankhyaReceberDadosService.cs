@@ -154,7 +154,7 @@ namespace PortalGrupoAlyne.Services
                     }
                     if (tabela == "Titulo")
                     {
-                        limpaTb("Titulo", " Id in (select id from Parceiro where VendedorId = "+ vendedorId + ")");
+                        limpaTb("Titulo", " ParceiroId in (select id from Parceiro where VendedorId = "+ vendedorId + ")");
                     }
                     AtualizadoEm = atualizadoEm(tabela); // último timestamp
                     integracao = obterIntegracaoSankhya(configuration, tabela);
