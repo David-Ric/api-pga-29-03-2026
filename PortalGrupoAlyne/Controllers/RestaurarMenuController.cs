@@ -589,7 +589,7 @@ namespace PortalGrupoAlyne.Controllers
                      Id = 2,
                    TabelaPortal = "TipoNegociacao",
                    ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT CPL.SUGTIPNEGSAID 
+                   SqlObterSankhya = @"SELECT CPL.SUGTIPNEGSAID Id
                         , RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao
                         , TPV.DHALTER AtualizadoEm
 					FROM TGFCPL CPL
