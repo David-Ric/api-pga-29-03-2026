@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PortalGrupoAlyne.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ChatController : Controller
@@ -27,29 +29,6 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { Recebidas = mensagensRecebidas, Enviadas = mensagensEnviadas });
         }
 
-        //[HttpGet("mensagens/{id}")]
-        //public IActionResult MinhasMensagensTotais(int id)
-        //{
-        //    // Busca as mensagens em que o usuário é o remetente ou destinatário com base no ID
-        //    var mensagens = _context.Message.Where(m => m.ReceiverId == id || m.SenderId == id).ToList();
-
-        //    // Obtém os senderIds únicos
-        //    var senderIds = mensagens.Select(m => m.SenderId).Distinct().ToList();
-
-        //    // Itera por cada senderId e calcula o número de mensagens não lidas para ele
-        //    foreach (var senderId in senderIds)
-        //    {
-        //        var naoLidas = _context.Message.Count(m => m.SenderId == senderId && m.ReceiverId == id && m.Lida == false);
-        //        // Atualiza o valor de NaoLidas para todas as mensagens com o senderId atual
-        //        foreach (var mensagem in mensagens.Where(m => m.SenderId == senderId))
-        //        {
-        //            mensagem.NaoLidas = naoLidas;
-        //        }
-        //    }
-
-        //    // Retorna as mensagens atualizadas
-        //    return Ok(mensagens);
-        //}
 
 
         [HttpGet("mensagens/{id}")]

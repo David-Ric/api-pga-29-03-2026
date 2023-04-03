@@ -30,11 +30,10 @@ namespace PortalGrupoAlyne
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            string mySqlConnection =
-              builder.Configuration.GetConnectionString("DefaultConnection");
+            string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
             builder.Services.AddDbContextPool<DataContext>(options =>
-                options.UseMySql(mySqlConnection,
-                      ServerVersion.AutoDetect(mySqlConnection)));
+                options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection),
+                                 mySqlOptions => mySqlOptions.EnableRetryOnFailure()));
 
 
             //builder.Services.AddDbContext<ProEventosContext>(
