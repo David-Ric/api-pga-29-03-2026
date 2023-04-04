@@ -234,7 +234,36 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { resposta="Senha alterada com sucesso.",data=user.Username });
         }
 
-      
+
+        [HttpPost("alterar-senha")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(int id, string currentPassword, string newPassword)
+        {
+            var user = await _context.Usuario.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            if (!VerifyPasswordHash(currentPassword, user.PasswordHash, user.PasswordSalt))
+            {
+                return BadRequest("Senha atual incorreta.");
+            }
+
+            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
+
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Senha alterada com sucesso.");
+        }
+
+
+
+
 
         private string CreateToken(Usuario user)
         {
