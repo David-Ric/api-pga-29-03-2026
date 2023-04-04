@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ChatController : Controller
@@ -134,6 +134,22 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(mensagensFiltradas);
         }
 
+
+
+        [HttpGet("mensagens-nao-lidas")]
+        public async Task<IActionResult> MinhasMensagensÑaoLidas(int id)
+        {
+            // Busca as mensagens em que o usuário é o destinatário com base no ID e a propriedade Lida é false
+            var mensagensNaoLidas = await _context.Message
+                .Where(m => m.ReceiverId == id && m.Lida == false)
+                .ToListAsync();
+
+            // Conta o número de mensagens não lidas
+            var numeroMensagensNaoLidas = mensagensNaoLidas.Count();
+
+            // Retorna o número de mensagens não lidas
+            return Ok(numeroMensagensNaoLidas);
+        }
 
 
 
