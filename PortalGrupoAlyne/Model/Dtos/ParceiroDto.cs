@@ -81,6 +81,9 @@ namespace PortalGrupoAlyne.Model.Dtos
         public int VendedorId { get; set; }
         public Vendedor? Vendedor { get; set; }
 
+        [NotMapped]
+        public string? DescTipoNegociacao { get; set; }
+
         public IEnumerable<TabelaPrecoParceiro>? TabelaPrecoParceiro { get; set; }
         public IEnumerable<Titulo>? Titulo { get; set; }
         public DateTime? AtualizadoEm { get; set; }

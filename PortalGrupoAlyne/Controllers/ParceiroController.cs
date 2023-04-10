@@ -173,6 +173,24 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
 
+        //[HttpGet("{id}")]
+        //public async Task<IActionResult> GetById(int id)
+        //{
+        //    try
+        //    {
+        //        var parceiro = await _parceirosService.GetParceirosId(id);
+        //        if (parceiro == null)
+        //            return NoContent();
+
+        //        return Ok(new { Parceiro = parceiro, DescTipoNegociacao = parceiro.DescTipoNegociacao });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest("Parceiro não encontrado.");
+        //    }
+        //}
+
+
 
         [HttpPost]
         public async Task<ActionResult<List<Parceiro>>> AddParceiros(Parceiro model)

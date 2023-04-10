@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.IdentityModel.Tokens;
 using PortalGrupoAlyne.Extension;
 using PortalGrupoAlyne.Extension.Helpers;
 using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using PortalGrupoAlyne.Services;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using static System.Net.WebRequestMethods;
 
 namespace PortalGrupoAlyne.Controllers
 {
-  // [Authorize]
+   [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class UsuarioController : ControllerBase
@@ -39,7 +42,7 @@ namespace PortalGrupoAlyne.Controllers
         }
        
         [HttpGet]
-      //  [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina
@@ -55,7 +58,7 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
         [HttpGet("filter")]
-      //  [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina,
@@ -88,7 +91,7 @@ namespace PortalGrupoAlyne.Controllers
             
         }
         [HttpGet("filter/status")]
-        //  [AllowAnonymous]
+          [AllowAnonymous]
         public async Task<IActionResult> GetAllFilterStatus([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina,
@@ -293,6 +296,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("conectado/{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<UserDto>> GetUserById(int id)
         {
             var usuario = await _context.Usuario.FindAsync(id);
@@ -322,7 +326,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("{id}")]
-      //  [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -337,10 +341,26 @@ namespace PortalGrupoAlyne.Controllers
                 return BadRequest("Usuario não encontrado.");
             }
         }
+         [HttpGet("permissao/{id}")]
+         public async Task<IActionResult> GetPermissaoById(int id)
+         {
+             try
+             {
+                 var usuario = await _userService.GetById(id);
+                 if (usuario == null) return NoContent();
+
+                 return Ok(usuario);
+             }
+             catch (Exception ex)
+             {
+                 return BadRequest("Usuario não encontrado.");
+             }
+         }
+        
 
 
         [HttpPut("{id}")]
-       // [AllowAnonymous]
+        [AllowAnonymous]
         public IActionResult Update(int id, UserUpdateResquest model)
         {
             _userService.Update(id, model);
@@ -350,6 +370,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost("UploadImage")]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> UploadImage([FromQuery] string name)
         {
             try
@@ -404,7 +425,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpDelete("{id}")]
-      //  [AllowAnonymous]
+        [AllowAnonymous]
         public async Task<ActionResult<List<Usuario>>> Delete(int id)
         {
             var usuario = await _context.Usuario.FindAsync(id);

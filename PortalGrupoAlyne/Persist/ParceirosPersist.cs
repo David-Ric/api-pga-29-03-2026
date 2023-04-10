@@ -12,14 +12,44 @@
             _context = context;
         }
 
+        //public async Task<Parceiro> GetParceirosId(int id)
+        //{
+        //    IQueryable<Parceiro> query = _context.Parceiro
+        //        .Include("Vendedor").Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").Include("Titulo"); 
+
+        //    query = query.AsNoTracking().OrderBy(e => e.id).Where(e => e.id == id);
+
+        //    return await query.FirstOrDefaultAsync();
+        //}
+
+     
+
         public async Task<Parceiro> GetParceirosId(int id)
         {
             IQueryable<Parceiro> query = _context.Parceiro
-                .Include("Vendedor").Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").Include("Titulo"); 
+                .Include("Vendedor").Include("TabelaPrecoParceiro").Include("TabelaPrecoParceiro.Empresa").Include("TabelaPrecoParceiro.TabelaPreco").Include("Titulo");
 
             query = query.AsNoTracking().OrderBy(e => e.id).Where(e => e.id == id);
 
-            return await query.FirstOrDefaultAsync();
-        }
+            var parceiro = await query.FirstOrDefaultAsync();
+
+            if (parceiro != null)
+            {
+                var tipoNegociacaoId = int.Parse(parceiro.TipoNegociacao);
+
+                var tipoNegociacao = await _context.TipoNegociacao
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(tn => tn.Id == tipoNegociacaoId);
+
+                if (tipoNegociacao != null)
+                {
+                    parceiro.DescTipoNegociacao = tipoNegociacao.Descricao;
+                }
+            }
+
+            return parceiro;
+            }
+
+
     }
 }

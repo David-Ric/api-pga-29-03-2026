@@ -195,22 +195,6 @@ namespace PortalGrupoAlyne.Controllers
     
 
 
-        //[HttpPost("forgot-password")]
-        //[AllowAnonymous]
-        //public async Task<IActionResult> ForgotPassword(string email)
-        //{
-        //    var user = await _context.Usuario.FirstOrDefaultAsync(u => u.Email == email);
-        //    if (user == null)
-        //    {
-        //        return BadRequest("Usuário não encontrado.");
-        //    }
-
-        //    user.PasswordResetToken = CreateRandomToken();
-        //    user.ResetTokenExpires = DateTime.Now.AddDays(1);
-        //    await _context.SaveChangesAsync();
-
-        //    return Ok(user.PasswordResetToken);
-        //}
 
         [HttpPost("reset-password")]
         [AllowAnonymous]
@@ -279,7 +263,6 @@ namespace PortalGrupoAlyne.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
-                //expires: DateTime.Now.AddSeconds(60),
                 expires: DateTime.Now.AddHours(10),
                 signingCredentials: creds);
 

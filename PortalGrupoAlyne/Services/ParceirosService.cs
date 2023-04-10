@@ -43,6 +43,23 @@ namespace PortalGrupoAlyne.Services
             return parceiro;
         }
 
+        //public async Task<Parceiro> GetParceirosId(int id)
+        //{
+        //    try
+        //    {
+        //        var vendedor = await _parceirosPersist.GetParceirosId(id);
+        //        if (vendedor == null) return null;
+
+        //        var resultado = _mapper.Map<Parceiro>(vendedor);
+
+        //        return resultado;
+        //    }
+         //   catch (Exception ex)
+         //   {
+          //      throw new Exception(ex.Message);
+           // }
+       // }
+
         public async Task<Parceiro> GetParceirosId(int id)
         {
             try
@@ -52,6 +69,11 @@ namespace PortalGrupoAlyne.Services
 
                 var resultado = _mapper.Map<Parceiro>(vendedor);
 
+                // Obtém a descrição da tabela tipoNegociacao
+                var tipoNegociacao = await _context.TipoNegociacao.FirstOrDefaultAsync(tn => tn.Id == int.Parse(resultado.TipoNegociacao));
+
+                resultado.DescTipoNegociacao = tipoNegociacao?.Descricao;
+
                 return resultado;
             }
             catch (Exception ex)
@@ -59,5 +81,6 @@ namespace PortalGrupoAlyne.Services
                 throw new Exception(ex.Message);
             }
         }
+
     }
 }

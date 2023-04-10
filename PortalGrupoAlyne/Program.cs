@@ -151,6 +151,9 @@ namespace PortalGrupoAlyne
 
             app.UseAuthorization();
 
+
+
+
             app.UseCors(x => x.AllowAnyHeader()
                               .AllowAnyMethod()
                               .AllowAnyOrigin());
