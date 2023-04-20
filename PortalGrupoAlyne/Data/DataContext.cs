@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using System.Security.Cryptography;
@@ -82,6 +83,13 @@ namespace PortalGrupoAlyne.Data
 
         public DbSet<Message> Message { get; set; }
 
+        public DbSet<Modulo> Modulo { get; set; }
+        public DbSet<ColunaModulo> ColunaModulo { get; set; }
+
+        public DbSet<OpcaoCampo> OpcaoCampo { get; set; }
+        public DbSet<LigacaoTabela> LigacaoTabela { get; set; }
+
+
 
 
         private byte[] CreateHash(string input, byte[] salt)
@@ -101,6 +109,7 @@ namespace PortalGrupoAlyne.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+
             base.OnModelCreating(modelBuilder);
 
             var password = "Sync550v";

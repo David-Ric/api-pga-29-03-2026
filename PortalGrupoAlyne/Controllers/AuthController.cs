@@ -263,6 +263,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var token = new JwtSecurityToken(
                 claims: claims,
+                
                 expires: DateTime.Now.AddHours(10),
                 signingCredentials: creds);
 

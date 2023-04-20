@@ -141,6 +141,8 @@ namespace PortalGrupoAlyne
                 app.UseSwaggerUI();
             }
 
+            app.UseCustomErrorHandler();
+
             app.UseStaticFiles();
 
             app.UseHttpsRedirection();

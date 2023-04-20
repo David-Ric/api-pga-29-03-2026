@@ -567,6 +567,15 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "fa fa-money",
                        MenuId = 4,
 
+                   }, new Pagina
+                   {
+                       Id = 49,
+                       Codigo = 35,
+                       Nome = "Cadastro de Novas Telas",
+                       Url = "/cadastro-telas",
+                       Icon = "GoFileSubmodule",
+                       MenuId = 1,
+                       SubMenuId = 4,
                    }
 
                 };

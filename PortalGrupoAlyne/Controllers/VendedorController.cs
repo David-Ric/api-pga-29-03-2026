@@ -42,6 +42,7 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
         [HttpGet("filter")]
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
             [FromQuery] int pagina,
