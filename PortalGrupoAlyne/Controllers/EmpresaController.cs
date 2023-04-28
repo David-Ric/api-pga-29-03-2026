@@ -23,6 +23,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina
@@ -39,7 +40,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet("filter")]
-
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
           [FromQuery] int pagina,
            [FromQuery] int totalpagina,
@@ -72,6 +73,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<Empresa>> Get(int id)
         {
             var empresa = await _context.Empresa.FindAsync(id);

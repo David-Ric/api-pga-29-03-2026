@@ -35,33 +35,39 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
-        //[HttpGet("filter")]
-        //public async Task<IActionResult> GetFilteredOpcaoCampo([FromQuery] int pagina, [FromQuery] int totalpagina, [FromQuery] string filter)
-        //{
-        //    var skip = (pagina - 1) * totalpagina;
-        //    var take = totalpagina;
+        [HttpGet("ModuloId")]
+        public async Task<IActionResult> GetAll([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] int ModuloId
+           )
+        {
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
 
-        //    var modulos = await _context.LigacaoTabela
-        //        .AsNoTracking()
-        //        .Where(m => m..ToLower().Contains(filter.ToLower()))
-        //        .OrderBy(m => m.Id)
-        //        .Skip(skip)
-        //        .Take(take)
-        //        .ToListAsync();
+            var modulos = await _context.LigacaoTabela
+                .AsNoTracking()
+                .Where(m => m.ModuloId==ModuloId)
+                .OrderBy(m => m.Id)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
 
-        //    var total = await _context.LigacaoTabela
-        //        .AsNoTracking()
-        //        .Where(m => m.Opcao.ToLower().Contains(filter.ToLower()))
-        //        .CountAsync();
+            var total = await _context.LigacaoTabela
+                .AsNoTracking()
+                 .Where(m => m.ModuloId == ModuloId)
+                .CountAsync();
 
-        //    var modulosDto = _mapper.Map<IEnumerable<OpcaoCampoDto>>(modulos);
+            var modulosDto = _mapper.Map<IEnumerable<LigacaoTabelaDto>>(modulos);
 
-        //    return Ok(new
-        //    {
-        //        total,
-        //        data = modulosDto
-        //    });
-        //}
+            return Ok(new
+            {
+                total,
+                data = modulosDto
+            });
+        }
+
+        
 
 
 
@@ -78,29 +84,34 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(moduloDto);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<ModuloDto>> Post(ModuloDto moduloDto)
-        //{
-        //    var modulo = _mapper.Map<Modulo>(moduloDto);
-        //    _context.Modulo.Add(modulo);
-        //    await _context.SaveChangesAsync();
-        //    moduloDto.Id = modulo.Id;
-        //    return CreatedAtAction(nameof(GetById), new { id = modulo.Id }, moduloDto);
-        //}
 
-        [HttpPost]
-        public async Task<ActionResult<object>> Post(LigacaoTabelaDto moduloDto)
+
+
+       
+        [HttpPost("{moduloId}")]
+        public async Task<ActionResult<object>> Post(int moduloId, IEnumerable<LigacaoTabelaDto> ligacoesDto)
         {
-            var modulo = _mapper.Map<LigacaoTabela>(moduloDto);
-            _context.LigacaoTabela.Add(modulo);
+            var existingLigacoes = await _context.LigacaoTabela.Where(l => l.ModuloId == moduloId).ToListAsync();
+            _context.LigacaoTabela.RemoveRange(existingLigacoes); // delete all existing connections
+
+            var ligacoes = _mapper.Map<IEnumerable<LigacaoTabela>>(ligacoesDto);
+            foreach (var ligacao in ligacoes)
+            {
+                ligacao.ModuloId = moduloId; // set the module ID for each new connection
+                _context.LigacaoTabela.Add(ligacao);
+            }
+
             await _context.SaveChangesAsync();
-            moduloDto.Id = modulo.Id;
+
+            var ids = ligacoes.Select(l => l.Id);
 
             return new
             {
-                Id = modulo.Id
+                Ids = ids
             };
         }
+
+
 
 
         [HttpPut("{id}")]
@@ -126,6 +137,20 @@ namespace PortalGrupoAlyne.Controllers
             }
             return NoContent();
         }
+
+        [HttpDelete("modulo/{id}")]
+        public async Task<IActionResult> DeleteByModuloId(int id)
+        {
+            var ligacoes = await _context.LigacaoTabela.Where(l => l.ModuloId == id).ToListAsync();
+            if (ligacoes == null)
+            {
+                return NotFound();
+            }
+            _context.LigacaoTabela.RemoveRange(ligacoes);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

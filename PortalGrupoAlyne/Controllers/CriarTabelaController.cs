@@ -9,6 +9,10 @@ using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using Dapper;
+using System.Data.SqlClient;
+using Newtonsoft.Json;
+using System.Configuration;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -17,10 +21,12 @@ namespace PortalGrupoAlyne.Controllers
     public class CriarTabelaController : ControllerBase
     {
         private readonly DataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public CriarTabelaController(DataContext context)
+        public CriarTabelaController(DataContext context, IConfiguration configuration)
         {
             _context = context;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -54,40 +60,41 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-        //[HttpGet("{tableName}")]
-        //public async Task<IActionResult> GetTable(string tableName)
-        //{
-        //    if (!await TableExists(tableName))
-        //        return NotFound();
 
-        //    var columnNames = await GetColumnNames(tableName);
 
-        //    return Ok(columnNames);
-        //}
 
-        //private async Task<List<string>> GetColumnNames(string tableName)
-        //{
-        //    var columnNames = new List<string>();
+        [HttpGet("tabela/{tableName}")]
+ 
+        public async Task<IEnumerable<dynamic>> GetTabela(string tableName)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using IDbConnection connection = new MySqlConnection(connectionString);
+            string query = $"SELECT * FROM {tableName}";
+            IEnumerable<dynamic> result = await connection.QueryAsync(query);
+            return result;
+        }
 
-        //    using (var connection = _context.Database.GetDbConnection())
-        //    {
-        //        await connection.OpenAsync();
 
-        //        var command = connection.CreateCommand();
-        //        command.CommandText = $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}'";
 
-        //        using (var reader = await command.ExecuteReaderAsync())
-        //        {
-        //            while (await reader.ReadAsync())
-        //            {
-        //                var columnName = reader.GetString(0);
-        //                columnNames.Add(columnName);
-        //            }
-        //        }
-        //    }
 
-        //    return columnNames;
-        //}
+
+
+        [HttpGet("tabela/{tableName}/{tabelaLigada}/{campoLigacao}/{campoExibido}")]
+        public async Task<IEnumerable<dynamic>> GetTabela(string tableName, string tabelaLigada, string campoLigacao, string campoExibido)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using IDbConnection connection = new MySqlConnection(connectionString);
+            string campoVirtual = $"{campoLigacao}";
+            string query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '-', {tabelaLigada}.{campoExibido}) as {campoVirtual} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+
+
+            IEnumerable<dynamic> result = await connection.QueryAsync(query);
+            return result;
+        }
+
+
+
+
 
 
 
@@ -109,7 +116,15 @@ namespace PortalGrupoAlyne.Controllers
                 var name = column["name"].ToString();
                 var type = column["type"].ToString();
 
-                query += $"{name} {type}, ";
+                
+                if ((column.TryGetValue("primaryKey", out var primaryKeyObj) && primaryKeyObj.ToString().Equals("true", StringComparison.OrdinalIgnoreCase)))
+                {
+                    query += $"{name} INT AUTO_INCREMENT PRIMARY KEY, ";
+                }
+                else
+                {
+                    query += $"{name} {type}, ";
+                }
             }
 
             query = query.Remove(query.Length - 2); // Remove a última vírgula e espaço
@@ -121,52 +136,113 @@ namespace PortalGrupoAlyne.Controllers
             return Created($"api/tabela/{tableName}", null);
         }
 
-        [HttpPut("{tableName}")]
+
+        [HttpPost("{tableName}/update")]
         public async Task<IActionResult> UpdateTable(string tableName, [FromBody] List<Dictionary<string, object>> columns)
         {
             if (!await TableExists(tableName))
                 return NotFound();
 
-            var existingColumns = await GetColumns(tableName);
+            var existingColumns = await GetTableColumns(tableName);
 
-            var existingColumnNames = existingColumns.Select(c => c.Name);
+            var addColumns = columns.Where(c => !existingColumns.Any(ec => ec.Equals(c["name"].ToString(), StringComparison.OrdinalIgnoreCase)));
+            var removeColumns = existingColumns.Where(ec => !columns.Any(c => c["name"].ToString().Equals(ec, StringComparison.OrdinalIgnoreCase)));
 
-            var addedColumns = columns.Where(c => !existingColumnNames.Contains(c["name"].ToString())).ToList();
-
-            var modifiedColumns = columns.Where(c => existingColumnNames.Contains(c["name"].ToString())).ToList();
-
-            if (addedColumns.Any())
+            foreach (var column in addColumns)
             {
-                var query = $"ALTER TABLE {tableName} ";
+                var name = column["name"].ToString();
+                var type = column["type"].ToString();
 
-                foreach (var column in addedColumns)
+                if (column.TryGetValue("primaryKey", out var primaryKeyObj) && primaryKeyObj.ToString().Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
-                    var name = column["name"].ToString();
-                    var type = column["type"].ToString();
-
-                    query += $"ADD {name} {type}, ";
+                    await _context.Database.ExecuteSqlRawAsync($"ALTER TABLE {tableName} ADD COLUMN {name} INT AUTO_INCREMENT PRIMARY KEY");
                 }
-
-                query = query.Remove(query.Length - 2); // Remove a última vírgula e espaço
-
-                await _context.Database.ExecuteSqlRawAsync(query);
+                else
+                {
+                    await _context.Database.ExecuteSqlRawAsync($"ALTER TABLE {tableName} ADD COLUMN {name} {type}");
+                }
             }
 
-            if (modifiedColumns.Any())
+            foreach (var column in removeColumns)
             {
-                foreach (var column in modifiedColumns)
-                {
-                    var name = column["name"].ToString();
-                    var type = column["type"].ToString();
-
-                    var query = $"ALTER TABLE {tableName} MODIFY {name} {type}";
-
-                    await _context.Database.ExecuteSqlRawAsync(query);
-                }
+                await _context.Database.ExecuteSqlRawAsync($"ALTER TABLE {tableName} DROP COLUMN {column}");
             }
 
             return Ok();
         }
+
+        private async Task<List<string>> GetTableColumns(string tableName)
+        {
+            var columns = new List<string>();
+            var connection = _context.Database.GetDbConnection();
+            await connection.OpenAsync();
+
+            using (var command = connection.CreateCommand())
+            {
+                command.CommandText = $"SELECT column_name FROM information_schema.columns WHERE table_name = '{tableName}'";
+
+                using (var reader = await command.ExecuteReaderAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        columns.Add(reader.GetString(0));
+                    }
+                }
+            }
+
+            await connection.CloseAsync();
+
+            return columns;
+        }
+
+
+
+        //[HttpPut("{tableName}")]
+        //public async Task<IActionResult> UpdateTable(string tableName, [FromBody] List<Dictionary<string, object>> columns)
+        //{
+        //    if (!await TableExists(tableName))
+        //        return NotFound();
+
+        //    var existingColumns = await GetColumns(tableName);
+
+        //    var existingColumnNames = existingColumns.Select(c => c.Name);
+
+        //    var addedColumns = columns.Where(c => !existingColumnNames.Contains(c["name"].ToString())).ToList();
+
+        //    var modifiedColumns = columns.Where(c => existingColumnNames.Contains(c["name"].ToString())).ToList();
+
+        //    if (addedColumns.Any())
+        //    {
+        //        var query = $"ALTER TABLE {tableName} ";
+
+        //        foreach (var column in addedColumns)
+        //        {
+        //            var name = column["name"].ToString();
+        //            var type = column["type"].ToString();
+
+        //            query += $"ADD {name} {type}, ";
+        //        }
+
+        //        query = query.Remove(query.Length - 2); // Remove a última vírgula e espaço
+
+        //        await _context.Database.ExecuteSqlRawAsync(query);
+        //    }
+
+        //    if (modifiedColumns.Any())
+        //    {
+        //        foreach (var column in modifiedColumns)
+        //        {
+        //            var name = column["name"].ToString();
+        //            var type = column["type"].ToString();
+
+        //            var query = $"ALTER TABLE {tableName} MODIFY {name} {type}";
+
+        //            await _context.Database.ExecuteSqlRawAsync(query);
+        //        }
+        //    }
+
+        //    return Ok();
+        //}
 
         private async Task<bool> TableExists(string tableName)
         {

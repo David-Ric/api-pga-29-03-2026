@@ -66,10 +66,23 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ColunaModuloDto>> GetById(int id)
+        //[HttpGet("{id}")]
+        //public async Task<ActionResult<ColunaModuloDto>> GetById(int id)
+        //{
+        //    var modulo = await _context.ColunaModulo.Include(m => m.OpcaoCampo).FirstOrDefaultAsync(m => m.Id == id);
+        //    if (modulo == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var moduloDto = _mapper.Map<ColunaModuloDto>(modulo);
+        //    return Ok(moduloDto);
+        //}
+
+        [HttpGet("{nome}")]
+        public async Task<ActionResult<ColunaModuloDto>> GetByNome(string nome)
         {
-            var modulo = await _context.ColunaModulo.Include(m => m.OpcaoCampo).FirstOrDefaultAsync(m => m.Id == id);
+            var modulo = await _context.ColunaModulo.Include(m => m.OpcaoCampo)
+                .FirstOrDefaultAsync(m => m.Nome.ToLower() == nome.ToLower());
             if (modulo == null)
             {
                 return NotFound();
@@ -78,29 +91,28 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(moduloDto);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<ModuloDto>> Post(ModuloDto moduloDto)
-        //{
-        //    var modulo = _mapper.Map<Modulo>(moduloDto);
-        //    _context.Modulo.Add(modulo);
-        //    await _context.SaveChangesAsync();
-        //    moduloDto.Id = modulo.Id;
-        //    return CreatedAtAction(nameof(GetById), new { id = modulo.Id }, moduloDto);
-        //}
 
-        [HttpPost]
-        public async Task<ActionResult<object>> Post(ColunaModuloDto moduloDto)
+
+        [HttpPost("{moduloId}")]
+        public async Task<ActionResult<object>> Post(int moduloId, IEnumerable<ColunaModuloDto> moduloDtoList)
         {
-            var modulo = _mapper.Map<ColunaModulo>(moduloDto);
-            _context.ColunaModulo.Add(modulo);
-            await _context.SaveChangesAsync();
-            moduloDto.Id = modulo.Id;
+            var existingModulos = await _context.ColunaModulo.Where(m => m.ModuloId == moduloId).ToListAsync();
+            _context.ColunaModulo.RemoveRange(existingModulos); // delete all existing modulos
 
-            return new
+            var moduloList = _mapper.Map<IEnumerable<ColunaModulo>>(moduloDtoList);
+            foreach (var modulo in moduloList)
             {
-                Id = modulo.Id
-            };
+                modulo.ModuloId = moduloId; // set the module ID for each new modulo
+                _context.ColunaModulo.Add(modulo);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return new { moduloList };
         }
+
+
+
 
 
         [HttpPut("{id}")]
@@ -124,6 +136,19 @@ namespace PortalGrupoAlyne.Controllers
                 }
                 throw;
             }
+            return NoContent();
+        }
+
+        [HttpDelete("modulo/{id}")]
+        public async Task<IActionResult> DeleteByModuloId(int id)
+        {
+            var colunas = await _context.ColunaModulo.Where(l => l.ModuloId == id).ToListAsync();
+            if (colunas == null)
+            {
+                return NotFound();
+            }
+            _context.ColunaModulo.RemoveRange(colunas);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 

@@ -138,9 +138,20 @@ namespace PortalGrupoAlyne.Controllers
                 };
                 _context.Configuracao.AddRange(novaConfigura);
 
-                var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
+                //var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
+                //if (paginas == null) return NoContent();
+                //_context.Pagina.RemoveRange(paginas);
+                var paginas = await context.Pagina
+                .AsNoTracking()
+                .Where(e => e.Id >= 1 && e.Id <= 49) 
+                .ToListAsync();
+
                 if (paginas == null) return NoContent();
-                _context.Pagina.RemoveRange(paginas);
+
+                context.Pagina.RemoveRange(paginas);
+                await context.SaveChangesAsync();
+
+
                 var submenu = await context.SubMenu.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
                 if (submenu == null) return NoContent();
                 _context.SubMenu.RemoveRange(submenu);

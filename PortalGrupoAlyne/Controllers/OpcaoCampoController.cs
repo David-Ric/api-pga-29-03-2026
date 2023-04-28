@@ -78,29 +78,52 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(moduloDto);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<ModuloDto>> Post(ModuloDto moduloDto)
-        //{
-        //    var modulo = _mapper.Map<Modulo>(moduloDto);
-        //    _context.Modulo.Add(modulo);
-        //    await _context.SaveChangesAsync();
-        //    moduloDto.Id = modulo.Id;
-        //    return CreatedAtAction(nameof(GetById), new { id = modulo.Id }, moduloDto);
-        //}
-
-        [HttpPost]
-        public async Task<ActionResult<object>> Post(OpcaoCampoDto moduloDto)
+        [HttpGet("ByColunaModuloId/{colunaModuloId}")]
+        public async Task<ActionResult<IEnumerable<OpcaoCampoDto>>> GetByColunaModuloId(int colunaModuloId)
         {
-            var modulo = _mapper.Map<OpcaoCampo>(moduloDto);
-            _context.OpcaoCampo.Add(modulo);
+            var opcoes = await _context.OpcaoCampo
+                .Where(o => o.ColunaModuloId == colunaModuloId)
+                .ToListAsync();
+            if (!opcoes.Any())
+            {
+                return NotFound();
+            }
+            var opcoesDto = _mapper.Map<IEnumerable<OpcaoCampoDto>>(opcoes);
+            return Ok(opcoesDto);
+        }
+
+       
+        [HttpPost]
+        public async Task<ActionResult<object>> Post(OpcoesRequestDto opcoesRequestDto)
+        {
+            foreach (var colunaModuloId in opcoesRequestDto.ColunaModuloIds)
+            {
+                var existingOpcoes = await _context.OpcaoCampo.Where(o => o.ColunaModuloId == colunaModuloId).ToListAsync();
+                _context.OpcaoCampo.RemoveRange(existingOpcoes);
+
+                var opcoes = opcoesRequestDto.OpcoesDto.Where(o => o.ColunaModuloId == colunaModuloId).Select(o => _mapper.Map<OpcaoCampo>(o));
+                foreach (var opcao in opcoes)
+                {
+                    opcao.ColunaModuloId = colunaModuloId;
+                    _context.OpcaoCampo.Add(opcao);
+                }
+            }
+
             await _context.SaveChangesAsync();
-            moduloDto.Id = modulo.Id;
+
+            var ids = opcoesRequestDto.OpcoesDto.Select(o => o.Id);
 
             return new
             {
-                Id = modulo.Id
+                Ids = ids
             };
         }
+
+
+
+
+
+
 
 
         [HttpPut("{id}")]
@@ -126,6 +149,21 @@ namespace PortalGrupoAlyne.Controllers
             }
             return NoContent();
         }
+
+
+        [HttpDelete("colunamodulo/{id}")]
+        public async Task<IActionResult> DeleteByColunaModuloId(int id)
+        {
+            var opcao = await _context.OpcaoCampo.Where(l => l.ColunaModuloId == id).ToListAsync();
+            if (opcao == null)
+            {
+                return NotFound();
+            }
+            _context.OpcaoCampo.RemoveRange(opcao);
+            await _context.SaveChangesAsync();
+            return NoContent();
+        }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)

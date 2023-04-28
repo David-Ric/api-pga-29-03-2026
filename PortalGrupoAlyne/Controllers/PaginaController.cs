@@ -41,6 +41,26 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
+
+        [HttpGet("default")]
+        public async Task<IActionResult> GetAllDefault([FromServices] DataContext context,
+    [FromQuery] int pagina,
+    [FromQuery] int totalpagina)
+        {
+            var paginas = context.Pagina.Where(p => p.Url.Contains("/Tela/"));
+            var total = await paginas.CountAsync();
+            var data = await paginas.Skip((pagina - 1) * totalpagina).Take(totalpagina).OrderBy(e => e.Id).ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data
+            });
+        }
+
+
+
         [HttpGet("codigo")]
 
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
@@ -88,23 +108,104 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
 
+        //[HttpPost]
+        //public async Task<ActionResult<List<Pagina>>> AddProduto(Pagina pagina)
+        //{
+
+        //    if (_context.Pagina.Any(u => u.Id == pagina.Id))
+        //      {
+        //        return BadRequest("Página ja existe na base de dados.");
+        //    }
+        //    if (_context.Pagina.Any(u => u.MenuId == pagina.MenuId && u.Codigo==pagina.Codigo))
+        //    {
+        //        return BadRequest("Página ja existe na base de dados.");
+        //    }
+        //    _context.Pagina.Add(pagina);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok((new { message = "Página criada com sucesso" }));
+        //}
+
+
         [HttpPost]
         public async Task<ActionResult<List<Pagina>>> AddProduto(Pagina pagina)
         {
+            // Verifica se a página já existe pelo ID
+            if (await _context.Pagina.AnyAsync(p => p.Id == pagina.Id))
+            {
+                return BadRequest("A página já existe no banco de dados.");
+            }
 
-            if (_context.Pagina.Any(u => u.Id == pagina.Id))
+            // Verifica se a página já existe no menu pelo Codigo
+            if (await _context.Pagina.AnyAsync(p => p.MenuId == pagina.MenuId && p.Codigo == pagina.Codigo))
             {
-                return BadRequest("Página ja existe na base de dados.");
+                return BadRequest("A página já existe no menu especificado.");
             }
-            if (_context.Pagina.Any(u => u.MenuId == pagina.MenuId && u.Codigo==pagina.Codigo))
-            {
-                return BadRequest("Página ja existe na base de dados.");
-            }
+
+            // Encontra o último valor de Codigo no banco de dados e incrementa em 1
+            int lastCodigo = await _context.Pagina
+                .OrderByDescending(p => p.Codigo)
+                .Select(p => p.Codigo)
+                .FirstOrDefaultAsync();
+            pagina.Codigo = lastCodigo + 1;
+
+            // Adiciona a nova página ao contexto e salva as alterações
             _context.Pagina.Add(pagina);
             await _context.SaveChangesAsync();
 
-            return Ok((new { message = "Página criada com sucesso" }));
+            return Ok(new { message = "Página criada com sucesso." });
         }
+
+
+        [HttpPut("updateAdmin")]
+        public IActionResult UpdateAdmin(string nome, PaginaDto model)
+        {
+            var pagina = _context.Pagina.FirstOrDefault(p => p.Nome == nome && p.MenuId == 1);
+
+            if (pagina == null)
+            {
+                return NotFound();
+            }
+
+            if (pagina.MenuId == 1)
+            {
+                pagina.SubMenuId = model.SubMenuId;
+                pagina.Icon = model.Icon;
+            }
+
+            _context.Pagina.Update(pagina);
+            _context.SaveChanges();
+
+            return Ok(new { message = "Página atualizada com sucesso" });
+        }
+
+        [HttpPut("updatePagina")]
+        public IActionResult UpdatePagina(string nome, PaginaDto model)
+        {
+            var pagina = _context.Pagina.FirstOrDefault(p => p.Nome == nome && p.MenuId !=1);
+
+            if (pagina == null)
+            {
+                return NotFound();
+            }
+
+            if (pagina.MenuId != 1)
+            {
+                pagina.MenuId = model.MenuId;
+                pagina.Icon = model.Icon;
+            }
+
+            _context.Pagina.Update(pagina);
+            _context.SaveChanges();
+
+            return Ok(pagina);
+        }
+
+
+
+
+
+
 
         [HttpPut("{id}")]
 

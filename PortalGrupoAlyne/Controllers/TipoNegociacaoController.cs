@@ -23,7 +23,7 @@ namespace PortalGrupoAlyne.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-
+        [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
             [FromQuery] int pagina,
              [FromQuery] int totalpagina
@@ -39,7 +39,7 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
         [HttpGet("filter")]
-
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,
            [FromQuery] int pagina,
             [FromQuery] int totalpagina,
@@ -72,6 +72,7 @@ namespace PortalGrupoAlyne.Controllers
 
         }
         [HttpGet("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<TipoNegociacao>> Get(int id)
         {
             var negociacao = await _context.TipoNegociacao.FindAsync(id);

@@ -69,7 +69,11 @@ namespace PortalGrupoAlyne.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ModuloDto>> GetById(int id)
         {
-            var modulo = await _context.Modulo.Include(m => m.ColunaModulo).Include(m=>m.LigacaoTabela).FirstOrDefaultAsync(m => m.Id == id);
+            var modulo = await _context.Modulo
+                .Include(m => m.ColunaModulo)
+                .ThenInclude(cm => cm.OpcaoCampo)
+                .Include(m=>m.LigacaoTabela)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (modulo == null)
             {
                 return NotFound();
@@ -78,20 +82,20 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(moduloDto);
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult<ModuloDto>> Post(ModuloDto moduloDto)
-        //{
-        //    var modulo = _mapper.Map<Modulo>(moduloDto);
-        //    _context.Modulo.Add(modulo);
-        //    await _context.SaveChangesAsync();
-        //    moduloDto.Id = modulo.Id;
-        //    return CreatedAtAction(nameof(GetById), new { id = modulo.Id }, moduloDto);
-        //}
-
         [HttpPost]
         public async Task<ActionResult<object>> Post(ModuloDto moduloDto)
         {
             var modulo = _mapper.Map<Modulo>(moduloDto);
+
+            var tableNames = _context.Model.GetEntityTypes()
+     .Select(t => t.GetTableName().ToLower())
+     .ToList();
+
+            if (tableNames.Contains(modulo.Tabela.ToLower()))
+            {
+                return BadRequest("Já existe uma tabela com o mesmo nome.");
+            }
+
             _context.Modulo.Add(modulo);
             await _context.SaveChangesAsync();
             moduloDto.Id = modulo.Id;
@@ -102,9 +106,41 @@ namespace PortalGrupoAlyne.Controllers
             };
         }
 
+        [HttpGet("tabelas")]
+        public IActionResult GetAllTables()
+        {
+            try
+            {
+                var tableNames = _context.Model.GetEntityTypes()
+                    .Select(t => t.GetTableName())
+                    .ToList();
+                return Ok(tableNames);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        //[HttpPost]
+        //public async Task<ActionResult<object>> Post(ModuloDto moduloDto)
+        //{
+        //    var modulo = _mapper.Map<Modulo>(moduloDto);
+        //    _context.Modulo.Add(modulo);
+        //    await _context.SaveChangesAsync();
+        //    moduloDto.Id = modulo.Id;
+
+        //    return new
+        //    {
+        //        Id = modulo.Id
+        //    };
+        //}
+
+
+
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, ModuloDto moduloDto)
+        public async Task<ActionResult<object>> Put(int id, ModuloDto moduloDto)
         {
             if (id != moduloDto.Id)
             {
@@ -124,8 +160,13 @@ namespace PortalGrupoAlyne.Controllers
                 }
                 throw;
             }
-            return NoContent();
+
+            return new
+            {
+                Id = modulo.Id
+            };
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
