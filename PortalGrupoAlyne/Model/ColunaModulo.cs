@@ -14,6 +14,7 @@ namespace PortalGrupoAlyne.Model
         public string? ValueTabInput { get; set; }
         public string? LabelTabInput { get; set; }
         public bool? ChavePrimaria { get; set; }
+        public bool? Automatico { get; set; }
         public string? Expressao { get; set; }
 
         [ForeignKey("Modulo")]
