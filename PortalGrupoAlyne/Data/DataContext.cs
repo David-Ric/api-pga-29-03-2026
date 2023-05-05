@@ -88,6 +88,7 @@ namespace PortalGrupoAlyne.Data
 
         public DbSet<OpcaoCampo> OpcaoCampo { get; set; }
         public DbSet<LigacaoTabela> LigacaoTabela { get; set; }
+ 
 
 
 

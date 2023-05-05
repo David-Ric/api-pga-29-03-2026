@@ -63,33 +63,114 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
+        //[HttpGet("tabela/{tableName}")]
+
+        //public async Task<IEnumerable<dynamic>> GetTabela(string tableName)
+        //{
+        //    string connectionString = _configuration.GetConnectionString("DefaultConnection");
+        //    using IDbConnection connection = new MySqlConnection(connectionString);
+        //    string query = $"SELECT * FROM {tableName}";
+        //    IEnumerable<dynamic> result = await connection.QueryAsync(query);
+        //    return result;
+        //}
+
+
+        //get das telas sem ligação
+
+        //[HttpGet("tabela/{tableName}")]
+        //public async Task<IActionResult> GetTabelaPaginada(string tableName, int pagina, int totalPaginas)
+        //{
+        //    int skip = (pagina - 1) * totalPaginas;
+        //    string connectionString = _configuration.GetConnectionString("DefaultConnection");
+        //    using IDbConnection connection = new MySqlConnection(connectionString);
+
+        //    // Query para obter a quantidade total de registros
+        //    string countQuery = $"SELECT COUNT(*) FROM {tableName}";
+        //    int totalRegistros = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
+
+        //    // Query para obter os registros paginados
+        //    string paginatedQuery = $"SELECT * FROM {tableName} LIMIT {skip},{totalPaginas}";
+        //    IEnumerable<dynamic> result = await connection.QueryAsync(paginatedQuery);
+
+        //    return Ok(new
+        //    {
+        //        totalRegistros,
+        //        data = result
+        //    });
+        //}
+        //pesquisa sem ligação
         [HttpGet("tabela/{tableName}")]
- 
-        public async Task<IEnumerable<dynamic>> GetTabela(string tableName)
+        public async Task<IActionResult> GetTabelaPaginada(string tableName, int pagina, int totalPaginas, string? fieldName = null, string? fieldValue = null)
         {
+            int skip = (pagina - 1) * totalPaginas;
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
             using IDbConnection connection = new MySqlConnection(connectionString);
-            string query = $"SELECT * FROM {tableName}";
-            IEnumerable<dynamic> result = await connection.QueryAsync(query);
-            return result;
+
+            // Query para obter a quantidade total de registros
+            string countQuery = $"SELECT COUNT(*) FROM {tableName}";
+            int totalRegistros = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
+
+            // Query para obter os registros paginados
+            string paginatedQuery = $"SELECT * FROM {tableName}";
+
+            if (fieldName != null && fieldValue != null)
+            {
+                // Adiciona a cláusula WHERE na query com o campo e valor a serem buscados
+                paginatedQuery += $" WHERE {fieldName} LIKE '%{fieldValue}%'";
+            }
+
+            paginatedQuery += $" LIMIT {skip},{totalPaginas}";
+            IEnumerable<dynamic> result = await connection.QueryAsync(paginatedQuery);
+
+            return Ok(new
+            {
+                totalRegistros,
+                data = result
+            });
         }
 
 
-
-
-
-
+        //pesquisa com ligação
         [HttpGet("tabela/{tableName}/{tabelaLigada}/{campoLigacao}/{campoExibido}")]
-        public async Task<IEnumerable<dynamic>> GetTabela(string tableName, string tabelaLigada, string campoLigacao, string campoExibido)
+        public async Task<IActionResult> GetTabelaPaginada(string tableName, string tabelaLigada, string campoLigacao, string campoExibido, [FromQuery] int pagina, [FromQuery] int totalpagina, string? fieldName = null, string? fieldValue = null)
         {
-            string connectionString = _configuration.GetConnectionString("DefaultConnection");
-            using IDbConnection connection = new MySqlConnection(connectionString);
-            string campoVirtual = $"{campoLigacao}";
-            string query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '-', {tabelaLigada}.{campoExibido}) as {campoVirtual} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+            try
+            {
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                using var connection = new MySqlConnection(connectionString);
 
+                var countQuery = $"SELECT COUNT(*) FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+                if (!string.IsNullOrEmpty(fieldName) && !string.IsNullOrEmpty(fieldValue))
+                {
+                    countQuery += $" WHERE {tableName}.{fieldName} = '{fieldValue}'";
+                }
 
-            IEnumerable<dynamic> result = await connection.QueryAsync(query);
-            return result;
+                var countResult = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
+
+                var skip = (pagina - 1) * totalpagina;
+                var take = totalpagina;
+
+                var query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '| ', {tabelaLigada}.{campoExibido}) as {campoLigacao} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+                if (!string.IsNullOrEmpty(fieldName) && !string.IsNullOrEmpty(fieldValue))
+                {
+                    query += $" WHERE {tableName}.{fieldName} LIKE '%{fieldValue}%'";
+
+                }
+
+                query += $" ORDER BY {tableName}.id ASC LIMIT {skip},{take}";
+
+                var result = await connection.QueryAsync<dynamic>(query);
+
+                return Ok(new
+                {
+                    total = countResult,
+                    data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Erro ao buscar os dados da tabela {tableName}: {ex.Message}");
+            }
         }
 
 
@@ -97,7 +178,82 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
+        //[HttpGet("tabela/{tableName}/{tabelaLigada}/{campoLigacao}/{campoExibido}")]
+        //public async Task<IActionResult> GetTabelaPaginada(string tableName, string tabelaLigada, string campoLigacao, string campoExibido, [FromQuery] int pagina, [FromQuery] int totalpagina)
+        //{
+        //    try
+        //    {
+        //        var connectionString = _configuration.GetConnectionString("DefaultConnection");
+        //        using var connection = new MySqlConnection(connectionString);
 
+        //        var countQuery = $"SELECT COUNT(*) FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+        //        var countResult = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
+
+        //        var skip = (pagina - 1) * totalpagina;
+        //        var take = totalpagina;
+        //        var query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '| ', {tabelaLigada}.{campoExibido}) as {campoLigacao} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id ORDER BY {tableName}.id ASC LIMIT {skip},{take}";
+
+        //        var result = await connection.QueryAsync<dynamic>(query);
+
+        //        return Ok(new
+        //        {
+        //            total = countResult,
+        //            data = result
+        //        });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest($"Erro ao buscar os dados da tabela {tableName}: {ex.Message}");
+        //    }
+        //}
+
+
+
+
+        //get da tabela ligação
+
+        [HttpGet("tabela/{tableName}/{campoExibidor}")]
+        public async Task<IEnumerable<object>> GetTabela(string tableName, string campoExibidor)
+        {
+            string connectionString = _configuration.GetConnectionString("DefaultConnection");
+            using IDbConnection connection = new MySqlConnection(connectionString);
+            string query = $"SELECT id as value, {campoExibidor} as label FROM {tableName}";
+
+            IEnumerable<dynamic> result = await connection.QueryAsync(query);
+            IEnumerable<object> list = result.Select(r => new { value = r.value, label = r.label });
+
+            return list;
+        }
+
+        //popular as tabelas
+
+        [HttpPost("criarTabela{tableName}")]
+        public async Task<IActionResult> Post(string tableName, [FromBody] IEnumerable<Dictionary<string, object>> items)
+        {
+            try
+            {
+                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                using IDbConnection connection = new MySqlConnection(connectionString);
+
+                foreach (var item in items)
+                {
+                    var columns = string.Join(", ", item.Keys);
+                    var values = string.Join(", ", item.Values.Select(v => $"'{v.ToString()}'"));
+                    string query = $"INSERT INTO {tableName} ({columns}) VALUES ({values})";
+                    await connection.ExecuteAsync(query);
+                }
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
+
+
+
+       
 
 
 
@@ -194,55 +350,30 @@ namespace PortalGrupoAlyne.Controllers
 
             return columns;
         }
+        //deletar dados pela tabela e campo
 
+        [HttpDelete("deletarRegistros/{tableName}/{fieldName}/{fieldValue}")]
+        public async Task<IActionResult> Delete(string tableName, string fieldName, string fieldValue)
+        {
+            try
+            {
+                string connectionString = _configuration.GetConnectionString("DefaultConnection");
+                using IDbConnection connection = new MySqlConnection(connectionString);
 
+                string query = $"DELETE FROM {tableName} WHERE {fieldName} = '{fieldValue}'";
+                await connection.ExecuteAsync(query);
 
-        //[HttpPut("{tableName}")]
-        //public async Task<IActionResult> UpdateTable(string tableName, [FromBody] List<Dictionary<string, object>> columns)
-        //{
-        //    if (!await TableExists(tableName))
-        //        return NotFound();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex}");
+            }
+        }
 
-        //    var existingColumns = await GetColumns(tableName);
+       
 
-        //    var existingColumnNames = existingColumns.Select(c => c.Name);
-
-        //    var addedColumns = columns.Where(c => !existingColumnNames.Contains(c["name"].ToString())).ToList();
-
-        //    var modifiedColumns = columns.Where(c => existingColumnNames.Contains(c["name"].ToString())).ToList();
-
-        //    if (addedColumns.Any())
-        //    {
-        //        var query = $"ALTER TABLE {tableName} ";
-
-        //        foreach (var column in addedColumns)
-        //        {
-        //            var name = column["name"].ToString();
-        //            var type = column["type"].ToString();
-
-        //            query += $"ADD {name} {type}, ";
-        //        }
-
-        //        query = query.Remove(query.Length - 2); // Remove a última vírgula e espaço
-
-        //        await _context.Database.ExecuteSqlRawAsync(query);
-        //    }
-
-        //    if (modifiedColumns.Any())
-        //    {
-        //        foreach (var column in modifiedColumns)
-        //        {
-        //            var name = column["name"].ToString();
-        //            var type = column["type"].ToString();
-
-        //            var query = $"ALTER TABLE {tableName} MODIFY {name} {type}";
-
-        //            await _context.Database.ExecuteSqlRawAsync(query);
-        //        }
-        //    }
-
-        //    return Ok();
-        //}
+        
 
         private async Task<bool> TableExists(string tableName)
         {

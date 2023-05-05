@@ -8,7 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CabecalhoPedidoVendaController : ControllerBase
@@ -55,6 +55,33 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+        //[HttpGet("Pendentes")]
+        //public async Task<IActionResult> GetPendentes([FromServices] DataContext context)
+        //{
+        //    var header = await context.CabecalhoPedidoVenda
+        //        .Where(h => h.Status == "Pendente")
+        //        .FirstOrDefaultAsync();
+
+        //    if (header == null)
+        //    {
+        //        return NotFound("Não há cabeçalhos de venda pendentes");
+        //    }
+
+        //    var items = await context.ItemPedidoVenda
+        //        .Where(i => i.PalMPV == header.PalMPV)
+        //        .ToListAsync();
+
+        //    var result = new
+        //    {
+        //        CabecalhoPedidoVenda = header,
+        //        ItemPedidoVenda = items
+        //    };
+
+        //    return Ok(result);
+        //}
+
+
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -96,6 +123,26 @@ namespace PortalGrupoAlyne.Controllers
             _cabecalhoPedidoVendaService.Update(id, model);
             return Ok(new { message = "Pedido atualizado com sucesso" });
         }
+
+
+        [HttpPut("{id}/status")]
+        public IActionResult UpdateStatus(int id)
+        {
+            var pedido = _context.CabecalhoPedidoVenda.Find(id);
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+
+            pedido.Status = "Pendente";
+            _context.SaveChanges();
+
+            return Ok(new { message = "Erro de comunicação com o Sankya, Envio Pendente" });
+        }
+
+
+
+
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<List<CabecalhoPedidoVenda>>> Delete(int id)

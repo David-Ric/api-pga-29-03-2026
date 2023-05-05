@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PortalGrupoAlyne.Model.Dtos;
 
 namespace PortalGrupoAlyne.Controllers
@@ -92,7 +93,7 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(opcoesDto);
         }
 
-       
+
         [HttpPost]
         public async Task<ActionResult<object>> Post(OpcoesRequestDto opcoesRequestDto)
         {
@@ -119,6 +120,8 @@ namespace PortalGrupoAlyne.Controllers
             };
         }
 
+
+       
 
 
 
@@ -177,6 +180,24 @@ namespace PortalGrupoAlyne.Controllers
             await _context.SaveChangesAsync();
             return NoContent();
         }
+
+        [HttpDelete("colunaModulo/{colunaModuloId}/campo/{nomeCampo}")]
+        public async Task<IActionResult> Delete(int colunaModuloId, string nomeCampo)
+        {
+            var opcaoCampo = await _context.OpcaoCampo
+                .Where(o => o.ColunaModuloId == colunaModuloId && o.Opcao == nomeCampo)
+                .FirstOrDefaultAsync();
+            if (opcaoCampo == null)
+            {
+                return NotFound();
+            }
+
+            _context.OpcaoCampo.Remove(opcaoCampo);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
 
     }
 }
