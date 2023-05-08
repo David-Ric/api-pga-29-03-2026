@@ -29,14 +29,40 @@ namespace PortalGrupoAlyne.Controllers
             _configuration = configuration;
         }
 
+        //[HttpGet]
+        //public IActionResult GetAllTables()
+        //{
+        //    try
+        //    {
+        //        var tableNames = _context.Model.GetEntityTypes()
+        //            .Select(t => t.GetTableName())
+        //            .ToList();
+        //        return Ok(tableNames);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(500, ex.Message);
+        //    }
+        //}
+
+
         [HttpGet]
         public IActionResult GetAllTables()
         {
             try
             {
-                var tableNames = _context.Model.GetEntityTypes()
-                    .Select(t => t.GetTableName())
-                    .ToList();
+                var tableNames = new List<string>();
+                var connection = _context.Database.GetDbConnection();
+                connection.Open();
+                var command = connection.CreateCommand();
+                command.CommandText = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'";
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        tableNames.Add(reader.GetString(0));
+                    }
+                }
                 return Ok(tableNames);
             }
             catch (Exception ex)
@@ -75,32 +101,10 @@ namespace PortalGrupoAlyne.Controllers
         //}
 
 
-        //get das telas sem ligação
-
-        //[HttpGet("tabela/{tableName}")]
-        //public async Task<IActionResult> GetTabelaPaginada(string tableName, int pagina, int totalPaginas)
-        //{
-        //    int skip = (pagina - 1) * totalPaginas;
-        //    string connectionString = _configuration.GetConnectionString("DefaultConnection");
-        //    using IDbConnection connection = new MySqlConnection(connectionString);
-
-        //    // Query para obter a quantidade total de registros
-        //    string countQuery = $"SELECT COUNT(*) FROM {tableName}";
-        //    int totalRegistros = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
-
-        //    // Query para obter os registros paginados
-        //    string paginatedQuery = $"SELECT * FROM {tableName} LIMIT {skip},{totalPaginas}";
-        //    IEnumerable<dynamic> result = await connection.QueryAsync(paginatedQuery);
-
-        //    return Ok(new
-        //    {
-        //        totalRegistros,
-        //        data = result
-        //    });
-        //}
+       
         //pesquisa sem ligação
         [HttpGet("tabela/{tableName}")]
-        public async Task<IActionResult> GetTabelaPaginada(string tableName, int pagina, int totalPaginas, string? fieldName = null, string? fieldValue = null)
+        public async Task<IActionResult> GetTabelaPaginada(string tableName, int pagina, int totalPaginas, string? fieldName = null, string? fieldValue = null, string? campoExpressao = null, string? sqlExpressao = null)
         {
             int skip = (pagina - 1) * totalPaginas;
             string connectionString = _configuration.GetConnectionString("DefaultConnection");
@@ -108,10 +112,24 @@ namespace PortalGrupoAlyne.Controllers
 
             // Query para obter a quantidade total de registros
             string countQuery = $"SELECT COUNT(*) FROM {tableName}";
+
+            if (fieldName != null && fieldValue != null)
+            {
+                // Adiciona a cláusula WHERE na query com o campo e valor a serem buscados
+                countQuery += $" WHERE {fieldName} LIKE '%{fieldValue}%'";
+            }
+
             int totalRegistros = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
 
             // Query para obter os registros paginados
-            string paginatedQuery = $"SELECT * FROM {tableName}";
+            string paginatedQuery = $"SELECT *";
+
+            if (!string.IsNullOrEmpty(campoExpressao) && !string.IsNullOrEmpty(sqlExpressao))
+            {
+                paginatedQuery += $", ({sqlExpressao}) as {campoExpressao}";
+            }
+
+            paginatedQuery += $" FROM {tableName}";
 
             if (fieldName != null && fieldValue != null)
             {
@@ -130,9 +148,16 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-        //pesquisa com ligação
+
+
+
+
         [HttpGet("tabela/{tableName}/{tabelaLigada}/{campoLigacao}/{campoExibido}")]
-        public async Task<IActionResult> GetTabelaPaginada(string tableName, string tabelaLigada, string campoLigacao, string campoExibido, [FromQuery] int pagina, [FromQuery] int totalpagina, string? fieldName = null, string? fieldValue = null)
+        public async Task<IActionResult> GetTabelaPaginada(
+     string tableName, string tabelaLigada, string campoLigacao, string campoExibido,
+     [FromQuery] int pagina, [FromQuery] int totalpagina,
+     string? fieldName = null, string? fieldValue = null,
+     string? campoExpressao = null, string? sqlExpressao = null)
         {
             try
             {
@@ -150,7 +175,12 @@ namespace PortalGrupoAlyne.Controllers
                 var skip = (pagina - 1) * totalpagina;
                 var take = totalpagina;
 
-                var query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '| ', {tabelaLigada}.{campoExibido}) as {campoLigacao} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
+                var query = $"SELECT {tableName}.*";
+                if (!string.IsNullOrEmpty(campoExpressao) && !string.IsNullOrEmpty(sqlExpressao))
+                {
+                    query += $", ({sqlExpressao}) as {campoExpressao}";
+                }
+                query += $", CONCAT({tabelaLigada}.id, '| ', {tabelaLigada}.{campoExibido}) as {campoLigacao} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
                 if (!string.IsNullOrEmpty(fieldName) && !string.IsNullOrEmpty(fieldValue))
                 {
                     query += $" WHERE {tableName}.{fieldName} LIKE '%{fieldValue}%'";
@@ -178,34 +208,8 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
-        //[HttpGet("tabela/{tableName}/{tabelaLigada}/{campoLigacao}/{campoExibido}")]
-        //public async Task<IActionResult> GetTabelaPaginada(string tableName, string tabelaLigada, string campoLigacao, string campoExibido, [FromQuery] int pagina, [FromQuery] int totalpagina)
-        //{
-        //    try
-        //    {
-        //        var connectionString = _configuration.GetConnectionString("DefaultConnection");
-        //        using var connection = new MySqlConnection(connectionString);
 
-        //        var countQuery = $"SELECT COUNT(*) FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id";
-        //        var countResult = await connection.QueryFirstOrDefaultAsync<int>(countQuery);
 
-        //        var skip = (pagina - 1) * totalpagina;
-        //        var take = totalpagina;
-        //        var query = $"SELECT {tableName}.*, CONCAT({tabelaLigada}.id, '| ', {tabelaLigada}.{campoExibido}) as {campoLigacao} FROM {tableName} INNER JOIN {tabelaLigada} ON {tableName}.{campoLigacao} = {tabelaLigada}.id ORDER BY {tableName}.id ASC LIMIT {skip},{take}";
-
-        //        var result = await connection.QueryAsync<dynamic>(query);
-
-        //        return Ok(new
-        //        {
-        //            total = countResult,
-        //            data = result
-        //        });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest($"Erro ao buscar os dados da tabela {tableName}: {ex.Message}");
-        //    }
-        //}
 
 
 
@@ -327,29 +331,58 @@ namespace PortalGrupoAlyne.Controllers
             return Ok();
         }
 
+        //private async Task<List<string>> GetTableColumns(string tableName)
+        //{
+        //    var columns = new List<string>();
+        //    var connection = _context.Database.GetDbConnection();
+        //    await connection.OpenAsync();
+
+        //    using (var command = connection.CreateCommand())
+        //    {
+        //        command.CommandText = $"SELECT column_name FROM information_schema.columns WHERE table_name = '{tableName}'";
+
+        //        using (var reader = await command.ExecuteReaderAsync())
+        //        {
+        //            while (await reader.ReadAsync())
+        //            {
+        //                columns.Add(reader.GetString(0));
+        //            }
+        //        }
+        //    }
+
+        //    await connection.CloseAsync();
+
+        //    return columns;
+        //}
+
         private async Task<List<string>> GetTableColumns(string tableName)
+{
+    var columns = new List<string>();
+    var connection = _context.Database.GetDbConnection();
+    if (connection.State != ConnectionState.Open)
+    {
+        await connection.OpenAsync();
+    }
+
+    using (var command = connection.CreateCommand())
+    {
+        command.CommandText = $"SELECT column_name FROM information_schema.columns WHERE table_name = '{tableName}'";
+
+        using (var reader = await command.ExecuteReaderAsync())
         {
-            var columns = new List<string>();
-            var connection = _context.Database.GetDbConnection();
-            await connection.OpenAsync();
-
-            using (var command = connection.CreateCommand())
+            while (await reader.ReadAsync())
             {
-                command.CommandText = $"SELECT column_name FROM information_schema.columns WHERE table_name = '{tableName}'";
-
-                using (var reader = await command.ExecuteReaderAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        columns.Add(reader.GetString(0));
-                    }
-                }
+                columns.Add(reader.GetString(0));
             }
-
-            await connection.CloseAsync();
-
-            return columns;
         }
+    }
+
+    return columns;
+}
+
+
+
+
         //deletar dados pela tabela e campo
 
         [HttpDelete("deletarRegistros/{tableName}/{fieldName}/{fieldValue}")]
