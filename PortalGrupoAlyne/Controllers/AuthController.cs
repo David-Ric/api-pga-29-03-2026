@@ -39,17 +39,56 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
+        //[HttpPost("register")]
+        //// [AllowAnonymous]
+        //public async Task<IActionResult> Register(UserRegisterRequest request)
+        //{
+        //    if (_context.Usuario.Any(u => u.Email == request.Email))
+        //    {
+        //        return BadRequest("Usuario ja existe na base de dados.");
+        //    }
+        //    if (_context.Usuario.Any(u => u.Username == request.Username))
+        //    {
+        //        return BadRequest("Usuario ja existe na base de dados.");
+        //    }
+
+        //    CreatePasswordHash(request.Password,
+        //         out byte[] passwordHash,
+        //         out byte[] passwordSalt);
+
+        //    var user = new Usuario
+        //    {
+        //        Email = request.Email,
+        //        Username = request.Username,
+        //        NomeCompleto = request.NomeCompleto,
+        //        Status = request.Status,
+        //        GrupoId = request.GrupoId,
+        //        Funcao = request.Funcao,
+        //        Telefone = request.Telefone,
+        //        PasswordHash = passwordHash,
+        //        PasswordSalt = passwordSalt,
+        //        // VerificationToken = CreateRandomToken()
+        //    };
+
+        //    _context.Usuario.Add(user);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok(new { data = user.Id,
+        //        grupo = user.GrupoId,
+        //        resposta = "Usuário criado com sucesso!" });
+        //}
+
+
         [HttpPost("register")]
-        // [AllowAnonymous]
         public async Task<IActionResult> Register(UserRegisterRequest request)
         {
             if (_context.Usuario.Any(u => u.Email == request.Email))
             {
-                return BadRequest("Usuario ja existe na base de dados.");
+                return BadRequest("Usuário já existe na base de dados.");
             }
             if (_context.Usuario.Any(u => u.Username == request.Username))
             {
-                return BadRequest("Usuario ja existe na base de dados.");
+                return BadRequest("Nome de usuário já existe na base de dados.");
             }
 
             CreatePasswordHash(request.Password,
@@ -67,16 +106,41 @@ namespace PortalGrupoAlyne.Controllers
                 Telefone = request.Telefone,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                // VerificationToken = CreateRandomToken()
             };
 
             _context.Usuario.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { data = user.Id,
+            // Cria o corpo do email
+            var emailBody = $@"<div style='background-color: #a5bef7; padding: 20px; border-radius: 5px; width:400px'><h1>Olá {user.NomeCompleto},</h1><h2>Você acaba de ser cadastrado na nova ferramenta web PGA, do Grupo Alyne.</h2>
+                <h2>Segue abaixo o seu nome de usuário e senha, lembre-se que você deve mudar a senha após o primeiro acesso:</h2>
+                <h1>Usuário: {user.Username}</h1>
+                <h1>Senha: {request.Password}</h1>
+                <h2>Acesse agora mesmo:<a href=""https://pga.cigel.com.br/pga/""> https://pga.cigel.com.br/pga/</a> </h2></div></br></br>
+                <h1>Gupo Alyne Cosméticos</h1>
+                ";
+
+            // Envia o email
+            var emailSend = new SendMailViewModel
+            {
+                Emails = new List<string> { user.Email }.ToArray(),
+                Subject = "Boas-vindas à ferramenta web PGA - Grupo Alyne",
+                Body = emailBody,
+                IsHtml = true
+            };
+
+            await _mailService.SendMailAsync(emailSend);
+
+            return Ok(new
+            {
+                data = user.Id,
                 grupo = user.GrupoId,
-                resposta = "Usuário criado com sucesso!" });
+                resposta = "Usuário criado com sucesso!"
+            });
         }
+
+
+
 
         [HttpPost("login")]
         [AllowAnonymous]
@@ -174,10 +238,12 @@ namespace PortalGrupoAlyne.Controllers
             var resetPasswordLink = baseUrl + "/pga/redefinir-senha?token=" + user.PasswordResetToken;
 
             // Cria o corpo do email
-            var emailBody = $@"<div><h2>Falta pouco para redefinir sua senha!!!<a href=""{resetPasswordLink}""> Clique aqui para redefinir...</a></h2></br></br>
+            var emailBody = $@"<div style='background-color: #a5bef7; padding: 20px; border-radius: 5px; width:400px'>
+<h1>Olá {user.NomeCompleto},</h1>
+<h2>Falta pouco para redefinir sua senha!!!<a href=""{resetPasswordLink}""> Clique aqui para redefinir...</a></h2></br></br></div>
         </br></br></br></br>
-        <h2></h2></br></br>
-        <img style=""marginTop:20"" src=""https://grupoalynecosmeticos.com.br/wp-content/uploads/2021/03/grupoalyne.png"" width=""200"">";
+      <h1>Gupo Alyne Cosméticos</h1>
+";
 
             // Envia o email
             var emailSend = new SendMailViewModel

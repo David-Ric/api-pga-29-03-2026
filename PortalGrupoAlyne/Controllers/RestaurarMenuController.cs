@@ -503,25 +503,26 @@ namespace PortalGrupoAlyne.Controllers
                        MenuId = 4,
 
                    },
-                     new Pagina
-                   {
-                       Id = 41,
-                       Codigo = 31,
-                       Nome = "CI - RH",
-                       Url = "/comunicacao-interna",
-                       Icon = "fa fa-comments-o",
-                       MenuId = 1,
-                       SubMenuId = 4,
-                   }, new Pagina
-                   {
-                       Id = 42,
-                       Codigo = 31,
-                       Nome = "CI - RH",
-                       Url = "/comunicacao-interna",
-                       Icon = "fa fa-comments-o",
-                       MenuId = 5,
+                   //  new Pagina
+                   //{
+                   //    Id = 41,
+                   //    Codigo = 31,
+                   //    Nome = "CI - RH",
+                   //    Url = "/comunicacao-interna",
+                   //    Icon = "fa fa-comments-o",
+                   //    MenuId = 1,
+                   //    SubMenuId = 4,
+                   //}, 
+                   // new Pagina
+                   //{
+                   //    Id = 42,
+                   //    Codigo = 31,
+                   //    Nome = "CI - RH",
+                   //    Url = "/comunicacao-interna",
+                   //    Icon = "fa fa-comments-o",
+                   //    MenuId = 5,
 
-                   },
+                   //},
                      new Pagina
                    {
                        Id = 43,
@@ -541,25 +542,25 @@ namespace PortalGrupoAlyne.Controllers
                        MenuId = 5,
 
                    },
-                     new Pagina
-                   {
-                       Id = 45,
-                       Codigo = 33,
-                       Nome = "CI - Comercial",
-                       Url = "/comunicacao-interna-comercial",
-                       Icon = "fa fa-commenting",
-                       MenuId = 1,
-                       SubMenuId = 4,
-                   }, new Pagina
-                   {
-                       Id = 46,
-                       Codigo = 33,
-                       Nome = "CI - Comercial",
-                       Url = "/comunicacao-interna-comercial",
-                       Icon = "fa fa-commenting",
-                       MenuId = 5,
+                   //  new Pagina
+                   //{
+                   //    Id = 45,
+                   //    Codigo = 33,
+                   //    Nome = "CI - Comercial",
+                   //    Url = "/comunicacao-interna-comercial",
+                   //    Icon = "fa fa-commenting",
+                   //    MenuId = 1,
+                   //    SubMenuId = 4,
+                   //}, new Pagina
+                   //{
+                   //    Id = 46,
+                   //    Codigo = 33,
+                   //    Nome = "CI - Comercial",
+                   //    Url = "/comunicacao-interna-comercial",
+                   //    Icon = "fa fa-commenting",
+                   //    MenuId = 5,
 
-                   },
+                   //},
                      new Pagina
                    {
                        Id = 47,

@@ -22,7 +22,7 @@ namespace PortalGrupoAlyne.Infra.Services
         {
             using (MailMessage mailMessage = new MailMessage())
             {
-                mailMessage.From = new MailAddress(emailFromAddress);
+                mailMessage.From = new MailAddress(emailFromAddress, "PGA - Grupo Alyne");
                 AddEmailsToMailMessage(mailMessage, model.Emails.ToArray());
                 mailMessage.Subject = model.Subject;
                 mailMessage.Body = model.Body;
