@@ -342,7 +342,8 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
          [HttpGet("permissao/{id}")]
-         public async Task<IActionResult> GetPermissaoById(int id)
+        [AllowAnonymous]
+        public async Task<IActionResult> GetPermissaoById(int id)
          {
              try
              {
