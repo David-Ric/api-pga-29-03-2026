@@ -5,7 +5,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   //[Authorize]
+    [Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaEnviarDadosController : ControllerBase
@@ -19,7 +19,7 @@ namespace PortalGrupoAlyne.Controllers
 
         [HttpPost("EnviarDados")]
         [ApiExplorerSettings(IgnoreApi = true)]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> Processar([FromBody] PedidoVendaRequest pedido)
         {
             var response = await SankhyaEnviarDadosService.processarPedido(_configuration, pedido);

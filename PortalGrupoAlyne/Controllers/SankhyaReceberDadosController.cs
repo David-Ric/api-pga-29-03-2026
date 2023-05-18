@@ -4,7 +4,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+   [Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaReceberDadosController : ControllerBase
@@ -17,7 +17,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpPost("ReceberDados")]
-        //[AllowAnonymous]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> Processar([FromQuery] string tabela, [FromQuery] int vendedorId)
         {
             var response = await SankhyaReceberDadosService.processar(_configuration, tabela, vendedorId);

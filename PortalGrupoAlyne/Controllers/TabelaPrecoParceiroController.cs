@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class TabelaPrecoParceiroController : ControllerBase

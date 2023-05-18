@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+   [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ChatController : Controller

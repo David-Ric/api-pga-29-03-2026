@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Model.Dtos;
 
 namespace PortalGrupoAlyne.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LigacaoTabelaController : ControllerBase

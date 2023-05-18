@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+    //[Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaController : ControllerBase

@@ -197,6 +197,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet("conectados")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosConectados()
         {
             var usuariosConectados = await _context.Usuario.OrderBy(u => u.NomeCompleto).ToListAsync();
@@ -228,7 +229,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("buscaUsuarios")]
-
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosConectados([FromQuery] string searchTerm)
         {
             var usuariosConectados = _context.Usuario.AsQueryable();
@@ -264,6 +265,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpGet("por-nome/{nome}")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsuariosPorNome(string nome)
         {
             var usuarios = await _context.Usuario

@@ -6,7 +6,7 @@ using PortalGrupoAlyne.Model.Dtos;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   // [Authorize]
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LogController : ControllerBase
