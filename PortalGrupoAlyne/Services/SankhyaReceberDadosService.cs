@@ -1,5 +1,7 @@
+using System.Text;
 using System.Text.Json;
 using Dapper;
+using Microsoft.Win32;
 using MySqlConnector;
 using PortalGrupoAlyne.Model.Dtos.Sankhya;
 
@@ -216,8 +218,10 @@ namespace PortalGrupoAlyne.Services
             return integracaoSankhya;
         }
 
-        public static async Task<String> AtualizarTabela(string sql, string table, string key)
+        public static async Task<string> AtualizarTabela(string sql, string table, string key)
         {
+            List<IList<object>> registrosProcessados = new List<IList<object>>();
+
             try
             {
                 Console.WriteLine(sql);
@@ -227,77 +231,259 @@ namespace PortalGrupoAlyne.Services
                     if (data.status == "1")
                     {
                         IList<QueryFieldsMetadata> fieldsMetadata = data.responseBody.fieldsMetadata;
-                        IList<IList<Object>> rows = data.responseBody.rows;
+                        IList<IList<object>> rows = data.responseBody.rows;
+
                         if (rows != null)
                         {
+                            registrosProcessados.AddRange(rows.Select(row => row.ToList()));
+
                             string MySqlCon = _configuration.GetConnectionString("DefaultConnection");
-                            using var con = new MySqlConnection(MySqlCon);
-                            con.Open();
-                            for (int i = 0; i < rows.Count; i++)
+                            using (var con = new MySqlConnection(MySqlCon))
                             {
-                                string where = "";
-                                int qtdCol = fieldsMetadata.Count;
-                                String fieldsValues = "";
-                                String fields = "";
-                                String values = "";
-                                for (int j = 0; j < qtdCol; j++)
+                                con.Open();
+                                for (int i = 0; i < rows.Count; i++)
                                 {
-                                    QueryFieldsMetadata field = fieldsMetadata[j];
-                                    String name = field.name;
-                                    IList<Object> row = rows[i];
-                                    Object value = row[j];
-                                    if (field.userType == "S" && value != null)
-                                        value = $"'{value.ToString().Trim()}'";
-                                    if (field.userType == "H" && value != null)
+                                    string where = "";
+                                    int qtdCol = fieldsMetadata.Count;
+                                    string fieldsValues = "";
+                                    string fields = "";
+                                    string values = "";
+                                    IList<object> row = rows[i];
+
+                                    bool hasNullFields = false;
+
+                                    for (int j = 0; j < qtdCol; j++)
                                     {
-                                        DateTime dtvalue = DateTime.ParseExact(value.ToString(), "ddMMyyyy HH:mm:ss", null);
-                                        value = "'" + dtvalue.ToString("yyyy-MM-dd HH:mm:ss") + "'";
-                                    }
-                                    fieldsValues += $"{name}={value},";
-                                    fields += $"{name},";
-                                    values += $"{value},";
-                                    if (key != null)
-                                    {
-                                        String[] keydata = key.Split(',');
-                                        if (keydata.Contains(name))
+                                        QueryFieldsMetadata field = fieldsMetadata[j];
+                                        string name = field.name;
+                                        object value = row[j];
+
+                                        if ((field.userType?.Equals("I") ?? false) && value == null)
                                         {
-                                            value = $"'{value.ToString().Trim()}'";
-                                            where += $"{name} = {value} AND ";
+                                            Console.WriteLine("Registro não inserido: " + string.Join(", ", row));
+                                            hasNullFields = true; // Marca que há campos nulos
+                                            break;
+                                        }
+
+                                        if (field.userType == "S" && value != null)
+                                            value = $"'{value?.ToString().Trim()}'";
+                                        if (field.userType == "H" && value != null)
+                                        {
+                                            DateTime dtvalue = DateTime.ParseExact(value.ToString(), "ddMMyyyy HH:mm:ss", null);
+                                            value = "'" + dtvalue.ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                                        }
+                                        fieldsValues += $"{name}={value},";
+                                        fields += $"{name},";
+                                        values += $"{value},";
+                                        if (key != null)
+                                        {
+                                            string[] keydata = key.Split(',');
+                                            if (keydata.Contains(name))
+                                            {
+                                                value = $"'{value?.ToString().Trim()}'";
+                                                where += $"{name} = {value} AND ";
+                                            }
                                         }
                                     }
+                                    //if (hasNullFields) // Verifica se há campos nulos
+                                    //    continue; // P
+                                    fieldsValues = fieldsValues.TrimEnd(',');
+                                    fields = fields.TrimEnd(',');
+                                    values = values.TrimEnd(',');
+                                    if (where.Count() > 0)
+                                    {
+                                        where = where.TrimEnd("AND ".ToCharArray()); // Corrigido
+                                        string query = $"SELECT {key} FROM {table} WHERE {where}";
+                                        Console.WriteLine(query);
+                                        string chave = con.ExecuteScalar<string>(query);
+                                        var cSql = "";
+                                        if (chave != null) cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
+                                        else cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
+                                        Console.WriteLine(cSql);
+                                        int resultado = con.Execute(cSql);
+                                    }
                                 }
-                                fieldsValues = fieldsValues.Substring(0, fieldsValues.Length - 1);
-                                fields = fields.Substring(0, fields.Length - 1);
-                                values = values.Substring(0, values.Length - 1);
-                                if (where.Count() > 0)
-                                {
-                                    where = where.Substring(0, where.Length - 5);
-                                    String query = $"SELECT {key} FROM {table} WHERE {where}";
-                                    Console.WriteLine(query);
-                                    string chave = con.ExecuteScalar<string>(query);
-                                    var cSql = "";
-                                    if (chave != null) cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
-                                    else cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
-                                    Console.WriteLine(cSql);
-                                    int resultado = con.Execute(cSql);
-                                }
+                                con.Close();
                             }
-                            con.Close();
                         }
                     }
                     else
                     {
-                        Console.WriteLine("message" + data.statusMessage);
+                        Console.WriteLine("Erro: " + data?.statusMessage);
                     }
                 }
             }
+
+
             catch (Exception e)
             {
-                Console.WriteLine("error: " + e.Message);
-                throw new Exception("Falha na comunicação com o BD!" + "\n" + e.Message);
+                
+                Console.WriteLine("Erro: " + e.Message);
+
+                string mensagemErro = "Erro de migração de dados! ";
+
+                if (e.Message == "Field 'TabelaPrecoId' doesn't have a default value")
+                {
+                    mensagemErro += "Estes parceiros não possuem tabelas de preço vinculadas. O campo 'TabelaPrecoId' está vazio.";
+                }
+                else if (e.Message == "Cannot add or update a child row: a foreign key constraint fails (`grupoalyne`.`tabelaprecoparceiro`, CONSTRAINT `FK_TabelaPrecoParceiro_Parceiro_ParceiroId` FOREIGN KEY (`ParceiroId`) REFERENCES `parceiro` (`id`) ON DELETE CASCADE)")
+                {
+                    mensagemErro += "O parceiro vinculado a uma das tabelas de preço parceiro, não existe na base de dados.";
+                }
+                else
+                {
+                    mensagemErro += e.Message;
+                }
+
+                List<string> registrosErro = new List<string>();
+                foreach (var registro in registrosProcessados)
+                {
+                    registrosErro.Add(string.Join(", ", registro.Select(value => value?.ToString())));
+                }
+
+                List<string> registrosComCamposNulos = registrosProcessados
+              .Where(registro => registro.Any(value => value == null || value?.ToString() == ""))
+              .Select(registro => string.Join(", ", registro.Select(value => value?.ToString())))
+              .ToList();
+
+                mensagemErro += " / Registros não processados: " + string.Join(", ", registrosComCamposNulos);
+
+                await AtualizarTabelaPosErro(sql, table, key);
+
+                throw new Exception(mensagemErro);
             }
+
             return "Sucesso";
         }
+
+        public static async Task<string> AtualizarTabelaPosErro(string sql, string table, string key)
+        {
+            List<IList<object>> registrosProcessados = new List<IList<object>>();
+
+            try
+            {
+                Console.WriteLine(sql);
+                QueryResponse data = await SankhyaService.executeQuery(_configuration, sql);
+                if (data != null)
+                {
+                    if (data.status == "1")
+                    {
+                        IList<QueryFieldsMetadata> fieldsMetadata = data.responseBody.fieldsMetadata;
+                        IList<IList<object>> rows = data.responseBody.rows;
+
+                        if (rows != null)
+                        {
+                            registrosProcessados.AddRange(rows.Select(row => row.ToList()));
+
+                            string MySqlCon = _configuration.GetConnectionString("DefaultConnection");
+                            using (var con = new MySqlConnection(MySqlCon))
+                            {
+                                con.Open();
+                                for (int i = 0; i < rows.Count; i++)
+                                {
+                                    string where = "";
+                                    int qtdCol = fieldsMetadata.Count;
+                                    string fieldsValues = "";
+                                    string fields = "";
+                                    string values = "";
+                                    IList<object> row = rows[i];
+
+                                    bool hasNullFields = false;
+
+                                    for (int j = 0; j < qtdCol; j++)
+                                    {
+                                        QueryFieldsMetadata field = fieldsMetadata[j];
+                                        string name = field.name;
+                                        object value = row[j];
+
+                                        if ((field.userType?.Equals("I") ?? false) && value == null)
+                                        {
+                                            Console.WriteLine("Registro não inserido: " + string.Join(", ", row));
+                                            hasNullFields = true; // Marca que há campos nulos
+                                            break;
+                                        }
+
+                                        if (field.userType == "S" && value != null)
+                                            value = $"'{value?.ToString().Trim()}'";
+                                        if (field.userType == "H" && value != null)
+                                        {
+                                            DateTime dtvalue = DateTime.ParseExact(value.ToString(), "ddMMyyyy HH:mm:ss", null);
+                                            value = "'" + dtvalue.ToString("yyyy-MM-dd HH:mm:ss") + "'";
+                                        }
+                                        fieldsValues += $"{name}={value},";
+                                        fields += $"{name},";
+                                        values += $"{value},";
+                                        if (key != null)
+                                        {
+                                            string[] keydata = key.Split(',');
+                                            if (keydata.Contains(name))
+                                            {
+                                                value = $"'{value?.ToString().Trim()}'";
+                                                where += $"{name} = {value} AND ";
+                                            }
+                                        }
+                                    }
+                                    if (hasNullFields) // Verifica se há campos nulos
+                                        continue; // continua apos acar o erro
+                                    fieldsValues = fieldsValues.TrimEnd(',');
+                                    fields = fields.TrimEnd(',');
+                                    values = values.TrimEnd(',');
+                                    if (where.Count() > 0)
+                                    {
+                                        where = where.TrimEnd("AND ".ToCharArray()); // Corrigido
+                                        string query = $"SELECT {key} FROM {table} WHERE {where}";
+                                        Console.WriteLine(query);
+                                        string chave = con.ExecuteScalar<string>(query);
+                                        var cSql = "";
+                                        if (chave != null) cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
+                                        else cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
+                                        Console.WriteLine(cSql);
+                                        int resultado = con.Execute(cSql);
+                                    }
+                                }
+                                con.Close();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("Erro: " + data?.statusMessage);
+                    }
+                }
+            }
+
+
+            catch (Exception e)
+            {
+                
+            }
+
+            return "Sucesso";
+        }
+
+        private static bool IsIntegerField(QueryFieldsMetadata field, object value)
+        {
+            if (value == null)
+            {
+                return IsNumericType(field);
+            }
+            return false;
+        }
+
+
+        private static bool IsNumericType(QueryFieldsMetadata field)
+        {
+            string fieldType = field.GetType().Name.ToLower();
+            return fieldType.Contains("int") || fieldType.Contains("decimal") || fieldType.Contains("double");
+        }
+
+
+
+
+
+
+
+
 
         public static DateTime atualizadoEm(string table)
         {

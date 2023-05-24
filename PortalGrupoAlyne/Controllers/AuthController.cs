@@ -191,6 +191,7 @@ namespace PortalGrupoAlyne.Controllers
             }
 
             user.Conectado = false;
+
             await _context.SaveChangesAsync(); //salva as alterações no banco de dados
 
             return Ok();

@@ -604,7 +604,7 @@ namespace PortalGrupoAlyne.Controllers
                    ChaveTabelaPortal = "Id",
                    SqlObterSankhya = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
                     TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
-                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId AND DTALTER > '$AtualizadoEm'"
+                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId "
                          },
                      new IntegracaoSankhya {
                      Id = 2,
@@ -720,15 +720,15 @@ namespace PortalGrupoAlyne.Controllers
                    TabelaPortal = "TabelaPrecoParceiro",
                    ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
                    SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
-                    FROM TGFPAR (NOLOCK) PAR
-                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
-                                            AND VEN.CODVEND = $VendedorId 
-                                            AND VEN.TIPVEND = 'R'
-                    WHERE PAR.CLIENTE = 'S' 
-                    AND PAR.CODPARC > 0 
-                    AND PAR.CODVEND > 0
-                    AND PAR.ATIVO = 'S'"
+                     FROM TGFPAR (NOLOCK) PAR
+                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
+                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
+                                             AND VEN.CODVEND = $VendedorId 
+                                             AND VEN.TIPVEND = 'R'
+                     WHERE PAR.CLIENTE = 'S' 
+                     AND PAR.CODPARC > 0 
+                     AND PAR.CODVEND > 0
+                     AND PAR.ATIVO = 'S'"
                     },
                         new IntegracaoSankhya {
                         Id = 9,
