@@ -46,6 +46,17 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<ColunaModulo, ColunaModuloDto>().ReverseMap();
             CreateMap<OpcaoCampo,OpcaoCampoDto>().ReverseMap();
             CreateMap<LigacaoTabela, LigacaoTabelaDto>().ReverseMap();
+            CreateMap<TabelaPrecoAdicional, TabelaPrecoAdicionalDto>().ReverseMap();
+            CreateMap<Grafico, GraficoDto>().ReverseMap();
+            CreateMap<VendaxMeta, VendaxMetaDto>().ReverseMap();
+            CreateMap<CardDashVendedor, CardDashVendedorDto>().ReverseMap();
+            CreateMap<RelatorioMetaXrealizado, RelatorioMetaXrealizadoDto>().ReverseMap();
+            CreateMap<RelatorioListaCobranca, RelatorioListaCobrancaDto>().ReverseMap();
+            CreateMap<RelatorioVendaClientesCrescimento, RelatorioVendaClientesCrescimentoDto>().ReverseMap();
+            CreateMap<RelatorioClienteQueda, RelatorioClienteQuedaDto>().ReverseMap();
+            CreateMap<RelatorioVendaProdutoQueda, RelatorioVendaProdutoQuedaDto>().ReverseMap();
+            CreateMap<RelatorioVendaProdutoCrescimento, RelatorioProdutoCrescimentoDto>().ReverseMap();
+            CreateMap<RelatorioPedidoFaturar, RelatorioPedidoFaturarDto>().ReverseMap();
 
         }
     }

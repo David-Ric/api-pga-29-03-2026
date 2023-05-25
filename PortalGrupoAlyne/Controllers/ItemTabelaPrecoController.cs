@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Services;
+using System.Linq;
 using System.Text;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ItemTabelaPrecoController : ControllerBase
@@ -67,146 +68,359 @@ namespace PortalGrupoAlyne.Controllers
         //        data = data
         //    });
         //}
-
-
-
+        //=======================metodo trazendo as tabelas adicionais ========================================
         [HttpGet("codTabela/codProduto")]
         public async Task<IActionResult> GetAllFilteritemcodProd([FromServices] DataContext context,
-          [FromQuery] int pagina,
-           [FromQuery] int totalpagina,
-           [FromQuery] int? codTabela,
-           [FromQuery] int? codProduto
-
-          )
+            [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+            [FromQuery] int? codTabela,
+            [FromQuery] int? codProduto,
+            [FromQuery] int? parceiroId,
+            [FromQuery] int? empresaId)
         {
-
             var skip = (pagina - 1) * totalpagina;
             var take = totalpagina;
 
             var data = await context.ItemTabela
                 .AsNoTracking()
-               .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
-                .OrderBy(e => e.Id).Include(e => e.Produtos)
-                .Skip(skip)
-                .Take(take)
+                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd == codProduto)
+                .OrderBy(e => e.Id)
+                .Include(e => e.Produtos)
+                //.Skip(skip)
+                //.Take(take)
                 .ToListAsync();
 
-            var total = await context.ItemTabela
+            var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.IdProd == codProduto)
+                 .Include(e => e.Produtos)
+                .ToListAsync();
+
+            var totalItemTabela = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd == codProduto)
                 .CountAsync();
+
+            var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional
+                .AsNoTracking()
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId)
+                .CountAsync();
+
+            var total = data.Count + tabelaPrecoAdicional.Count;
+
+            var result = new List<object>();
+            if (data != null)
+                result.AddRange(data);
+            if (tabelaPrecoAdicional != null)
+                result.AddRange(tabelaPrecoAdicional);
+
+            var paginatedData = result.Skip(skip).Take(take).ToList();
 
             return Ok(new
             {
                 total,
-                data = data
-            });
-
-
+                data = paginatedData
+            }); ;
         }
 
         [HttpGet("codTabela/nomeProduto")]
         public async Task<IActionResult> GetAllFilteritemProdName([FromServices] DataContext context,
-         [FromQuery] int pagina,
-          [FromQuery] int totalpagina,
-          [FromQuery] int? codTabela,
-          [FromQuery] string nomeProduto
-
-         )
+    [FromQuery] int pagina,
+    [FromQuery] int totalpagina,
+    [FromQuery] int? codTabela,
+    [FromQuery] string nomeProduto,
+    [FromQuery] int? parceiroId,
+    [FromQuery] int? empresaId)
         {
             var skip = (pagina - 1) * totalpagina;
             var take = totalpagina;
 
             var data = await context.ItemTabela
                 .AsNoTracking()
-               .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
-                .OrderBy(e => e.Id).Include(e => e.Produtos)
-                .Skip(skip)
-                .Take(take)
+                .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
+                .OrderBy(e => e.Id)
+                .Include(e => e.Produtos)
+                //.Skip(skip)
+                //.Take(take)
                 .ToListAsync();
 
-            var total = await context.ItemTabela
+            var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId)
+                 .Include(e => e.Produtos)
+                .ToListAsync();
+
+            var totalItemTabela = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
                 .CountAsync();
 
+            var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional
+                .AsNoTracking()
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
+                .CountAsync();
+
+            var total = data.Count + tabelaPrecoAdicional.Count;
+
+            var result = new List<object>();
+            if (data != null)
+                result.AddRange(data);
+            if (tabelaPrecoAdicional != null)
+                result.AddRange(tabelaPrecoAdicional);
+
+            var paginatedData = result.Skip(skip).Take(take).ToList();
             return Ok(new
             {
                 total,
-                data = data
-            });
-
-         
+                data = paginatedData
+            }); ;
         }
 
         [HttpGet("codTabela/grupoId")]
         public async Task<IActionResult> GetAllFilteritemGrupoProd([FromServices] DataContext context,
-         [FromQuery] int pagina,
-          [FromQuery] int totalpagina,
-          [FromQuery] int? codTabela,
-          [FromQuery] int? grupoId
-
-         )
+    [FromQuery] int pagina,
+    [FromQuery] int totalpagina,
+    [FromQuery] int? codTabela,
+    [FromQuery] int? grupoId,
+    [FromQuery] int? parceiroId,
+    [FromQuery] int? empresaId)
         {
             var skip = (pagina - 1) * totalpagina;
             var take = totalpagina;
 
             var data = await context.ItemTabela
                 .AsNoTracking()
-              .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
-                .OrderBy(e => e.Id).Include(e => e.Produtos)
-                .Skip(skip)
-                .Take(take)
+                .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.GrupoProdutoId == grupoId)
+                .OrderBy(e => e.Id)
+                .Include(e => e.Produtos)
+                //.Skip(skip)
+                //.Take(take)
                 .ToListAsync();
 
-            var total = await context.ItemTabela
+            var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.Produtos.GrupoProdutoId == grupoId)
+                 .Include(e => e.Produtos)
+                .ToListAsync();
+
+            var totalItemTabela = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.GrupoProdutoId == grupoId)
                 .CountAsync();
+
+            var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional
+                .AsNoTracking()
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId)
+                .CountAsync();
+
+            var total = data.Count + tabelaPrecoAdicional.Count;
+
+            var result = new List<object>();
+            if (data != null)
+                result.AddRange(data);
+            if (tabelaPrecoAdicional != null)
+                result.AddRange(tabelaPrecoAdicional);
+
+            var paginatedData = result.Skip(skip).Take(take).ToList();
 
             return Ok(new
             {
                 total,
-                data = data
-            });
-
-
-           
+                data = paginatedData
+            }); ;
         }
 
         [HttpGet("codTabela")]
         public async Task<IActionResult> GetAllFilteritem([FromServices] DataContext context,
-          [FromQuery] int pagina,
-           [FromQuery] int totalpagina,
-           [FromQuery] int? codTabela
-           
-          )
+    [FromQuery] int pagina,
+    [FromQuery] int totalpagina,
+    [FromQuery] int? codTabela,
+    [FromQuery] int? parceiroId,
+    [FromQuery] int? empresaId)
         {
             var skip = (pagina - 1) * totalpagina;
             var take = totalpagina;
 
             var data = await context.ItemTabela
                 .AsNoTracking()
-              .Where(e => (e.TabelaPrecoId == codTabela))
-                .OrderBy(p => p.Produtos.Nome).Include(e => e.Produtos)
-                .Skip(skip)
-                .Take(take)
+                .Where(e => e.TabelaPrecoId == codTabela)
+                .OrderBy(p => p.Produtos.Nome)
+                .Include(e => e.Produtos)
+                //.Skip(skip)
+                //.Take(take)
                 .ToListAsync();
 
-            var total = await context.ItemTabela
+            var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-               .Where(e => (e.TabelaPrecoId == codTabela))
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId )
+                 .Include(e => e.Produtos)
+                .ToListAsync();
+
+            var totalItemTabela = await context.ItemTabela
+                .AsNoTracking()
+                .Where(e => e.TabelaPrecoId == codTabela)
                 .CountAsync();
+
+            var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional
+                .AsNoTracking()
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId )
+                .CountAsync();
+
+            var total = data.Count + tabelaPrecoAdicional.Count;
+            var result = new List<object>();
+            if (data != null)
+                result.AddRange(data);
+            if (tabelaPrecoAdicional != null)
+                result.AddRange(tabelaPrecoAdicional);
+
+            var paginatedData = result.Skip(skip).Take(take).ToList();
 
             return Ok(new
             {
                 total,
-                data = data
-            });
-
-
-          
+                data = paginatedData
+            }); ;
         }
+
+        //==============================antigos=================================================================
+
+        //[HttpGet("codTabela/codProduto")]
+        //public async Task<IActionResult> GetAllFilteritemcodProd([FromServices] DataContext context,
+        //  [FromQuery] int pagina,
+        //   [FromQuery] int totalpagina,
+        //   [FromQuery] int? codTabela,
+        //   [FromQuery] int? codProduto
+
+        //  )
+        //{
+
+        //    var skip = (pagina - 1) * totalpagina;
+        //    var take = totalpagina;
+
+        //    var data = await context.ItemTabela
+        //        .AsNoTracking()
+        //       .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
+        //        .OrderBy(e => e.Id).Include(e => e.Produtos)
+        //        .Skip(skip)
+        //        .Take(take)
+        //        .ToListAsync();
+
+        //    var total = await context.ItemTabela
+        //        .AsNoTracking()
+        //        .Where(e => (e.TabelaPrecoId == codTabela) && (e.IdProd == codProduto))
+        //        .CountAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+
+
+        //}
+
+        //[HttpGet("codTabela/nomeProduto")]
+        //public async Task<IActionResult> GetAllFilteritemProdName([FromServices] DataContext context,
+        // [FromQuery] int pagina,
+        //  [FromQuery] int totalpagina,
+        //  [FromQuery] int? codTabela,
+        //  [FromQuery] string nomeProduto
+
+        // )
+        //{
+        //    var skip = (pagina - 1) * totalpagina;
+        //    var take = totalpagina;
+
+        //    var data = await context.ItemTabela
+        //        .AsNoTracking()
+        //       .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
+        //        .OrderBy(e => e.Id).Include(e => e.Produtos)
+        //        .Skip(skip)
+        //        .Take(take)
+        //        .ToListAsync();
+
+        //    var total = await context.ItemTabela
+        //        .AsNoTracking()
+        //        .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower())))
+        //        .CountAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+
+
+        //}
+
+        //[HttpGet("codTabela/grupoId")]
+        //public async Task<IActionResult> GetAllFilteritemGrupoProd([FromServices] DataContext context,
+        // [FromQuery] int pagina,
+        //  [FromQuery] int totalpagina,
+        //  [FromQuery] int? codTabela,
+        //  [FromQuery] int? grupoId
+
+        // )
+        //{
+        //    var skip = (pagina - 1) * totalpagina;
+        //    var take = totalpagina;
+
+        //    var data = await context.ItemTabela
+        //        .AsNoTracking()
+        //      .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
+        //        .OrderBy(e => e.Id).Include(e => e.Produtos)
+        //        .Skip(skip)
+        //        .Take(take)
+        //        .ToListAsync();
+
+        //    var total = await context.ItemTabela
+        //        .AsNoTracking()
+        //        .Where(e => (e.TabelaPrecoId == codTabela) && (e.Produtos.GrupoProdutoId == grupoId))
+        //        .CountAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+
+
+
+        //}
+
+        //[HttpGet("codTabela")]
+        //public async Task<IActionResult> GetAllFilteritem([FromServices] DataContext context,
+        //  [FromQuery] int pagina,
+        //   [FromQuery] int totalpagina,
+        //   [FromQuery] int? codTabela
+
+        //  )
+        //{
+        //    var skip = (pagina - 1) * totalpagina;
+        //    var take = totalpagina;
+
+        //    var data = await context.ItemTabela
+        //        .AsNoTracking()
+        //      .Where(e => (e.TabelaPrecoId == codTabela))
+        //        .OrderBy(p => p.Produtos.Nome).Include(e => e.Produtos)
+        //        .Skip(skip)
+        //        .Take(take)
+        //        .ToListAsync();
+
+        //    var total = await context.ItemTabela
+        //        .AsNoTracking()
+        //       .Where(e => (e.TabelaPrecoId == codTabela))
+        //        .CountAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+
+
+
+        //}
 
 
 

@@ -8,7 +8,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+  //  [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CabecalhoPedidoVendaController : ControllerBase
@@ -140,7 +140,35 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { message = "Erro de comunicação com o Sankya, Envio Pendente" });
         }
 
+        [HttpPut("{id}/statusErro")]
+        public IActionResult UpdateStatusErro(int id)
+        {
+            var pedido = _context.CabecalhoPedidoVenda.Find(id);
+            if (pedido == null)
+            {
+                return NotFound();
+            }
 
+            pedido.Status = "Não Enviado";
+            _context.SaveChanges();
+
+            return Ok(new { message = "Erro ao Enviar Pedido" });
+        }
+
+        [HttpPut("{palMPV}/statusErroPalMPV")]
+        public IActionResult UpdateStatusErroPalMPV(string palMPV)
+        {
+            var pedido = _context.CabecalhoPedidoVenda.FirstOrDefault(p => p.PalMPV == palMPV);
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+
+            pedido.Status = "Não Enviado";
+            _context.SaveChanges();
+
+            return Ok(new { message = "Erro ao Enviar Pedido" });
+        }
 
 
 

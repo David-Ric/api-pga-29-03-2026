@@ -755,7 +755,21 @@ namespace PortalGrupoAlyne.Controllers
 		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
 		                AND FIN.CODVEND = $VendedorId 
 		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
-                        }
+                        },
+                        new IntegracaoSankhya {
+                        Id = 10,
+                   TabelaPortal = "TabelaPrecoAdicional",
+                   ChaveTabelaPortal = "EmpresaId,ParceiroId,IdProd",
+                   SqlObterSankhya = @"Select AD.CODEMP as EmpresaId 
+	                 , AD.CODPARC as ParceiroId 
+	                 , EXC.CODPROD as IdProd
+	                 , EXC.VLRVENDA as Preco
+	 
+	                 FROM AD_TABCLI AD 
+	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC 
+	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB 
+	                 WHERE PAR.CODVEND = $VendedorId"
+                    }
                 };
                 _context.IntegracaoSankhya.AddRange(restauraIntegracao);
 

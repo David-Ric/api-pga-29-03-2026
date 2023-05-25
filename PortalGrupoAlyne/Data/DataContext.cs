@@ -88,9 +88,17 @@ namespace PortalGrupoAlyne.Data
 
         public DbSet<OpcaoCampo> OpcaoCampo { get; set; }
         public DbSet<LigacaoTabela> LigacaoTabela { get; set; }
- 
-
-
+        public DbSet<Grafico> Grafico { get; set; }
+        public DbSet<VendaxMeta> VendaxMeta { get; set; }
+        public DbSet<CardDashVendedor> CardDashVendedor { get; set; }
+        public DbSet<RelatorioMetaXrealizado> RelatorioMetaXrealizado { get; set; }
+        public DbSet<RelatorioListaCobranca> RelatorioListaCobranca { get; set; }
+        public DbSet<RelatorioVendaClientesCrescimento> RelatorioVendaClientesCrescimento { get; set; }
+        public DbSet<RelatorioClienteQueda> RelatorioClienteQueda { get; set; }
+        public DbSet<RelatorioVendaProdutoQueda> RelatorioVendaProdutoQueda { get; set; }
+        public DbSet<RelatorioVendaProdutoCrescimento> RelatorioVendaProdutoCrescimento { get; set; }
+        public DbSet<RelatorioPedidoFaturar> RelatorioPedidoFaturar { get; set; }
+        public DbSet<TabelaPrecoAdicional> TabelaPrecoAdicional { get; set; }
 
 
         private byte[] CreateHash(string input, byte[] salt)
