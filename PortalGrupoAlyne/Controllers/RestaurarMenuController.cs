@@ -648,8 +648,7 @@ namespace PortalGrupoAlyne.Controllers
                     LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
                     WHERE PAR.CLIENTE = 'S' 
                     AND PAR.CODPARC > 0 
-                    AND PAR.CODVEND > 0
-                    AND PAR.ATIVO = 'S'"
+                    AND PAR.CODVEND > 0"
                     },
                     new IntegracaoSankhya {
                      Id = 4,
