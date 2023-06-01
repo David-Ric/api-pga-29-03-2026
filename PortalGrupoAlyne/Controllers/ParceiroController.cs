@@ -7,7 +7,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+   // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ParceiroController : ControllerBase
@@ -22,14 +22,60 @@ namespace PortalGrupoAlyne.Controllers
             _mapper = mapper;
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll([FromServices] DataContext context,
+        //    [FromQuery] int pagina,
+        //     [FromQuery] int totalpagina
+        //    )
+        //{
+        //    var total = await context.Parceiro.CountAsync();
+        //    var data = await context.Parceiro.AsNoTracking()
+        //        .Include("Vendedor")
+        //        .Include("TabelaPrecoParceiro")
+        //        .Include("TabelaPrecoParceiro.Empresa")
+        //        .Include("TabelaPrecoParceiro.TabelaPreco")
+        //        .Include("Titulo")
+        //        .Skip((pagina - 1) * totalpagina)
+        //        .Take(totalpagina)
+
+        //        .ToListAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+        //}
+
+
         [HttpGet]
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
-            [FromQuery] int pagina,
-             [FromQuery] int totalpagina
-            )
+        [FromQuery] int pagina,
+        [FromQuery] int totalpagina)
         {
             var total = await context.Parceiro.CountAsync();
-            var data = await context.Parceiro.AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.Parceiro.AsNoTracking()
+                .Include("Vendedor")
+                .Include("TabelaPrecoParceiro")
+                .Include("TabelaPrecoParceiro.Empresa")
+                .Include("TabelaPrecoParceiro.TabelaPreco")
+                .Include("Titulo")
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina)
+                .ToListAsync();
+
+            foreach (var parceiro in data)
+            {
+                var tipoNegociacaoId = int.Parse(parceiro.TipoNegociacao);
+                var tipoNegociacao = await context.TipoNegociacao
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(tn => tn.Id == tipoNegociacaoId);
+
+                if (tipoNegociacao != null)
+                {
+                    parceiro.DescTipoNegociacao = tipoNegociacao.Descricao;
+                }
+            }
 
             return Ok(new
             {
@@ -37,6 +83,8 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
+
 
         [HttpGet("filter")]
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
+using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using System.Security.Cryptography;
 using System.Text;
@@ -99,6 +100,7 @@ namespace PortalGrupoAlyne.Data
         public DbSet<RelatorioVendaProdutoCrescimento> RelatorioVendaProdutoCrescimento { get; set; }
         public DbSet<RelatorioPedidoFaturar> RelatorioPedidoFaturar { get; set; }
         public DbSet<TabelaPrecoAdicional> TabelaPrecoAdicional { get; set; }
+        public DbSet<Sessao> Sessao { get; set; }
 
 
         private byte[] CreateHash(string input, byte[] salt)
