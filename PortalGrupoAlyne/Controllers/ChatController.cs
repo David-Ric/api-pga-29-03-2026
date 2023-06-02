@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace PortalGrupoAlyne.Controllers
 {
-   [Authorize]
+  // [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ChatController : Controller
@@ -193,6 +193,42 @@ namespace PortalGrupoAlyne.Controllers
 
             // Salva a mensagem no banco de dados
             _context.Message.Add(message);
+            await _context.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("mensagens-grupo")]
+        public async Task<ActionResult> SendMessage(int? groupId, Message message)
+        {
+            // Define a propriedade Lida como false
+            message.Lida = false;
+
+            // Obtém a lista de usuários com base no parâmetro groupId
+            List<Usuario> usuarios = new List<Usuario>();
+
+            if (groupId.HasValue)
+            {
+                usuarios = await _context.Usuario
+                    .Where(u => u.GrupoId == groupId.Value && u.Id != message.SenderId)
+                    .ToListAsync();
+            }
+            else
+            {
+                usuarios = await _context.Usuario
+                    .Where(u => u.Id != message.SenderId)
+                    .ToListAsync();
+            }
+
+            // Cria uma nova mensagem para cada usuário
+            foreach (var usuario in usuarios)
+            {
+                var newMessage = new Message(message.SenderId, usuario.Id, message.Body);
+                newMessage.Date = DateTime.Now;
+
+                _context.Message.Add(newMessage);
+            }
+
             await _context.SaveChangesAsync();
 
             return Ok();
