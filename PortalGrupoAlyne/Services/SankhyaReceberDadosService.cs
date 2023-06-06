@@ -3,6 +3,7 @@ using System.Text.Json;
 using Dapper;
 using Microsoft.Win32;
 using MySqlConnector;
+using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos.Sankhya;
 
 namespace PortalGrupoAlyne.Services
@@ -161,6 +162,14 @@ namespace PortalGrupoAlyne.Services
                     if (tabela == "TabelaPrecoParceiro")
                     {
                         limpaTb("TabelaPrecoParceiro", " ParceiroId in (select id from Parceiro where VendedorId = " + vendedorId + ")");
+                    }
+                    if (tabela == "ItemTabela")
+                    {
+                        string condicao = @"TabelaPrecoId IN 
+                     (SELECT TabelaPrecoId FROM TabelaPrecoParceiro WHERE ParceiroId IN 
+                     (SELECT id FROM Parceiro WHERE VendedorId = " + vendedorId + "))";
+
+                        limpaTb("ItemTabela", condicao);
                     }
                     if (tabela == "TabelaPrecoAdicional")
                     {

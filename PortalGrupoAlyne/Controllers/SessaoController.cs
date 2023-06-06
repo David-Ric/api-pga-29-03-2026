@@ -19,13 +19,37 @@ namespace PortalGrupoAlyne.Controllers
             _mapper = mapper;
         }
 
+        //[HttpPost("iniciar-sessao")]
+        //public IActionResult IniciarSessao([FromBody] Sessao sessao)
+        //{
+        //    try
+        //    {
+        //        var sessoesAnteriores = _context.Sessao.Where(s => s.Nome == sessao.Nome).ToList();
+        //        _context.Sessao.RemoveRange(sessoesAnteriores);
+
+        //        sessao.Online = "S";
+        //        _context.Sessao.Add(sessao);
+        //        _context.SaveChanges();
+
+        //        return Ok();
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        return StatusCode(500);
+        //    }
+        //}
+
         [HttpPost("iniciar-sessao")]
         public IActionResult IniciarSessao([FromBody] Sessao sessao)
         {
             try
             {
-                var sessoesAnteriores = _context.Sessao.Where(s => s.Nome == sessao.Nome).ToList();
-                _context.Sessao.RemoveRange(sessoesAnteriores);
+                var sessaoExistente = _context.Sessao.FirstOrDefault(s => s.Nome == sessao.Nome);
+
+                if (sessaoExistente != null)
+                {
+                    _context.Sessao.Remove(sessaoExistente);
+                }
 
                 sessao.Online = "S";
                 _context.Sessao.Add(sessao);
@@ -38,7 +62,6 @@ namespace PortalGrupoAlyne.Controllers
                 return StatusCode(500);
             }
         }
-    
 
 
         [HttpPost("encerrar-sessao")]

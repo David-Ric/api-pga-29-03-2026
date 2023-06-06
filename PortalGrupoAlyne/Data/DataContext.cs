@@ -101,6 +101,7 @@ namespace PortalGrupoAlyne.Data
         public DbSet<RelatorioPedidoFaturar> RelatorioPedidoFaturar { get; set; }
         public DbSet<TabelaPrecoAdicional> TabelaPrecoAdicional { get; set; }
         public DbSet<Sessao> Sessao { get; set; }
+        public DbSet<LogAcao> LogAcao { get; set; }
 
 
         private byte[] CreateHash(string input, byte[] salt)

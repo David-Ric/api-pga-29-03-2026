@@ -32,7 +32,10 @@ namespace PortalGrupoAlyne.Controllers
             )
         {
             var total = await context.TabelaPreco.CountAsync();
-            var data = await context.TabelaPreco.AsNoTracking().Include(i => i.ItemTabela).Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.TabelaPreco.AsNoTracking()
+                .Include(i => i.ItemTabela)
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina).ToListAsync();
             
             return Ok(new
             {
@@ -41,8 +44,76 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
-   
+        //============filter nome ============================================================
+        [HttpGet("filter/nome")]
+        public async Task<IActionResult> GetAllFilterNome([FromServices] DataContext context,
+                [FromQuery] int pagina,
+                 [FromQuery] int totalpagina,
+                 [FromQuery] string filter
+                )
+        {
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
 
+            var data = await context.TabelaPreco
+            .Where(e => (e.Descricao.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Include(i => i.ItemTabela)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.TabelaPreco
+            .AsNoTracking()
+                 .Where(e => (e.Descricao.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id)
+                .Include(i => i.ItemTabela)
+                .CountAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+
+
+        }
+        //===========foilter codigo ========================================================
+        [HttpGet("filter/codigo")]
+        public async Task<IActionResult> GetAllFilterCodigo([FromServices] DataContext context,
+               [FromQuery] int pagina,
+                [FromQuery] int totalpagina,
+                [FromQuery] int filter
+               )
+        {
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.TabelaPreco
+            .Where(e => (e.Id==filter))
+                .OrderBy(e => e.Id)
+                .Include(i => i.ItemTabela)
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.TabelaPreco
+            .AsNoTracking()
+                .Where(e => (e.Id == filter))
+                .OrderBy(e => e.Id)
+                .Include(i => i.ItemTabela)
+                .CountAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+
+
+        }
+
+        //===================================================================================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

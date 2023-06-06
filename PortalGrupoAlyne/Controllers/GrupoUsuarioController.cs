@@ -122,7 +122,7 @@ namespace PortalGrupoAlyne.Controllers
             _context.GrupoUsuario.Remove(grupo);
             await _context.SaveChangesAsync();
 
-            return Ok("Grupo de usuários com sucesso!");
+            return Ok("Grupo de usuários excluido com sucesso!");
         }
     }
 }
