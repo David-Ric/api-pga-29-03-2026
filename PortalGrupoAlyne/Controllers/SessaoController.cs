@@ -38,20 +38,19 @@ namespace PortalGrupoAlyne.Controllers
         //        return StatusCode(500);
         //    }
         //}
-
         [HttpPost("iniciar-sessao")]
         public IActionResult IniciarSessao([FromBody] Sessao sessao)
         {
             try
             {
-                var sessaoExistente = _context.Sessao.FirstOrDefault(s => s.Nome == sessao.Nome);
+                // Exclui registros com Nome vazio ou nulo, ou Nome igual ao nome fornecido
+                var sessoesAnteriores = _context.Sessao.Where(s => string.IsNullOrEmpty(s.Nome) || s.Nome == sessao.Nome).ToList();
+                _context.Sessao.RemoveRange(sessoesAnteriores);
 
-                if (sessaoExistente != null)
-                {
-                    _context.Sessao.Remove(sessaoExistente);
-                }
-
+                // Define o status como "S" (online)
                 sessao.Online = "S";
+
+                // Adiciona a nova sessão
                 _context.Sessao.Add(sessao);
                 _context.SaveChanges();
 
@@ -62,6 +61,9 @@ namespace PortalGrupoAlyne.Controllers
                 return StatusCode(500);
             }
         }
+
+
+
 
 
         [HttpPost("encerrar-sessao")]
