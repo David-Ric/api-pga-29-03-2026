@@ -116,6 +116,37 @@ namespace PortalGrupoAlyne.Controllers
             return Ok((new {data=tabela, message = "Pedido de Venda criado com sucesso." }));
         }
 
+        //============salvar diversas tabelas =======================================================================
+        [HttpPost("Lista")]
+        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(List<CabecalhoPedidoVenda> listaTabelas)
+        {
+            List<CabecalhoPedidoVenda> tabelasJaExistem = new List<CabecalhoPedidoVenda>();
+
+            foreach (var tabela in listaTabelas)
+            {
+                if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
+                {
+                    tabelasJaExistem.Add(tabela);
+                }
+                else
+                {
+                    _context.CabecalhoPedidoVenda.Add(tabela);
+                }
+            }
+
+            if (tabelasJaExistem.Count > 0)
+            {
+                return BadRequest("Os seguintes Pedidos de Venda já existem na base de dados: " +
+                    string.Join(", ", tabelasJaExistem.Select(t => t.Id.ToString())));
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { data = listaTabelas, message = "Pedidos de Venda criados com sucesso." });
+        }
+
+
+
         [HttpPut("{id}")]
 
         public IActionResult Update(int id, CabecalhoPedidoVendaDto model)
