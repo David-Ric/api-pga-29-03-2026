@@ -55,6 +55,7 @@ namespace PortalGrupoAlyne.Model
         public string? Long { get; set; }
 
         public decimal? Lc { get; set; }
+        public decimal? Sc { get; set; }
 
         [StringLength(10, ErrorMessage = "inserir no máximo 10 caracteres")]
         public string? Status { get; set; }

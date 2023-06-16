@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PortalGrupoAlyne.Services;
+using System.Globalization;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -19,25 +20,7 @@ namespace PortalGrupoAlyne.Controllers
             _mapper = mapper;
         }
 
-        //[HttpPost("iniciar-sessao")]
-        //public IActionResult IniciarSessao([FromBody] Sessao sessao)
-        //{
-        //    try
-        //    {
-        //        var sessoesAnteriores = _context.Sessao.Where(s => s.Nome == sessao.Nome).ToList();
-        //        _context.Sessao.RemoveRange(sessoesAnteriores);
 
-        //        sessao.Online = "S";
-        //        _context.Sessao.Add(sessao);
-        //        _context.SaveChanges();
-
-        //        return Ok();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        return StatusCode(500);
-        //    }
-        //}
         [HttpPost("iniciar-sessao")]
         public IActionResult IniciarSessao([FromBody] Sessao sessao)
         {
@@ -65,7 +48,6 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
-
         [HttpPost("encerrar-sessao")]
         public IActionResult EncerrarSessao([FromBody] Sessao sessao)
         {
@@ -87,28 +69,53 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-        //[HttpGet("sessoes-online")]
-        //public IActionResult GetSessoesOnline()
-        //{
-        //    var sessoesOnline = _context.Sessao.Where(s => s.Online == "S")
-        //        .ToList();
-        //    return Ok(sessoesOnline);
-        //}
-
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromServices] DataContext context,
-           [FromQuery] int pagina,
-            [FromQuery] int totalpagina
-           )
+        public async Task<IActionResult> GetAll([FromServices] DataContext context, [FromQuery] int pagina, [FromQuery] int totalpagina)
         {
-            var total = await context.Sessao.CountAsync();
-            var data = await context.Sessao.Where(s => s.Online == "S").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var horaAtual = DateTime.Now; 
+
+            var sessoes = await context.Sessao.ToListAsync();
+
+            foreach (var sessao in sessoes)
+            {
+                DateTime horaAcesso = sessao.HoraAcesso ?? DateTime.MinValue; 
+
+                if ((horaAtual - horaAcesso).TotalMinutes > 40)
+                {
+                    sessao.Online = "N"; 
+                }
+            }
+
+            await context.SaveChangesAsync(); 
+
+            var data = sessoes.Where(s => s.Online == "S" && s.Nome !="admin").Skip((pagina - 1) * totalpagina).Take(totalpagina).ToList();
 
             return Ok(new
             {
-                total,
+                total = data.Count,
                 data = data
             });
         }
+
+
+
+
+
+
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll([FromServices] DataContext context,
+        //   [FromQuery] int pagina,
+        //    [FromQuery] int totalpagina
+        //   )
+        //{
+        //    var total = await context.Sessao.CountAsync();
+        //    var data = await context.Sessao.Where(s => s.Online == "S").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+        //}
     }
 }

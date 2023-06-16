@@ -14,6 +14,7 @@ namespace PortalGrupoAlyne.Model
 
         [StringLength(60, ErrorMessage = "inserir no máximo 60 caracteres")]
         public string? Url { get; set; }
+        public DateTime? HoraAcesso { get; set; }
         public string? Online { get; set; }
 
 

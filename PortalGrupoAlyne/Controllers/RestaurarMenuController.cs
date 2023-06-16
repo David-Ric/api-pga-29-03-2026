@@ -630,27 +630,65 @@ namespace PortalGrupoAlyne.Controllers
                     Id = 3,
                    TabelaPortal = "Parceiro",
                    ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, 
-                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, 
-                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, 
-                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, 
-                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,
-                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,
-                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
-                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
-                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
-                        , ISNULL(PAR.LIMCRED,0) as LC
-                    FROM TGFPAR (NOLOCK) PAR
-					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
-                                            AND VEN.CODVEND = $VendedorId
-                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
-                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
-                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
-                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
-                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
-                    WHERE PAR.CLIENTE = 'S' 
-                    AND PAR.CODPARC > 0 
-                    AND PAR.CODVEND > 0"
+                   SqlObterSankhya = @"SELECT PAR.CODPARC AS Id,
+    REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') AS Nome,
+    PAR.TIPPESSOA AS TipoPessoa,
+    REPLACE(PAR.NOMEPARC, CHAR(39),'') AS NomeFantasia,
+    PAR.CGC_CPF AS Cnpj_Cpf,
+    ISNULL(PAR.EMAIL, '') AS Email,
+    ISNULL(PAR.TELEFONE, '') AS Fone,
+    PAR.CODTIPPARC AS Canal,
+    REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND, ''), CHAR(39), '') AS Endereco,
+    REPLACE(ISNULL(BAI.NOMEBAI, ''), CHAR(39), '') AS Bairro,
+    REPLACE(CID.NOMECID, CHAR(39), '') AS Municipio,
+    UFS.UF AS UF,
+    PAR.ATIVO AS Status,
+    ISNULL(CPL.SUGTIPNEGSAID, 0) AS TipoNegociacao,
+    PAR.CODVEND AS VendedorId,
+    PAR.DTALTER AS AtualizadoEm,
+    ISNULL(PAR.LIMCRED,0) as LC,
+    ISNULL(PAR.LIMCRED, 0) - ISNULL(PED.VLRPED, 0) - ISNULL(FIN.VLRTIT, 0) AS SC
+FROM 
+    TGFPAR (NOLOCK) PAR
+    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND =  $VendedorId
+    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
+    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
+    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
+    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
+    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(((ITE.QTDNEG-ITE.QTDENTREGUE) * VLRUNIT)) AS VLRPED
+        FROM 
+            TGFITE ITE 
+            JOIN TGFCAB CAB ON CAB.NUNOTA = ITE.NUNOTA
+        WHERE 
+            (ITE.QTDNEG-ITE.QTDENTREGUE) > 0
+            AND ITE.PENDENTE = 'S'
+        GROUP BY 
+            CAB.CODPARC
+    ) PED ON PED.CODPARC = PAR.CODPARC
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA) AS VLRTIT
+        FROM 
+            TGFCAB CAB
+            JOIN TGFFIN FIN ON FIN.NUNOTA = CAB.NUNOTA
+        WHERE 
+            CAB.TIPMOV = 'V'
+            AND FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA > 0
+            AND FIN.PROVISAO <> 'S'
+            AND ISNULL(FIN.NURENEG, 0) = 0
+        GROUP BY 
+            CAB.CODPARC
+    ) FIN ON FIN.CODPARC = PAR.CODPARC
+WHERE 
+    PAR.CODPARC > 0
+    AND PAR.CODVEND > 0
+    AND PAR.CLIENTE = 'S'
+    AND PAR.CODVEND =  $VendedorId"
                     },
                     new IntegracaoSankhya {
                      Id = 4,
