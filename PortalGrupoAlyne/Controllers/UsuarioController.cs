@@ -395,16 +395,50 @@ namespace PortalGrupoAlyne.Controllers
                  return BadRequest("Usuario não encontrado.");
              }
          }
-        
-
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
-        public IActionResult Update(int id, UserUpdateResquest model)
+        public IActionResult Update(int id, [FromBody] UserUpdateResquest model)
         {
-            _userService.Update(id, model);
-            return Ok(new { message = "Usuário atualizado com sucesso" });
+            try
+            {
+                var user = _context.Usuario.FirstOrDefault(x => x.Id == id);
+
+                if (user == null)
+                    return NotFound();
+
+                // Validate email
+                if (model.Email != user.Email && _context.Usuario.Any(x => x.Email == model.Email))
+                    return BadRequest("Email já cadastrado na base de dados");
+
+                // Validate username
+                if (model.Username != user.Username && _context.Usuario.Any(x => x.Username == model.Username))
+                    return BadRequest("Usuário já cadastrado na base de dados");
+
+                // Map properties from model to user
+                _mapper.Map(model, user);
+
+                _context.Usuario.Update(user);
+                _context.SaveChanges();
+
+                return Ok("Usuário atualizado com sucesso");
+            }
+            catch (Exception ex)
+            {
+                // Handle any exception that occurs during the update process
+                return StatusCode(500, $"Ocorreu um erro ao atualizar o usuário: {ex.Message}");
+            }
         }
+
+
+
+
+        //[HttpPut("{id}")]
+        //[AllowAnonymous]
+        //public IActionResult Update(int id, UserUpdateResquest model)
+        //{
+        //    _userService.Update(id, model);
+        //    return Ok(new { message = "Usuário atualizado com sucesso" });
+        //}
 
 
 

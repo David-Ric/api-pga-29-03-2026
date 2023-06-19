@@ -15,6 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using PortalGrupoAlyne.Model.Dtos.Usuarios;
 using PortalGrupoAlyne.Infra.Services;
+using PortalGrupoAlyne.Migrations;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -84,11 +85,11 @@ namespace PortalGrupoAlyne.Controllers
         {
             if (_context.Usuario.Any(u => u.Email == request.Email))
             {
-                return BadRequest("Usuário já existe na base de dados.");
+                return BadRequest("Este email já pertence a outro usuário.");
             }
             if (_context.Usuario.Any(u => u.Username == request.Username))
             {
-                return BadRequest("Nome de usuário já existe na base de dados.");
+                return BadRequest("Usuário já existe na base de dados.");
             }
 
             CreatePasswordHash(request.Password,
@@ -104,6 +105,7 @@ namespace PortalGrupoAlyne.Controllers
                 GrupoId = request.GrupoId,
                 Funcao = request.Funcao,
                 Telefone = request.Telefone,
+                TempoSessao = request.TempoSessao,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
             };
@@ -177,6 +179,7 @@ namespace PortalGrupoAlyne.Controllers
                 ImagemURL = user.ImagemURL,
                 Telefone = user.Telefone,
                 logado = user.Conectado,
+                Temposessao = user.TempoSessao,
                 token
             });
         }

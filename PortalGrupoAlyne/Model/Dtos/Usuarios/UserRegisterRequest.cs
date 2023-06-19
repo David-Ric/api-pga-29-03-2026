@@ -17,5 +17,7 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public string? Funcao { get; set; }
         public string? Telefone { get; set; }
         public string? ImagemURL { get; set; }
+
+        public int? TempoSessao { get; set; }
     }
 }

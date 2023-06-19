@@ -11,5 +11,7 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public string Password { get; set; } = string.Empty;
 
         public bool? Conectado { get; set; }
+
+        public int? TempoSessao { get; set; }
     }
 }

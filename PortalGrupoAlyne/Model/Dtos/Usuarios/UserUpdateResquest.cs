@@ -20,6 +20,8 @@ namespace PortalGrupoAlyne.Model.Dtos.Usuarios
         public string? ImagemURL { get; set; }
         public bool? PrimeiroLoginAdm { get; set; }
         public bool? Conectado { get; set; }
+
+        public int? TempoSessao { get; set; }
         //public IEnumerable<MenuPermissao>? MenuPermissao { get; set; }
         //public IEnumerable<SubMenuPermissao>? SubMenuPermissao { get; set; }
         //public IEnumerable<PaginaPermissao>? PaginaPermissao { get; set; }
