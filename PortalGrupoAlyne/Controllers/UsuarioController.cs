@@ -122,6 +122,42 @@ namespace PortalGrupoAlyne.Controllers
             });
 
         }
+
+        [HttpGet("filter/userName")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAllFilterUserName([FromServices] DataContext context,
+           [FromQuery] int pagina,
+            [FromQuery] int totalpagina,
+           [FromQuery] string filter
+           )
+        {
+
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            var data = await context.Usuario
+            .AsNoTracking()
+                 .Where(e => (e.Username.ToLower().Contains(filter.ToLower())))
+                .OrderBy(e => e.Id).Include("GrupoUsuario")
+                .Skip(skip)
+                .Take(take)
+                .ToListAsync();
+
+            var total = await context.Usuario
+            .AsNoTracking()
+                .Where(e => (e.Username.ToLower().Contains(filter.ToLower())))
+                .CountAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+
+        }
+
+
+
         [HttpGet("userName")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAllName([FromServices] DataContext context,

@@ -56,8 +56,50 @@ namespace PortalGrupoAlyne.Controllers
             return NoContent();
         }
 
+        [HttpPut("UpdateSessao")]
+        public async Task<IActionResult> UpdateSessao()
+        {
+            var configuracao = await _context.Configuracao.FindAsync(1);
 
-        
+            if (configuracao == null)
+            {
+                return NotFound();
+            }
+
+            if (configuracao.TempoSessao == null || configuracao.TempoSessao == 0)
+            {
+                configuracao.TempoSessao = 15;
+                await _context.SaveChangesAsync();
+                return Ok("Tempo de sessão alterada com sucesso.");
+            }
+            else
+            {
+                return Ok("Já existe um tempo de sessão configurado.");
+            }
+        }
+
+
+        [HttpGet("integracao{id}")]
+        public async Task<ActionResult<Configuracao>> SqlIntegracao(int id, string novoValor)
+        {
+            var configuracao = await _context.IntegracaoSankhya.FindAsync(id);
+            if (configuracao == null)
+            {
+                return NotFound();
+            }
+
+            if (configuracao.SqlObterSankhya == novoValor)
+            {
+                return Ok("SQL já existente");
+            }
+
+            configuracao.SqlObterSankhya = novoValor;
+            await _context.SaveChangesAsync();
+
+            return Ok(configuracao);
+        }
+
+
         //[HttpPut("{id}/{tipoConfig}")]
         //public async Task<IActionResult> Update(int id, string tipoConfig, string urlApontamento, Configuracao configuracao)
         //{

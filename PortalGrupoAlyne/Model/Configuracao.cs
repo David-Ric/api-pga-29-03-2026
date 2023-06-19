@@ -17,5 +17,6 @@ namespace PortalGrupoAlyne.Model
         public string? SankhyaSenha { get; set; }
 
         public DateTime? AtualizadoEm { get; set; }
+        public int? TempoSessao { get; set; }
     }
 }

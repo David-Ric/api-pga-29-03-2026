@@ -136,7 +136,8 @@ namespace PortalGrupoAlyne.Controllers
                      Id = 1,
                      SankhyaServidor = "http://179.185.45.146:8180/",
                      SankhyaUsuario = "ADMIN",
-                     SankhyaSenha = "SYNC550V"
+                     SankhyaSenha = "SYNC550V",
+                     TempoSessao = 15
                     }
                 };
                 _context.Configuracao.AddRange(novaConfigura);
