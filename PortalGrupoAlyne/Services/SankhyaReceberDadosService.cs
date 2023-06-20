@@ -258,6 +258,7 @@ namespace PortalGrupoAlyne.Services
                             using (var con = new MySqlConnection(MySqlCon))
                             {
                                 con.Open();
+                                List<string> sqlStatements = new List<string>(); // Lista para armazenar as instruções SQL
                                 for (int i = 0; i < rows.Count; i++)
                                 {
                                     string where = "";
@@ -314,11 +315,17 @@ namespace PortalGrupoAlyne.Services
                                         Console.WriteLine(query);
                                         string chave = con.ExecuteScalar<string>(query);
                                         var cSql = "";
-                                        if (chave != null) cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
-                                        else cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
+                                        if (chave != null)
+                                            cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
+                                        else
+                                            cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
                                         Console.WriteLine(cSql);
-                                        int resultado = con.Execute(cSql);
+                                        sqlStatements.Add(cSql); // Adiciona a instrução SQL à li
                                     }
+                                }
+                                foreach (var sqlStatement in sqlStatements)
+                                {
+                                    int resultado = con.Execute(sqlStatement);
                                 }
                                 con.Close();
                             }
@@ -396,6 +403,7 @@ namespace PortalGrupoAlyne.Services
                             using (var con = new MySqlConnection(MySqlCon))
                             {
                                 con.Open();
+                                List<string> sqlStatements = new List<string>(); // Lista para armazenar as instruções SQL
                                 for (int i = 0; i < rows.Count; i++)
                                 {
                                     string where = "";
@@ -452,12 +460,20 @@ namespace PortalGrupoAlyne.Services
                                         Console.WriteLine(query);
                                         string chave = con.ExecuteScalar<string>(query);
                                         var cSql = "";
-                                        if (chave != null) cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
-                                        else cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
+                                        if (chave != null)
+                                            cSql = $"UPDATE {table} SET {fieldsValues} WHERE {where}";
+                                        else
+                                            cSql = $"INSERT INTO {table} ({fields}) VALUES({values})";
                                         Console.WriteLine(cSql);
-                                        int resultado = con.Execute(cSql);
+                                        sqlStatements.Add(cSql); // Adiciona a instrução SQL à li
                                     }
                                 }
+
+                                foreach (var sqlStatement in sqlStatements)
+                                {
+                                    int resultado = con.Execute(sqlStatement);
+                                }
+
                                 con.Close();
                             }
                         }

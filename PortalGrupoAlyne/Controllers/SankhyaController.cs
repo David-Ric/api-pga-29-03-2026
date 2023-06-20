@@ -2,6 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using PortalGrupoAlyne.Services;
 using System.Text.RegularExpressions;
+using MySqlConnector;
+using Newtonsoft.Json;
+using PortalGrupoAlyne.Model;
+using PortalGrupoAlyne.Model.Dtos.Sankhya;
 
 namespace PortalGrupoAlyne.Controllers
 {
@@ -10,11 +14,13 @@ namespace PortalGrupoAlyne.Controllers
     [ApiController]
     public class SankhyaController : ControllerBase
     {
+        private readonly DataContext _context;
         private readonly IConfiguration _configuration;
 
-        public SankhyaController(IConfiguration configuration)
+        public SankhyaController(IConfiguration configuration, DataContext context)
         {
             _configuration = configuration;
+            _context = context;
         }
 
         [HttpPost("login")]
@@ -52,6 +58,8 @@ namespace PortalGrupoAlyne.Controllers
 
             return Ok(response);
         }
+
+
 
     }
 }
