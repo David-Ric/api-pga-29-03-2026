@@ -894,9 +894,57 @@ namespace PortalGrupoAlyne.Data
                          Icon = "fa fa-money",
                          MenuId = 4,
 
+                     }, new Pagina
+                     {
+                         Id = 200,
+                         Codigo = 37,
+                         Nome = "Acompanhamento Vendas",
+                         Url = "/acompanhamento-vendas",
+                         Icon = "fa fa-money",
+                         MenuId = 4,
+
+                     },
+                     new Pagina
+                     {
+                         Id = 201,
+                         Codigo = 38,
+                         Nome = "Sessões em uso",
+                         Url = "/sessoes-em-uso",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     },
+                     new Pagina
+                     {
+                         Id = 202,
+                         Codigo = 39,
+                         Nome = "Log Ações",
+                         Url = "/log-acoes",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
                      }
 
           );
+            modelBuilder.Entity<MenuPermissao>().HasData(
+              new MenuPermissao
+              {
+                  Id = 200,
+                  GrupoUsuarioId = 5,
+                  Codigo = 7,
+                  Nome= "Consultas"
+
+              });
+            modelBuilder.Entity<PaginaPermissao>().HasData(
+              new PaginaPermissao
+              {
+                  Id=200,
+                  Codigo = 37,
+                  Nome = "Acompanhamento Vendas",
+                  MenuPermissaoId =13,
+                  GrupoUsuarioId=5
+
+              });
             modelBuilder.Entity<GrupoUsuario>().HasData(
                new GrupoUsuario
                {
@@ -908,6 +956,11 @@ namespace PortalGrupoAlyne.Data
                 {
                     Id = 2,
                     Nome = "Representante"
+
+                }, new GrupoUsuario
+                {
+                    Id = 5,
+                    Nome = "Coordenador"
 
                 }
            );

@@ -13,6 +13,45 @@ namespace PortalGrupoAlyne.Controllers
         {
             _context = context;
         }
+
+
+        //[HttpGet("mensagensgeraisnaolidas")]
+        //public IActionResult MensagensGeraisNaoLidas()
+        //{
+
+        //    var mensagensNaoLidas = _context.Message
+        //        .Where(m => m.Lida == false)
+        //        .Join(_context.Usuario, m => m.ReceiverId, u => u.Id, (m, u) => new { Mensagem = m, Usuario = u })
+        //        .Select(m => new
+        //        {
+        //            Mensagem = m.Mensagem,
+        //            Telefone = m.Usuario.Telefone
+        //        })
+        //        .ToList();
+
+        //    return Ok(mensagensNaoLidas);
+        //}
+
+        [HttpGet("mensagensgeraisnaolidas")]
+        public IActionResult MensagensGeraisNaoLidas()
+        {
+            var mensagensNaoLidas = _context.Message
+                .Where(m => m.Lida == false)
+                .Join(_context.Usuario, m => m.ReceiverId, u => u.Id, (m, u) => new { Mensagem = m, UsuarioRemetente = u })
+                .Join(_context.Usuario, m => m.Mensagem.SenderId, u => u.Id, (m, u) => new { MensagemUsuario = m.Mensagem, UsuarioRemetente = m.UsuarioRemetente, UsuarioReceptor = u })
+                .Select(m => new
+                {
+                    Mensagem = m.MensagemUsuario,
+                    TelefoneDestinatario = m.UsuarioRemetente.Telefone,
+                    Remetente = m.UsuarioReceptor.NomeCompleto
+                })
+                .ToList();
+
+            return Ok(mensagensNaoLidas);
+        }
+
+
+
         [HttpGet("{id}")]
         public IActionResult MinhasMensagens(int id)
         {

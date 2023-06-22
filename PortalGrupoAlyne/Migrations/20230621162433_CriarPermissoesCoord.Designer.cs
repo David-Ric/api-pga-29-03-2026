@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230621162433_CriarPermissoesCoord")]
+    partial class CriarPermissoesCoord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1331,26 +1333,6 @@ namespace PortalGrupoAlyne.Migrations
                             MenuId = 4,
                             Nome = "Acompanhamento Vendas",
                             Url = "/acompanhamento-vendas"
-                        },
-                        new
-                        {
-                            Id = 201,
-                            Codigo = 38,
-                            Icon = "",
-                            MenuId = 1,
-                            Nome = "Sessões em uso",
-                            SubMenuId = 4,
-                            Url = "/sessoes-em-uso"
-                        },
-                        new
-                        {
-                            Id = 202,
-                            Codigo = 39,
-                            Icon = "",
-                            MenuId = 1,
-                            Nome = "Log Ações",
-                            SubMenuId = 4,
-                            Url = "/log-acoes"
                         });
                 });
 
@@ -2631,8 +2613,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 15, 212, 126, 110, 102, 154, 187, 201, 42, 62, 150, 10, 247, 78, 113, 240, 182, 221, 81, 3, 217, 141, 75, 229, 133, 223, 196, 13, 241, 154, 254, 2, 143, 107, 170, 97, 65, 12, 134, 150, 199, 45, 159, 98, 22, 87, 137, 34, 179, 42, 38, 218, 80, 157, 65, 240, 153, 96, 249, 44, 120, 230, 111, 195 },
-                            PasswordSalt = new byte[] { 188, 127, 222, 138, 233, 94, 108, 21, 163, 93, 254, 205, 224, 81, 189, 204, 57, 81, 86, 21, 205, 240, 12, 137, 78, 16, 186, 20, 253, 186, 193, 64 },
+                            PasswordHash = new byte[] { 21, 228, 107, 171, 108, 11, 204, 33, 85, 190, 146, 171, 218, 223, 40, 83, 31, 115, 182, 104, 72, 20, 220, 210, 203, 4, 96, 181, 38, 159, 20, 214, 13, 79, 124, 85, 107, 13, 250, 163, 68, 72, 31, 250, 58, 131, 143, 22, 120, 45, 248, 222, 134, 209, 249, 87, 95, 48, 169, 62, 118, 174, 227, 79 },
+                            PasswordSalt = new byte[] { 96, 20, 23, 42, 26, 111, 5, 111, 112, 107, 153, 83, 16, 242, 91, 161, 171, 188, 218, 22, 22, 243, 44, 224, 227, 254, 161, 75, 33, 115, 252, 213 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

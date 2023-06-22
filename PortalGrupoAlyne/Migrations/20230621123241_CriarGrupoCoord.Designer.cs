@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PortalGrupoAlyne.Data;
 
@@ -10,9 +11,10 @@ using PortalGrupoAlyne.Data;
 namespace PortalGrupoAlyne.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20230621123241_CriarGrupoCoord")]
+    partial class CriarGrupoCoord
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -747,15 +749,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("MenuPermissao");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 200,
-                            Codigo = 7,
-                            GrupoUsuarioId = 5,
-                            Nome = "Consultas"
-                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Message", b =>
@@ -1322,35 +1315,6 @@ namespace PortalGrupoAlyne.Migrations
                             MenuId = 4,
                             Nome = "Comissões",
                             Url = "/comissoes"
-                        },
-                        new
-                        {
-                            Id = 200,
-                            Codigo = 37,
-                            Icon = "fa fa-money",
-                            MenuId = 4,
-                            Nome = "Acompanhamento Vendas",
-                            Url = "/acompanhamento-vendas"
-                        },
-                        new
-                        {
-                            Id = 201,
-                            Codigo = 38,
-                            Icon = "",
-                            MenuId = 1,
-                            Nome = "Sessões em uso",
-                            SubMenuId = 4,
-                            Url = "/sessoes-em-uso"
-                        },
-                        new
-                        {
-                            Id = 202,
-                            Codigo = 39,
-                            Icon = "",
-                            MenuId = 1,
-                            Nome = "Log Ações",
-                            SubMenuId = 4,
-                            Url = "/log-acoes"
                         });
                 });
 
@@ -1602,16 +1566,6 @@ namespace PortalGrupoAlyne.Migrations
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("PaginaPermissao");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 200,
-                            Codigo = 37,
-                            GrupoUsuarioId = 5,
-                            MenuPermissaoId = 13,
-                            Nome = "Acompanhamento Vendas"
-                        });
                 });
 
             modelBuilder.Entity("PortalGrupoAlyne.Model.Parceiro", b =>
@@ -2631,8 +2585,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 15, 212, 126, 110, 102, 154, 187, 201, 42, 62, 150, 10, 247, 78, 113, 240, 182, 221, 81, 3, 217, 141, 75, 229, 133, 223, 196, 13, 241, 154, 254, 2, 143, 107, 170, 97, 65, 12, 134, 150, 199, 45, 159, 98, 22, 87, 137, 34, 179, 42, 38, 218, 80, 157, 65, 240, 153, 96, 249, 44, 120, 230, 111, 195 },
-                            PasswordSalt = new byte[] { 188, 127, 222, 138, 233, 94, 108, 21, 163, 93, 254, 205, 224, 81, 189, 204, 57, 81, 86, 21, 205, 240, 12, 137, 78, 16, 186, 20, 253, 186, 193, 64 },
+                            PasswordHash = new byte[] { 235, 239, 146, 186, 89, 128, 146, 176, 34, 39, 48, 102, 100, 103, 70, 2, 56, 229, 71, 236, 227, 130, 102, 35, 206, 76, 72, 11, 8, 183, 65, 146, 221, 69, 155, 244, 146, 169, 154, 162, 115, 26, 225, 50, 4, 227, 27, 164, 217, 38, 251, 94, 86, 236, 122, 210, 32, 171, 170, 188, 184, 125, 207, 126 },
+                            PasswordSalt = new byte[] { 141, 245, 104, 24, 147, 111, 129, 191, 38, 151, 228, 205, 71, 201, 118, 31, 101, 14, 238, 151, 88, 208, 176, 28, 105, 89, 48, 121, 251, 28, 64, 1 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

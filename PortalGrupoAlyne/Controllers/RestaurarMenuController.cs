@@ -593,7 +593,16 @@ namespace PortalGrupoAlyne.Controllers
                        Icon = "GoFileSubmodule",
                        MenuId = 1,
                        SubMenuId = 4,
-                   }
+                   },new Pagina
+                     {
+                         Id = 59,
+                         Codigo = 37,
+                         Nome = "Acompanhamento Vendas",
+                         Url = "/acompanhamento-vendas",
+                         Icon = "fa fa-money",
+                         MenuId = 4,
+
+                     }
 
                 };
                 _context.Pagina.AddRange(novaPagina);

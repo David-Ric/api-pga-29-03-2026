@@ -76,18 +76,6 @@ namespace PortalGrupoAlyne.Controllers
 
             var sessoes = await context.Sessao.ToListAsync();
 
-            foreach (var sessao in sessoes)
-            {
-                DateTime horaAcesso = sessao.HoraAcesso ?? DateTime.MinValue; 
-
-                if ((horaAtual - horaAcesso).TotalMinutes > 40)
-                {
-                    sessao.Online = "N"; 
-                }
-            }
-
-            await context.SaveChangesAsync(); 
-
             var data = sessoes.Where(s => s.Online == "S" && s.Nome !="admin").Skip((pagina - 1) * totalpagina).Take(totalpagina).ToList();
 
             return Ok(new
