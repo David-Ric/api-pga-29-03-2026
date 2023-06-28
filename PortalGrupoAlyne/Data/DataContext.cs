@@ -923,6 +923,25 @@ namespace PortalGrupoAlyne.Data
                          Icon = "",
                          MenuId = 1,
                          SubMenuId = 4,
+                     },
+                     new Pagina
+                     {
+                         Id = 203,
+                         Codigo = 40,
+                         Nome = "Construtor BI",
+                         Url = "/construtor-bi",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     },
+                     new Pagina
+                     {
+                         Id = 204,
+                         Codigo = 41,
+                         Nome = "Construtor BI",
+                         Url = "/construtor-bi",
+                         Icon = "",
+                         MenuId = 5,
                      }
 
           );
@@ -982,71 +1001,108 @@ namespace PortalGrupoAlyne.Data
                    ChaveTabelaPortal = "Id",
                    SqlObterSankhya = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
                     TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
-                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId AND DTALTER > '$AtualizadoEm'"
+                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId "
                },
-               new IntegracaoSankhya
-               {
-                   Id = 2,
-                   TabelaPortal = "TipoNegociacao",
-                   ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT DISTINCT TPV.CODTIPVENDA Id, 
-                        RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao,
-                        TPV.DHALTER AtualizadoEm
-                    FROM TGFTPV (NOLOCK) TPV
-                    JOIN TGFCPL (NOLOCK) CPL ON CPL.SUGTIPNEGSAID = TPV.CODTIPVENDA
-                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = CPL.CODPARC AND PAR.CLIENTE = 'S'
-                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC AND PAEM.CODEMP = 1		
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
-                                            AND VEN.CODVEND = $VendedorId
-                    WHERE TPV.CODTIPVENDA > 0
-                    AND DHALTER > '$AtualizadoEm'
-                    ORDER BY 1"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 3,
-                   TabelaPortal = "Parceiro",
-                   ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT PAR.CODPARC Id, REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') Nome, 
-                        PAR.TIPPESSOA TipoPessoa, REPLACE(PAR.NOMEPARC, CHAR(39),'') NomeFantasia, 
-                        PAR.CGC_CPF Cnpj_Cpf, ISNULL(PAR.EMAIL,'') Email, 
-                        ISNULL(PAR.TELEFONE,'') Fone, PAR.CODTIPPARC Canal, 
-                        REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND,''), CHAR(39), '') Endereco,
-                        REPLACE(ISNULL(BAI.NOMEBAI,''), CHAR(39),'') Bairro,
-                        REPLACE(CID.NOMECID, CHAR(39),'') Municipio, UFS.UF UF, 
-                        PAR.ATIVO Status, ISNULL(CPL.SUGTIPNEGSAID,0) TipoNegociacao, 
-                        PAR.CODVEND VendedorId, PAR.DTALTER AtualizadoEm
-                        , ISNULL(PAR.LIMCRED,0) as LC
-                    FROM TGFPAR (NOLOCK) PAR
-					JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' 
-                                            AND VEN.CODVEND = $VendedorId
-                    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
-                    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
-                    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
-                    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
-                    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
-                    WHERE PAR.CLIENTE = 'S' 
-                    AND PAR.CODPARC > 0 
-                    AND PAR.CODVEND > 0
-                    AND PAR.ATIVO = 'S'"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 4,
-                   TabelaPortal = "GrupoProduto",
-                   ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) Id, 
+                     new IntegracaoSankhya
+                     {
+                         Id = 2,
+                         TabelaPortal = "TipoNegociacao",
+                         ChaveTabelaPortal = "Id",
+                         SqlObterSankhya = @"SELECT CPL.SUGTIPNEGSAID Id
+                        , RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao
+                        , TPV.DHALTER AtualizadoEm
+					FROM TGFCPL CPL
+					JOIN TGFTPV TPV ON TPV.CODTIPVENDA = CPL.SUGTIPNEGSAID
+					JOIN TGFPAR PAR ON PAR.CODPARC = CPL.CODPARC
+					WHERE PAR.CODVEND = $VendedorId
+						AND PAR.ATIVO = 'S'
+						AND PAR.CLIENTE = 'S'
+					GROUP BY CPL.SUGTIPNEGSAID 
+						, RTRIM(LTRIM(TPV.DESCRTIPVENDA))
+						, TPV.DHALTER"
+                     },
+                    new IntegracaoSankhya
+                    {
+                        Id = 3,
+                        TabelaPortal = "Parceiro",
+                        ChaveTabelaPortal = "Id",
+                        SqlObterSankhya = @"SELECT PAR.CODPARC AS Id,
+    REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') AS Nome,
+    PAR.TIPPESSOA AS TipoPessoa,
+    REPLACE(PAR.NOMEPARC, CHAR(39),'') AS NomeFantasia,
+    PAR.CGC_CPF AS Cnpj_Cpf,
+    ISNULL(PAR.EMAIL, '') AS Email,
+    ISNULL(PAR.TELEFONE, '') AS Fone,
+    PAR.CODTIPPARC AS Canal,
+    REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND, ''), CHAR(39), '') AS Endereco,
+    REPLACE(ISNULL(BAI.NOMEBAI, ''), CHAR(39), '') AS Bairro,
+    REPLACE(CID.NOMECID, CHAR(39), '') AS Municipio,
+    UFS.UF AS UF,
+    PAR.ATIVO AS Status,
+    ISNULL(CPL.SUGTIPNEGSAID, 0) AS TipoNegociacao,
+    PAR.CODVEND AS VendedorId,
+    PAR.DTALTER AS AtualizadoEm,
+    ISNULL(PAR.LIMCRED,0) as LC,
+    ISNULL(PAR.LIMCRED, 0) - ISNULL(PED.VLRPED, 0) - ISNULL(FIN.VLRTIT, 0) AS SC
+FROM 
+    TGFPAR (NOLOCK) PAR
+    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND =  $VendedorId
+    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
+    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
+    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
+    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
+    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(((ITE.QTDNEG-ITE.QTDENTREGUE) * VLRUNIT)) AS VLRPED
+        FROM 
+            TGFITE ITE 
+            JOIN TGFCAB CAB ON CAB.NUNOTA = ITE.NUNOTA
+        WHERE 
+            (ITE.QTDNEG-ITE.QTDENTREGUE) > 0
+            AND ITE.PENDENTE = 'S'
+        GROUP BY 
+            CAB.CODPARC
+    ) PED ON PED.CODPARC = PAR.CODPARC
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA) AS VLRTIT
+        FROM 
+            TGFCAB CAB
+            JOIN TGFFIN FIN ON FIN.NUNOTA = CAB.NUNOTA
+        WHERE 
+            CAB.TIPMOV = 'V'
+            AND FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA > 0
+            AND FIN.PROVISAO <> 'S'
+            AND ISNULL(FIN.NURENEG, 0) = 0
+        GROUP BY 
+            CAB.CODPARC
+    ) FIN ON FIN.CODPARC = PAR.CODPARC
+WHERE 
+    PAR.CODPARC > 0
+    AND PAR.CODVEND > 0
+    AND PAR.CLIENTE = 'S'
+    AND PAR.CODVEND =  $VendedorId"
+                    },
+                    new IntegracaoSankhya
+                    {
+                        Id = 4,
+                        TabelaPortal = "GrupoProduto",
+                        ChaveTabelaPortal = "Id",
+                        SqlObterSankhya = @"SELECT convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) Id, 
                     RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
                     FROM sankhya.TGFGRU (NOLOCK)
                     WHERE ANALITICO = 'S'
                     and SUBSTRING(RTRIM(CODGRUPOPROD),1,3) = '120'"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 5,
-                   TabelaPortal = "Produto",
-                   ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
+                    },
+                    new IntegracaoSankhya
+                    {
+                        Id = 5,
+                        TabelaPortal = "Produto",
+                        ChaveTabelaPortal = "Id",
+                        SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
                         PRO.DESCRPROD Nome, 
                         convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) GrupoProdutoId,
                         PRO.DTALTER AtualizadoEm,
@@ -1058,28 +1114,29 @@ namespace PortalGrupoAlyne.Data
                     LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
                     WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
                     AND PRO.DTALTER > '$AtualizadoEm'"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 6,
-                   TabelaPortal = "TabelaPreco",
-                   ChaveTabelaPortal = "Id",
-                   SqlObterSankhya = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal 
+                    },
+
+                     new IntegracaoSankhya
+                     {
+                         Id = 6,
+                         TabelaPortal = "TabelaPreco",
+                         ChaveTabelaPortal = "Id",
+                         SqlObterSankhya = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal 
                     FROM TGFNTA (NOLOCK) NTA
                     JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                     JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'
+                                            AND VEN.CODVEND = $VendedorId 
                     GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
                     ORDER BY 1"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 7,
-                   TabelaPortal = "ItemTabela",
-                   ChaveTabelaPortal = "TabelaPrecoId,IdProd",
-                   SqlObterSankhya = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, 
+                     },
+                      new IntegracaoSankhya
+                      {
+                          Id = 7,
+                          TabelaPortal = "ItemTabela",
+                          ChaveTabelaPortal = "TabelaPrecoId,IdProd",
+                          SqlObterSankhya = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, 
                     ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm
                     FROM TGFTAB TAB
                     JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB
@@ -1090,37 +1147,35 @@ namespace PortalGrupoAlyne.Data
                                             JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                                             JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
 						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' 
+                                                                    AND VEN.CODVEND = $VendedorId  
                                             GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
                                     ORDER BY EXC.CODPROD, DTVIGOR DESC)
                     --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
                     ORDER BY TAB.CODTAB, PRO.CODPROD"
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 8,
-                   TabelaPortal = "TabelaPrecoParceiro",
-                   ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
-                   SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
-                    FROM TGFPAR (NOLOCK) PAR
-                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
-                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
-                                            AND VEN.CODVEND = $VendedorId 
-                                            AND VEN.TIPVEND = 'R'
-                    WHERE PAR.CLIENTE = 'S' 
-                    AND PAR.CODPARC > 0 
-                    AND PAR.CODVEND > 0
-                    AND PAR.ATIVO = 'S'"
-
-               },
-               new IntegracaoSankhya
-               {
-                   Id = 9,
-                   TabelaPortal = "Titulo",
-                   ChaveTabelaPortal = "EmpresaId,ParceiroId,NuUnico",
-                   SqlObterSankhya = @"SELECT FIN.CODEMP as EmpresaId
+                      },
+                       new IntegracaoSankhya
+                       {
+                           Id = 8,
+                           TabelaPortal = "TabelaPrecoParceiro",
+                           ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
+                           SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
+                     FROM TGFPAR (NOLOCK) PAR
+                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
+                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
+                                             AND VEN.CODVEND = $VendedorId 
+                     WHERE PAR.CLIENTE = 'S' 
+                     AND PAR.CODPARC > 0 
+                     AND PAR.CODVEND > 0
+                     AND PAR.ATIVO = 'S'"
+                       },
+                        new IntegracaoSankhya
+                        {
+                            Id = 9,
+                            TabelaPortal = "Titulo",
+                            ChaveTabelaPortal = "EmpresaId,ParceiroId,NuUnico",
+                            SqlObterSankhya = @"SELECT FIN.CODEMP as EmpresaId
 	                , FIN.CODPARC as ParceiroId
 	                , FIN.NUNOTA as NuUnico
 	                , FIN.DESDOBRAMENTO as Parcela
@@ -1141,11 +1196,25 @@ namespace PortalGrupoAlyne.Data
 		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
 		                AND FIN.CODVEND = $VendedorId 
 		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
-
-               }
+                        },
+                        new IntegracaoSankhya
+                        {
+                            Id = 10,
+                            TabelaPortal = "TabelaPrecoAdicional",
+                            ChaveTabelaPortal = "EmpresaId,ParceiroId,IdProd",
+                            SqlObterSankhya = @"Select AD.CODEMP as EmpresaId 
+	                 , AD.CODPARC as ParceiroId 
+	                 , EXC.CODPROD as IdProd
+	                 , EXC.VLRVENDA as Preco
+	 
+	                 FROM AD_TABCLI AD 
+	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC 
+	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB 
+	                 WHERE PAR.CODVEND = $VendedorId"
+                        }
 
            );
-
+           
         }
 
 

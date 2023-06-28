@@ -41,6 +41,245 @@ namespace PortalGrupoAlyne.Controllers
             return salt;
         }
 
+        [HttpPost("atualizar-tabela-integracao")]
+        public async Task<ActionResult> AtualizarTabelaIntegracaoSankhya([FromServices] DataContext context)
+        {
+            try
+            {
+                var integracao = await context.IntegracaoSankhya.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
+                if (integracao == null) return NoContent();
+                _context.IntegracaoSankhya.RemoveRange(integracao);
+
+                var restauraIntegracao = new List<IntegracaoSankhya> {
+                    new IntegracaoSankhya {
+                        Id = 1,
+                   TabelaPortal = "Vendedor",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT CODVEND Id, APELIDO Nome, ATIVO Status, ISNULL(EMAIL, '') Email, 
+                    TIPVEND Tipo, CASE WHEN ATUACOMPRADOR = 'S' THEN 1 ELSE 0 END AtuaCompras, DTALTER AtualizadoEm
+                    FROM TGFVEN VEN WHERE VEN.CODVEND = $VendedorId "
+                         },
+                     new IntegracaoSankhya {
+                     Id = 2,
+                   TabelaPortal = "TipoNegociacao",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT CPL.SUGTIPNEGSAID Id
+                        , RTRIM(LTRIM(TPV.DESCRTIPVENDA)) Descricao
+                        , TPV.DHALTER AtualizadoEm
+					FROM TGFCPL CPL
+					JOIN TGFTPV TPV ON TPV.CODTIPVENDA = CPL.SUGTIPNEGSAID
+					JOIN TGFPAR PAR ON PAR.CODPARC = CPL.CODPARC
+					WHERE PAR.CODVEND = $VendedorId
+						AND PAR.ATIVO = 'S'
+						AND PAR.CLIENTE = 'S'
+					GROUP BY CPL.SUGTIPNEGSAID 
+						, RTRIM(LTRIM(TPV.DESCRTIPVENDA))
+						, TPV.DHALTER"
+                    },
+                    new IntegracaoSankhya {
+                    Id = 3,
+                   TabelaPortal = "Parceiro",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT PAR.CODPARC AS Id,
+    REPLACE(PAR.RAZAOSOCIAL, CHAR(39),'') AS Nome,
+    PAR.TIPPESSOA AS TipoPessoa,
+    REPLACE(PAR.NOMEPARC, CHAR(39),'') AS NomeFantasia,
+    PAR.CGC_CPF AS Cnpj_Cpf,
+    ISNULL(PAR.EMAIL, '') AS Email,
+    ISNULL(PAR.TELEFONE, '') AS Fone,
+    PAR.CODTIPPARC AS Canal,
+    REPLACE(ISNULL(EN1.TIPO +' '+ EN1.NOMEEND, ''), CHAR(39), '') AS Endereco,
+    REPLACE(ISNULL(BAI.NOMEBAI, ''), CHAR(39), '') AS Bairro,
+    REPLACE(CID.NOMECID, CHAR(39), '') AS Municipio,
+    UFS.UF AS UF,
+    PAR.ATIVO AS Status,
+    ISNULL(CPL.SUGTIPNEGSAID, 0) AS TipoNegociacao,
+    PAR.CODVEND AS VendedorId,
+    PAR.DTALTER AS AtualizadoEm,
+    ISNULL(PAR.LIMCRED,0) as LC,
+    ISNULL(PAR.LIMCRED, 0) - ISNULL(PED.VLRPED, 0) - ISNULL(FIN.VLRTIT, 0) AS SC
+FROM 
+    TGFPAR (NOLOCK) PAR
+    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND =  $VendedorId
+    JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
+    JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
+    LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
+    LEFT JOIN TSIEND (NOLOCK) EN1 ON EN1.CODEND = PAR.CODEND
+    LEFT JOIN TSIBAI (NOLOCK) BAI ON BAI.CODBAI = PAR.CODBAI
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(((ITE.QTDNEG-ITE.QTDENTREGUE) * VLRUNIT)) AS VLRPED
+        FROM 
+            TGFITE ITE 
+            JOIN TGFCAB CAB ON CAB.NUNOTA = ITE.NUNOTA
+        WHERE 
+            (ITE.QTDNEG-ITE.QTDENTREGUE) > 0
+            AND ITE.PENDENTE = 'S'
+        GROUP BY 
+            CAB.CODPARC
+    ) PED ON PED.CODPARC = PAR.CODPARC
+    LEFT JOIN (
+        SELECT 
+            CAB.CODPARC,
+            SUM(FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA) AS VLRTIT
+        FROM 
+            TGFCAB CAB
+            JOIN TGFFIN FIN ON FIN.NUNOTA = CAB.NUNOTA
+        WHERE 
+            CAB.TIPMOV = 'V'
+            AND FIN.VLRDESDOB-FIN.VLRDESC-FIN.VLRBAIXA > 0
+            AND FIN.PROVISAO <> 'S'
+            AND ISNULL(FIN.NURENEG, 0) = 0
+        GROUP BY 
+            CAB.CODPARC
+    ) FIN ON FIN.CODPARC = PAR.CODPARC
+WHERE 
+    PAR.CODPARC > 0
+    AND PAR.CODVEND > 0
+    AND PAR.CLIENTE = 'S'
+    AND PAR.CODVEND =  $VendedorId"
+                    },
+                    new IntegracaoSankhya {
+                     Id = 4,
+                   TabelaPortal = "GrupoProduto",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) Id, 
+                    RTRIM(LTRIM(REPLACE(ISNULL(DESCRGRUPOPROD,''), CHAR(39),''))) Nome
+                    FROM sankhya.TGFGRU (NOLOCK)
+                    WHERE ANALITICO = 'S'
+                    and SUBSTRING(RTRIM(CODGRUPOPROD),1,3) = '120'"
+                    },
+                    new IntegracaoSankhya {
+                        Id = 5,
+                   TabelaPortal = "Produto",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
+                        PRO.DESCRPROD Nome, 
+                        convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) GrupoProdutoId,
+                        PRO.DTALTER AtualizadoEm,
+                        PRO.CODVOL TipoUnid,
+                        ISNULL(VOA.CODVOL,'UN') TipoUnid2,
+                        ISNULL(VOA.QUANTIDADE,1) Conv
+                    FROM sankhya.TGFPRO (NOLOCK) PRO
+                    LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
+                    LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
+                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
+                    AND PRO.DTALTER > '$AtualizadoEm'"
+                    },
+
+                     new IntegracaoSankhya {
+                        Id = 6,
+                   TabelaPortal = "TabelaPreco",
+                   ChaveTabelaPortal = "Id",
+                   SqlObterSankhya = @"SELECT NTA.CODTAB Id, 1 Codigo, RTRIM(LTRIM(NTA.NOMETAB)) Descricao, TAB.DTVIGOR DataInicial, '2070-01-01 01:01:01' DataFinal 
+                    FROM TGFNTA (NOLOCK) NTA
+                    JOIN (SELECT CODTAB, MAX(DTVIGOR) DTVIGOR FROM TGFTAB (NOLOCK) GROUP BY CODTAB) TAB ON TAB.CODTAB = NTA.CODTAB
+                    JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                    JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
+                                            AND VEN.CODVEND = $VendedorId 
+                    GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
+                    ORDER BY 1"
+                    },
+                      new IntegracaoSankhya {
+                      Id = 7,
+                   TabelaPortal = "ItemTabela",
+                   ChaveTabelaPortal = "TabelaPrecoId,IdProd",
+                   SqlObterSankhya = @"SELECT TAB.CODTAB TabelaPrecoId, EXC.CODPROD IdProd, EXC.VLRVENDA Preco, 
+                    ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') AtualizadoEm
+                    FROM TGFTAB TAB
+                    JOIN TGFNTA NTA ON NTA.CODTAB = TAB.CODTAB
+                    JOIN TGFEXC EXC ON EXC.NUTAB = TAB.NUTAB
+                    JOIN TGFPRO PRO ON PRO.CODPROD = EXC.CODPROD
+                    WHERE TAB.CODTAB IN (	SELECT NTA.CODTAB 
+                                            FROM TGFNTA (NOLOCK) NTA
+                                            JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
+                                            JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
+						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
+                                                                    AND VEN.CODVEND = $VendedorId  
+                                            GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
+                    AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
+                                    AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
+                                    ORDER BY EXC.CODPROD, DTVIGOR DESC)
+                    --AND ISNULL(EXC.AD_DTALTER, '1970-01-01 01:01:02') > '$AtualizadoEm'
+                    ORDER BY TAB.CODTAB, PRO.CODPROD"
+                    },
+                       new IntegracaoSankhya {
+                      Id = 8,
+                   TabelaPortal = "TabelaPrecoParceiro",
+                   ChaveTabelaPortal = "ParceiroId,EmpresaId,TabelaPrecoId",
+                   SqlObterSankhya = @"SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId
+                     FROM TGFPAR (NOLOCK) PAR
+                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
+                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
+                                             AND VEN.CODVEND = $VendedorId 
+                     WHERE PAR.CLIENTE = 'S' 
+                     AND PAR.CODPARC > 0 
+                     AND PAR.CODVEND > 0
+                     AND PAR.ATIVO = 'S'"
+                    },
+                        new IntegracaoSankhya {
+                        Id = 9,
+                   TabelaPortal = "Titulo",
+                   ChaveTabelaPortal = "EmpresaId,ParceiroId,NuUnico",
+                   SqlObterSankhya = @"SELECT FIN.CODEMP as EmpresaId
+	                , FIN.CODPARC as ParceiroId
+	                , FIN.NUNOTA as NuUnico
+	                , FIN.DESDOBRAMENTO as Parcela
+	                , CONVERT(DATE,FIN.DTNEG) as DataEmissao
+	                , CONVERT(DATE,FIN.DTVENC) as DataVencim
+	                , FIN.VLRDESDOB as Valor
+	
+	                FROM TGFFIN FIN 
+	                JOIN TGFCAB CAB ON CAB.NUNOTA = FIN.NUNOTA
+                        JOIN TGFPAR PAR ON FIN.CODPARC = PAR.CODPARC
+	                WHERE (VLRDESDOB-(VLRBAIXA+VLRDESC)) > 0
+                                AND PAR.ATIVO = 'S'
+		                AND PROVISAO = 'N'
+		                AND FIN.RECDESP = 1
+		                AND FIN.DHBAIXA IS NULL
+		                AND FIN.CODTIPTIT IN (0,4)
+		                AND FIN.CODTIPOPER NOT IN (1020,5016,5019,5029)
+		                AND CONVERT(DATE,FIN.DTVENC) < convert(date,dateadd(day, -3, getdate()))
+		                AND FIN.CODVEND = $VendedorId 
+		                AND FIN.CODPARC NOT IN (471,512,589,1293)"
+                        },
+                        new IntegracaoSankhya {
+                        Id = 10,
+                   TabelaPortal = "TabelaPrecoAdicional",
+                   ChaveTabelaPortal = "EmpresaId,ParceiroId,IdProd",
+                   SqlObterSankhya = @"Select AD.CODEMP as EmpresaId 
+	                 , AD.CODPARC as ParceiroId 
+	                 , EXC.CODPROD as IdProd
+	                 , EXC.VLRVENDA as Preco
+	 
+	                 FROM AD_TABCLI AD 
+	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC 
+	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB 
+	                 WHERE PAR.CODVEND = $VendedorId"
+                    }
+                };
+                _context.IntegracaoSankhya.AddRange(restauraIntegracao);
+
+                await _context.SaveChangesAsync();
+
+
+                return Ok("Tabela integração atualizada com sucesso");
+
+            }
+            catch (Exception ex)
+            {
+                return this.StatusCode(StatusCodes.Status500InternalServerError,
+                    $"Erro ao atualizar tabela integração. Erro: {ex.Message}");
+            }
+        }
+
+
+
+
+
+
         [HttpPost]
         public async Task<ActionResult> DeleteAllPages([FromServices] DataContext context)
         {
@@ -64,7 +303,7 @@ namespace PortalGrupoAlyne.Controllers
                 new Empresa { Id = 2, Descricao = "Distribuidora"} };
                     _context.Empresa.AddRange(novaEmpresa2);
                 }
-                
+
                 var novoLog = new List<Logs> {
                 new Logs { Id = 1, VersaoApi = "1.0.0", AtualizadoEm = DateTime.Now },
                  new Logs { Id = 3, VersaoApi = "1.0.2", AtualizadoEm = DateTime.Now },
@@ -85,11 +324,11 @@ namespace PortalGrupoAlyne.Controllers
                     }
                     else
                     {
-                       
+
                     }
                 }
 
-              //  await _context.SaveChangesAsync();
+                //  await _context.SaveChangesAsync();
 
 
 
@@ -109,7 +348,7 @@ namespace PortalGrupoAlyne.Controllers
                 {
                     var password = "Sync550v";
                     var salt = CreateSalt();
-                    var novoUser= new List<Usuario> {
+                    var novoUser = new List<Usuario> {
                 new Usuario {
                  Id = 1,
                     Email = "nfe@grupoalyne.com.br",
@@ -144,17 +383,17 @@ namespace PortalGrupoAlyne.Controllers
                 };
                 _context.Configuracao.AddRange(novaConfigura);
 
-                //var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
-                //if (paginas == null) return NoContent();
-                //_context.Pagina.RemoveRange(paginas);
-                var paginas = await context.Pagina
-                .AsNoTracking()
-                .Where(e => e.Id >= 1 && e.Id <= 49) 
-                .ToListAsync();
-
+                var paginas = await context.Pagina.AsNoTracking().OrderBy(e => e.Id).ToListAsync();
                 if (paginas == null) return NoContent();
+                _context.Pagina.RemoveRange(paginas);
+                //var paginas = await context.Pagina
+                //.AsNoTracking()
+                //.Where(e => e.Id >= 1 && e.Id <= 49)
+                //.ToListAsync();
 
-                context.Pagina.RemoveRange(paginas);
+                //if (paginas == null) return NoContent();
+
+                //_context.Pagina.RemoveRange(paginas);
                 await context.SaveChangesAsync();
 
 
@@ -165,31 +404,31 @@ namespace PortalGrupoAlyne.Controllers
                 if (menu == null) return NoContent();
                 _context.Menu.RemoveRange(menu);
 
-                var novoMenu = new List<Menu> { 
+                var novoMenu = new List<Menu> {
                 new Menu { Id = 1, Codigo = 1, Ordem = 0, Nome = "Administrativo", Icon = "fa fa-bank" },
                 new Menu { Id = 2, Codigo = 4, Ordem = 0, Nome = "Cadastros", Icon = "fa fa-address-card" },
                 new Menu { Id = 3, Codigo = 5, Ordem = 0, Nome = "Movimentos", Icon = "fa fa-map-o" },
                 new Menu { Id = 4, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus" },
                 new Menu { Id = 5, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup" },
                 new Menu { Id = 10, Codigo = 25, Ordem = 0, Nome = "Configurações",Icon = "fa fa-cogs" }
-               
+
 
                 };
                 _context.Menu.AddRange(novoMenu);
 
-                var novoSubMenu = new List<SubMenu> { 
+                var novoSubMenu = new List<SubMenu> {
                     new SubMenu { Id = 1, Codigo = 4, Ordem = 0, Nome = "Cadastros", Icon = "fa fa-address-card",MenuId=1  },
                     new SubMenu { Id = 2, Codigo = 3, Ordem = 0,  Nome = "Movimentos", Icon = "fa fa-map-o",MenuId=1  },
                     new SubMenu { Id = 3, Codigo = 7, Ordem = 0, Nome = "Consultas", Icon = "fa fa-search-minus",MenuId=1  },
                     new SubMenu { Id = 4, Codigo = 6, Ordem = 0, Nome = "Outros", Icon = "fa fa-object-ungroup",MenuId=1  },
                     new SubMenu { Id = 10,Codigo = 25,Ordem = 0,Nome = "Configurações",Icon = "fa fa-cogs",MenuId = 1}
-                   
+
 
                 };
                 _context.SubMenu.AddRange(novoSubMenu);
 
                 var novaPagina = new List<Pagina>
-                { 
+                {
                     new Pagina {
                      Id = 1,
                      Codigo = 13,
@@ -469,7 +708,7 @@ namespace PortalGrupoAlyne.Controllers
                        Url = "/configuracoes",
                        Icon = "fa fa-cogs",
                        MenuId = 10,
-                       
+
                    },
                    new Pagina
                    {
@@ -509,26 +748,7 @@ namespace PortalGrupoAlyne.Controllers
                        MenuId = 4,
 
                    },
-                   //  new Pagina
-                   //{
-                   //    Id = 41,
-                   //    Codigo = 31,
-                   //    Nome = "CI - RH",
-                   //    Url = "/comunicacao-interna",
-                   //    Icon = "fa fa-comments-o",
-                   //    MenuId = 1,
-                   //    SubMenuId = 4,
-                   //}, 
-                   // new Pagina
-                   //{
-                   //    Id = 42,
-                   //    Codigo = 31,
-                   //    Nome = "CI - RH",
-                   //    Url = "/comunicacao-interna",
-                   //    Icon = "fa fa-comments-o",
-                   //    MenuId = 5,
-
-                   //},
+                  
                      new Pagina
                    {
                        Id = 43,
@@ -548,25 +768,7 @@ namespace PortalGrupoAlyne.Controllers
                        MenuId = 5,
 
                    },
-                   //  new Pagina
-                   //{
-                   //    Id = 45,
-                   //    Codigo = 33,
-                   //    Nome = "CI - Comercial",
-                   //    Url = "/comunicacao-interna-comercial",
-                   //    Icon = "fa fa-commenting",
-                   //    MenuId = 1,
-                   //    SubMenuId = 4,
-                   //}, new Pagina
-                   //{
-                   //    Id = 46,
-                   //    Codigo = 33,
-                   //    Nome = "CI - Comercial",
-                   //    Url = "/comunicacao-interna-comercial",
-                   //    Icon = "fa fa-commenting",
-                   //    MenuId = 5,
-
-                   //},
+                   
                      new Pagina
                    {
                        Id = 47,
@@ -596,14 +798,35 @@ namespace PortalGrupoAlyne.Controllers
                        SubMenuId = 4,
                    },new Pagina
                      {
-                         Id = 59,
+                         Id = 200,
                          Codigo = 37,
                          Nome = "Acompanhamento Vendas",
                          Url = "/acompanhamento-vendas",
                          Icon = "fa fa-money",
                          MenuId = 4,
 
+                     },
+                     new Pagina
+                     {
+                         Id = 201,
+                         Codigo = 38,
+                         Nome = "Sessões em uso",
+                         Url = "/sessoes-em-uso",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     },
+                     new Pagina
+                     {
+                         Id = 202,
+                         Codigo = 39,
+                         Nome = "Log Ações",
+                         Url = "/log-acoes",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
                      }
+                    
 
                 };
                 _context.Pagina.AddRange(novaPagina);
@@ -612,7 +835,7 @@ namespace PortalGrupoAlyne.Controllers
                 if (integracao == null) return NoContent();
                 _context.IntegracaoSankhya.RemoveRange(integracao);
 
-                var restauraIntegracao= new List<IntegracaoSankhya> {
+                var restauraIntegracao = new List<IntegracaoSankhya> {
                     new IntegracaoSankhya {
                         Id = 1,
                    TabelaPortal = "Vendedor",
@@ -662,7 +885,7 @@ namespace PortalGrupoAlyne.Controllers
     ISNULL(PAR.LIMCRED, 0) - ISNULL(PED.VLRPED, 0) - ISNULL(FIN.VLRTIT, 0) AS SC
 FROM 
     TGFPAR (NOLOCK) PAR
-    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.TIPVEND = 'R' AND VEN.CODVEND =  $VendedorId
+    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND AND VEN.CODVEND =  $VendedorId
     JOIN TSICID (NOLOCK) CID ON CID.CODCID = PAR.CODCID
     JOIN TSIUFS (NOLOCK) UFS ON UFS.CODUF = CID.UF
     LEFT JOIN TGFCPL (NOLOCK) CPL ON CPL.CODPARC = PAR.CODPARC
@@ -740,7 +963,7 @@ WHERE
                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                     JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                            AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R'
+                                            AND VEN.CODVEND = $VendedorId 
                     GROUP BY NTA.CODTAB,TAB.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)),TAB.DTVIGOR 
                     ORDER BY 1"
                     },
@@ -759,7 +982,7 @@ WHERE
                                             JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODTAB = NTA.CODTAB
                                             JOIN TGFPAR (NOLOCK) PAR ON PAR.CODPARC = PAEM.CODPARC
 						                    JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND 
-                                                                    AND VEN.CODVEND = $VendedorId AND VEN.TIPVEND = 'R' 
+                                                                    AND VEN.CODVEND = $VendedorId  
                                             GROUP BY NTA.CODTAB,RTRIM(LTRIM(NTA.NOMETAB)))
                     AND EXC.NUTAB = (SELECT TOP 1 NUTAB FROM TGFTAB WHERE CODTAB = TAB.CODTAB
                                     AND CONVERT(DATE,DTVIGOR) <= CONVERT(DATE,GETDATE())
@@ -776,7 +999,6 @@ WHERE
                      JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC
                      JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND
                                              AND VEN.CODVEND = $VendedorId 
-                                             AND VEN.TIPVEND = 'R'
                      WHERE PAR.CLIENTE = 'S' 
                      AND PAR.CODPARC > 0 
                      AND PAR.CODVEND > 0
@@ -826,7 +1048,7 @@ WHERE
                 _context.IntegracaoSankhya.AddRange(restauraIntegracao);
 
                 await _context.SaveChangesAsync();
-              
+
 
                 return Ok("Menu restaurado");
 
@@ -834,11 +1056,11 @@ WHERE
             catch (Exception ex)
             {
                 return this.StatusCode(StatusCodes.Status500InternalServerError,
-                    $"Erro ao tentar recuperar paginas. Erro: {ex.Message}");
+                    $"Erro ao tentar recuperar menu. Erro: {ex.Message}");
             }
         }
 
-        
-       
+
+
     }
 }
