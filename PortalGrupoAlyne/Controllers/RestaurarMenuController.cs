@@ -826,7 +826,27 @@ WHERE
                          MenuId = 1,
                          SubMenuId = 4,
                      }
-                    
+                     //,
+                     //new Pagina
+                     //{
+                     //    Id = 203,
+                     //    Codigo = 40,
+                     //    Nome = "Construtor BI",
+                     //    Url = "/construtor-bi",
+                     //    Icon = "",
+                     //    MenuId = 1,
+                     //    SubMenuId = 4,
+                     //},
+                     //new Pagina
+                     //{
+                     //    Id = 204,
+                     //    Codigo = 41,
+                     //    Nome = "Construtor BI",
+                     //    Url = "/construtor-bi",
+                     //    Icon = "",
+                     //    MenuId = 5,
+                     //}
+
 
                 };
                 _context.Pagina.AddRange(novaPagina);

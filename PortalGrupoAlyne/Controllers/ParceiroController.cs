@@ -84,6 +84,37 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
+        [HttpGet("total")]
+        public async Task<IActionResult> GetAllTotal([FromServices] DataContext context)
+        {
+            var total = await context.Parceiro.CountAsync();
+            var data = await context.Parceiro.AsNoTracking()
+                .Include("Vendedor")
+                .Include("TabelaPrecoParceiro")
+                .Include("TabelaPrecoParceiro.Empresa")
+                .Include("TabelaPrecoParceiro.TabelaPreco")
+                .Include("Titulo")
+                .ToListAsync();
+
+            foreach (var parceiro in data)
+            {
+                var tipoNegociacaoId = int.Parse(parceiro.TipoNegociacao);
+                var tipoNegociacao = await context.TipoNegociacao
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(tn => tn.Id == tipoNegociacaoId);
+
+                if (tipoNegociacao != null)
+                {
+                    parceiro.DescTipoNegociacao = tipoNegociacao.Descricao;
+                }
+            }
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
 
 
         [HttpGet("filter")]

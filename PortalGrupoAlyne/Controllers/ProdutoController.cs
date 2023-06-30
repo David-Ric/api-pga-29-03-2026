@@ -23,6 +23,7 @@ namespace PortalGrupoAlyne.Controllers
             _context = context;
             _mapper = mapper;
         }
+
         [HttpGet]
       
         public async Task<IActionResult> GetAll([FromServices] DataContext context,
@@ -39,6 +40,20 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+        [HttpGet("total")]
+
+        public async Task<IActionResult> GetAlltotal([FromServices] DataContext context)
+        {
+            var total = await context.Produto.CountAsync();
+            var data = await context.Produto.AsNoTracking().Include("GrupoProduto").ToListAsync();
+
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
+
         [HttpGet("filter")]
       
         public async Task<IActionResult> GetAllFilter([FromServices] DataContext context,

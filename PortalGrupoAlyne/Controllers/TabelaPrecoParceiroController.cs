@@ -39,7 +39,28 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
-        [HttpGet("filter/cliente/empresa")]
+
+      
+
+            [HttpGet("total")]
+            public async Task<IActionResult> GetAllTodos([FromServices] DataContext context)
+            {
+                var total = await context.TabelaPrecoParceiro.CountAsync();
+                var data = await context.TabelaPrecoParceiro
+                .Include(e => e.TabelaPreco).Include(e => e.Empresa)
+                .AsNoTracking()
+                .ToListAsync();
+
+                return Ok(new
+                {
+                    total,
+                    data = data
+                });
+            }
+
+
+
+            [HttpGet("filter/cliente/empresa")]
         public async Task<IActionResult> GetAllFilterCleinteEmpresa([FromServices] DataContext context,
            [FromQuery] int pagina,
             [FromQuery] int totalpagina,
