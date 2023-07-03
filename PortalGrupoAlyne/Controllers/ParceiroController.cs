@@ -85,16 +85,20 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpGet("total")]
-        public async Task<IActionResult> GetAllTotal([FromServices] DataContext context)
+        public async Task<IActionResult> GetAllTotal([FromServices] DataContext context,
+            [FromQuery] int codVendedor)
         {
             var total = await context.Parceiro.CountAsync();
             var data = await context.Parceiro.AsNoTracking()
+                .Where(e => e.VendedorId == codVendedor)
                 .Include("Vendedor")
                 .Include("TabelaPrecoParceiro")
                 .Include("TabelaPrecoParceiro.Empresa")
                 .Include("TabelaPrecoParceiro.TabelaPreco")
                 .Include("Titulo")
                 .ToListAsync();
+
+            var totalParceiros = data.Count;
 
             foreach (var parceiro in data)
             {
@@ -112,6 +116,7 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new
             {
                 total,
+                totalParceiros,
                 data = data
             });
         }
