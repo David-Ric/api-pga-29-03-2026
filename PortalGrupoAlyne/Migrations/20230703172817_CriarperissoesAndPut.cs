@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PortalGrupoAlyne.Migrations
 {
-    public partial class ReceberDadosRouV : Migration
+    public partial class CriarperissoesAndPut : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,25 +51,70 @@ namespace PortalGrupoAlyne.Migrations
                 column: "SqlObterSankhya",
                 value: "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                     FROM TGFPAR (NOLOCK) PAR\r\n                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND\r\n                                             AND VEN.CODVEND = $VendedorId \r\n                     WHERE PAR.CLIENTE = 'S' \r\n                     AND PAR.CODPARC > 0 \r\n                     AND PAR.CODVEND > 0\r\n                     AND PAR.ATIVO = 'S'");
 
-            //migrationBuilder.InsertData(
-            //    table: "IntegracaoSankhya",
-            //    columns: new[] { "Id", "AtualizadoEm", "ChaveTabelaPortal", "SqlObterSankhya", "TabelaPortal" },
-            //    values: new object[] { 10, null, "EmpresaId,ParceiroId,IdProd", "Select AD.CODEMP as EmpresaId \r\n	                 , AD.CODPARC as ParceiroId \r\n	                 , EXC.CODPROD as IdProd\r\n	                 , EXC.VLRVENDA as Preco\r\n	 \r\n	                 FROM AD_TABCLI AD \r\n	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC \r\n	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB \r\n	                 WHERE PAR.CODVEND = $VendedorId", "TabelaPrecoAdicional" });
+            migrationBuilder.InsertData(
+                table: "IntegracaoSankhya",
+                columns: new[] { "Id", "AtualizadoEm", "ChaveTabelaPortal", "SqlObterSankhya", "TabelaPortal" },
+                values: new object[] { 10, null, "EmpresaId,ParceiroId,IdProd", "Select AD.CODEMP as EmpresaId \r\n	                 , AD.CODPARC as ParceiroId \r\n	                 , EXC.CODPROD as IdProd\r\n	                 , EXC.VLRVENDA as Preco\r\n	 \r\n	                 FROM AD_TABCLI AD \r\n	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC \r\n	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB \r\n	                 WHERE PAR.CODVEND = $VendedorId", "TabelaPrecoAdicional" });
+
+            migrationBuilder.InsertData(
+                table: "MenuPermissao",
+                columns: new[] { "Id", "Codigo", "GrupoUsuarioId", "Nome", "UsuarioId" },
+                values: new object[] { 200, 7, 5, "Consultas", null });
+
+            migrationBuilder.InsertData(
+                table: "Pagina",
+                columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "SubMenuId", "Url" },
+                values: new object[,]
+                {
+                    { 200, 37, "fa fa-money", 4, "Acompanhamento Vendas", null, "/acompanhamento-vendas" },
+                    { 201, 38, "", 1, "Sessões em uso", 4, "/sessoes-em-uso" },
+                    { 202, 39, "", 1, "Log Ações", 4, "/log-acoes" }
+                });
 
             migrationBuilder.UpdateData(
                 table: "Usuario",
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "PasswordHash", "PasswordSalt" },
-                values: new object[] { new byte[] { 111, 170, 182, 196, 50, 184, 87, 137, 229, 99, 208, 95, 185, 31, 178, 91, 112, 123, 243, 108, 133, 189, 137, 252, 220, 158, 125, 210, 176, 38, 16, 87, 115, 25, 59, 209, 181, 185, 43, 108, 2, 133, 216, 128, 234, 51, 196, 71, 177, 204, 79, 213, 113, 140, 232, 44, 76, 224, 108, 187, 230, 120, 195, 238 }, new byte[] { 4, 133, 155, 148, 12, 139, 195, 237, 75, 212, 146, 130, 139, 80, 76, 30, 204, 152, 153, 37, 47, 9, 143, 122, 92, 17, 53, 152, 140, 4, 158, 175 } });
+                values: new object[] { new byte[] { 4, 195, 138, 200, 182, 75, 121, 78, 5, 180, 223, 96, 179, 91, 83, 213, 249, 71, 113, 14, 94, 201, 181, 13, 53, 42, 166, 206, 94, 135, 163, 223, 127, 102, 173, 94, 66, 51, 46, 102, 137, 26, 4, 234, 8, 192, 139, 219, 221, 76, 154, 115, 28, 49, 241, 161, 10, 254, 51, 14, 176, 166, 26, 219 }, new byte[] { 254, 205, 241, 69, 108, 139, 163, 107, 112, 127, 48, 169, 34, 11, 96, 163, 180, 219, 3, 137, 235, 150, 242, 4, 138, 197, 83, 193, 105, 169, 28, 169 } });
+
+            migrationBuilder.InsertData(
+                table: "PaginaPermissao",
+                columns: new[] { "Id", "Codigo", "GrupoUsuarioId", "MenuPermissaoId", "Nome", "SubMenuPermissaoId", "UsuarioId" },
+                values: new object[] { 200, 37, 5, 200, "Acompanhamento Vendas", null, null });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            //migrationBuilder.DeleteData(
-            //    table: "IntegracaoSankhya",
-            //    keyColumn: "Id",
-            //    keyValue: 10);
+            migrationBuilder.DeleteData(
+                table: "IntegracaoSankhya",
+                keyColumn: "Id",
+                keyValue: 10);
+
+            migrationBuilder.DeleteData(
+                table: "Pagina",
+                keyColumn: "Id",
+                keyValue: 200);
+
+            migrationBuilder.DeleteData(
+                table: "Pagina",
+                keyColumn: "Id",
+                keyValue: 201);
+
+            migrationBuilder.DeleteData(
+                table: "Pagina",
+                keyColumn: "Id",
+                keyValue: 202);
+
+            migrationBuilder.DeleteData(
+                table: "PaginaPermissao",
+                keyColumn: "Id",
+                keyValue: 200);
+
+            migrationBuilder.DeleteData(
+                table: "MenuPermissao",
+                keyColumn: "Id",
+                keyValue: 200);
 
             migrationBuilder.UpdateData(
                 table: "IntegracaoSankhya",
@@ -118,7 +163,7 @@ namespace PortalGrupoAlyne.Migrations
                 keyColumn: "Id",
                 keyValue: 1,
                 columns: new[] { "PasswordHash", "PasswordSalt" },
-                values: new object[] { new byte[] { 44, 207, 25, 146, 189, 59, 241, 75, 85, 212, 158, 228, 12, 224, 77, 184, 72, 47, 122, 150, 57, 5, 190, 227, 202, 192, 38, 51, 111, 34, 254, 206, 245, 237, 209, 119, 115, 155, 175, 184, 43, 207, 10, 21, 11, 52, 128, 0, 57, 154, 209, 212, 179, 207, 205, 72, 252, 229, 245, 13, 106, 19, 71, 221 }, new byte[] { 114, 173, 223, 132, 205, 36, 61, 205, 241, 218, 2, 207, 29, 197, 29, 116, 175, 239, 118, 228, 40, 45, 165, 177, 39, 188, 126, 30, 177, 254, 71, 114 } });
+                values: new object[] { new byte[] { 235, 239, 146, 186, 89, 128, 146, 176, 34, 39, 48, 102, 100, 103, 70, 2, 56, 229, 71, 236, 227, 130, 102, 35, 206, 76, 72, 11, 8, 183, 65, 146, 221, 69, 155, 244, 146, 169, 154, 162, 115, 26, 225, 50, 4, 227, 27, 164, 217, 38, 251, 94, 86, 236, 122, 210, 32, 171, 170, 188, 184, 125, 207, 126 }, new byte[] { 141, 245, 104, 24, 147, 111, 129, 191, 38, 151, 228, 205, 71, 201, 118, 31, 101, 14, 238, 151, 88, 208, 176, 28, 105, 89, 48, 121, 251, 28, 64, 1 } });
         }
     }
 }

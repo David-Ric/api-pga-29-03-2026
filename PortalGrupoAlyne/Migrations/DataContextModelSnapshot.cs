@@ -1358,25 +1358,6 @@ namespace PortalGrupoAlyne.Migrations
                             Nome = "Log Ações",
                             SubMenuId = 4,
                             Url = "/log-acoes"
-                        },
-                        new
-                        {
-                            Id = 203,
-                            Codigo = 40,
-                            Icon = "",
-                            MenuId = 1,
-                            Nome = "Construtor BI",
-                            SubMenuId = 4,
-                            Url = "/construtor-bi"
-                        },
-                        new
-                        {
-                            Id = 204,
-                            Codigo = 41,
-                            Icon = "",
-                            MenuId = 5,
-                            Nome = "Construtor BI",
-                            Url = "/construtor-bi"
                         });
                 });
 
@@ -1635,7 +1616,7 @@ namespace PortalGrupoAlyne.Migrations
                             Id = 200,
                             Codigo = 37,
                             GrupoUsuarioId = 5,
-                            MenuPermissaoId = 13,
+                            MenuPermissaoId = 200,
                             Nome = "Acompanhamento Vendas"
                         });
                 });
@@ -2657,8 +2638,8 @@ namespace PortalGrupoAlyne.Migrations
                             Imagem = new byte[0],
                             ImagemURL = "",
                             NomeCompleto = "Administrador Grupo Alyne",
-                            PasswordHash = new byte[] { 111, 170, 182, 196, 50, 184, 87, 137, 229, 99, 208, 95, 185, 31, 178, 91, 112, 123, 243, 108, 133, 189, 137, 252, 220, 158, 125, 210, 176, 38, 16, 87, 115, 25, 59, 209, 181, 185, 43, 108, 2, 133, 216, 128, 234, 51, 196, 71, 177, 204, 79, 213, 113, 140, 232, 44, 76, 224, 108, 187, 230, 120, 195, 238 },
-                            PasswordSalt = new byte[] { 4, 133, 155, 148, 12, 139, 195, 237, 75, 212, 146, 130, 139, 80, 76, 30, 204, 152, 153, 37, 47, 9, 143, 122, 92, 17, 53, 152, 140, 4, 158, 175 },
+                            PasswordHash = new byte[] { 4, 195, 138, 200, 182, 75, 121, 78, 5, 180, 223, 96, 179, 91, 83, 213, 249, 71, 113, 14, 94, 201, 181, 13, 53, 42, 166, 206, 94, 135, 163, 223, 127, 102, 173, 94, 66, 51, 46, 102, 137, 26, 4, 234, 8, 192, 139, 219, 221, 76, 154, 115, 28, 49, 241, 161, 10, 254, 51, 14, 176, 166, 26, 219 },
+                            PasswordSalt = new byte[] { 254, 205, 241, 69, 108, 139, 163, 107, 112, 127, 48, 169, 34, 11, 96, 163, 180, 219, 3, 137, 235, 150, 242, 4, 138, 197, 83, 193, 105, 169, 28, 169 },
                             PrimeiroLoginAdm = true,
                             RefreshToken = "",
                             Status = "1",

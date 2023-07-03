@@ -923,26 +923,8 @@ namespace PortalGrupoAlyne.Data
                          Icon = "",
                          MenuId = 1,
                          SubMenuId = 4,
-                     },
-                     new Pagina
-                     {
-                         Id = 203,
-                         Codigo = 40,
-                         Nome = "Construtor BI",
-                         Url = "/construtor-bi",
-                         Icon = "",
-                         MenuId = 1,
-                         SubMenuId = 4,
-                     },
-                     new Pagina
-                     {
-                         Id = 204,
-                         Codigo = 41,
-                         Nome = "Construtor BI",
-                         Url = "/construtor-bi",
-                         Icon = "",
-                         MenuId = 5,
                      }
+
 
           );
             modelBuilder.Entity<MenuPermissao>().HasData(
@@ -951,17 +933,17 @@ namespace PortalGrupoAlyne.Data
                   Id = 200,
                   GrupoUsuarioId = 5,
                   Codigo = 7,
-                  Nome= "Consultas"
+                  Nome = "Consultas"
 
               });
             modelBuilder.Entity<PaginaPermissao>().HasData(
               new PaginaPermissao
               {
-                  Id=200,
+                  Id = 200,
                   Codigo = 37,
                   Nome = "Acompanhamento Vendas",
-                  MenuPermissaoId =13,
-                  GrupoUsuarioId=5
+                  MenuPermissaoId = 200,
+                  GrupoUsuarioId = 5
 
               });
             modelBuilder.Entity<GrupoUsuario>().HasData(
@@ -1214,7 +1196,7 @@ WHERE
                         }
 
            );
-           
+
         }
 
 
