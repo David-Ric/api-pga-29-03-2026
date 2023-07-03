@@ -51,10 +51,10 @@ namespace PortalGrupoAlyne.Migrations
                 column: "SqlObterSankhya",
                 value: "SELECT PAR.CODPARC ParceiroId, PAEM.CODEMP EmpresaId, PAEM.CODTAB TabelaPrecoId\r\n                     FROM TGFPAR (NOLOCK) PAR\r\n                     JOIN TGFPAEM (NOLOCK) PAEM ON PAEM.CODPARC = PAR.CODPARC\r\n                     JOIN TGFVEN (NOLOCK) VEN ON VEN.CODVEND = PAR.CODVEND\r\n                                             AND VEN.CODVEND = $VendedorId \r\n                     WHERE PAR.CLIENTE = 'S' \r\n                     AND PAR.CODPARC > 0 \r\n                     AND PAR.CODVEND > 0\r\n                     AND PAR.ATIVO = 'S'");
 
-            migrationBuilder.InsertData(
-                table: "IntegracaoSankhya",
-                columns: new[] { "Id", "AtualizadoEm", "ChaveTabelaPortal", "SqlObterSankhya", "TabelaPortal" },
-                values: new object[] { 10, null, "EmpresaId,ParceiroId,IdProd", "Select AD.CODEMP as EmpresaId \r\n	                 , AD.CODPARC as ParceiroId \r\n	                 , EXC.CODPROD as IdProd\r\n	                 , EXC.VLRVENDA as Preco\r\n	 \r\n	                 FROM AD_TABCLI AD \r\n	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC \r\n	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB \r\n	                 WHERE PAR.CODVEND = $VendedorId", "TabelaPrecoAdicional" });
+            //migrationBuilder.InsertData(
+            //    table: "IntegracaoSankhya",
+            //    columns: new[] { "Id", "AtualizadoEm", "ChaveTabelaPortal", "SqlObterSankhya", "TabelaPortal" },
+            //    values: new object[] { 10, null, "EmpresaId,ParceiroId,IdProd", "Select AD.CODEMP as EmpresaId \r\n	                 , AD.CODPARC as ParceiroId \r\n	                 , EXC.CODPROD as IdProd\r\n	                 , EXC.VLRVENDA as Preco\r\n	 \r\n	                 FROM AD_TABCLI AD \r\n	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC \r\n	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB \r\n	                 WHERE PAR.CODVEND = $VendedorId", "TabelaPrecoAdicional" });
 
             migrationBuilder.InsertData(
                 table: "MenuPermissao",
