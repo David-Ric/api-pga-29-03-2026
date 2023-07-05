@@ -25,10 +25,7 @@ namespace PortalGrupoAlyne.Model
         public int TipoNegociacaoId { get; set; }
         public TipoNegociacao? TipoNegociacao { get; set; }
 
-        [ForeignKey("Parceiro")]
         public int ParceiroId { get; set; }
-
-        public Parceiro? Parceiro { get; set; }
         public DateTime Data { get; set; }
 
         public decimal? Valor { get; set; }

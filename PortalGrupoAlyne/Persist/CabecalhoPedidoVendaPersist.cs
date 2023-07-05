@@ -15,7 +15,7 @@
             public async Task<CabecalhoPedidoVenda> GetCabecalhoByIdAsync(int Id)
             {
                 IQueryable<CabecalhoPedidoVenda> query = _context.CabecalhoPedidoVenda
-                    .Include("Vendedor").Include("Parceiro").Include("TipoNegociacao");
+                    .Include("Vendedor").Include("TipoNegociacao");
 
                 query = query.AsNoTracking().OrderBy(e => e.Id).Where(e => e.Id == Id);
 

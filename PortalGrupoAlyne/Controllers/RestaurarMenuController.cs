@@ -313,6 +313,7 @@ WHERE
                  new Logs { Id = 6, VersaoApi = "1.1.003", AtualizadoEm = DateTime.Now },
                  new Logs { Id = 7, VersaoApi = "1.1.004", AtualizadoEm = DateTime.Now },
                  new Logs { Id = 8, VersaoApi = "1.1.005", AtualizadoEm = DateTime.Now },
+                 new Logs { Id = 9, VersaoApi = "1.1.009", AtualizadoEm = DateTime.Now },
                 };
                 var logsNoBanco = await _context.Logs.ToListAsync();
                 foreach (var log in novoLog)
