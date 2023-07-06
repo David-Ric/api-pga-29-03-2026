@@ -132,9 +132,9 @@ namespace PortalGrupoAlyne.Services
             sb.AppendLine($"                 <VEND>{pedido.CabecalhoPedidoVenda.VendedorId.ToString()}</VEND>");
             sb.AppendLine($"                 <CLIENT>{pedido.CabecalhoPedidoVenda.ParceiroId.ToString()}</CLIENT>");
             sb.AppendLine($"                 <COND>{pedido.CabecalhoPedidoVenda.TipoNegociacaoId.ToString()}</COND>");
-            sb.AppendLine($"                 <DATA>{pedido.CabecalhoPedidoVenda.Data.ToShortDateString()}</DATA>");
+            sb.AppendLine($"                 <DATA>{pedido.CabecalhoPedidoVenda.Data.ToString()}</DATA>");
             sb.AppendLine($"                 <VALOR>{sValor}</VALOR>");
-            sb.AppendLine($"                 <DTENTR>{pedido.CabecalhoPedidoVenda.DataEntrega.ToShortDateString()}</DTENTR>");
+            sb.AppendLine($"                 <DTENTR>{pedido.CabecalhoPedidoVenda.DataEntrega.ToString()}</DTENTR>");
             sb.AppendLine($"                 <OBS><![CDATA[{pedido.CabecalhoPedidoVenda.Observacao}]]></OBS>");
             sb.AppendLine("             </localFields>");
             sb.AppendLine("         </dataRow>");
