@@ -132,9 +132,9 @@ namespace PortalGrupoAlyne.Services
             sb.AppendLine($"                 <VEND>{pedido.CabecalhoPedidoVenda.VendedorId.ToString()}</VEND>");
             sb.AppendLine($"                 <CLIENT>{pedido.CabecalhoPedidoVenda.ParceiroId.ToString()}</CLIENT>");
             sb.AppendLine($"                 <COND>{pedido.CabecalhoPedidoVenda.TipoNegociacaoId.ToString()}</COND>");
-            sb.AppendLine($"                <DATA>{pedido.CabecalhoPedidoVenda.Data.ToString("yyyy-MM-ddTHH:mm:ssZ")}</DATA>");
+            sb.AppendLine($"                <DATA>{pedido.CabecalhoPedidoVenda.Data.ToString("yyyy-MM-dd HH:mm:ss")}</DATA>");
             sb.AppendLine($"                 <VALOR>{sValor}</VALOR>");
-            sb.AppendLine($"                 <DTENTR>{pedido.CabecalhoPedidoVenda.DataEntrega.ToString("yyyy-MM-ddTHH:mm:ssZ")}</DTENTR>");
+            sb.AppendLine($"                 <DTENTR>{pedido.CabecalhoPedidoVenda.DataEntrega.ToString("yyyy-MM-dd HH:mm:ss")}</DTENTR>");
             sb.AppendLine($"                 <OBS><![CDATA[{pedido.CabecalhoPedidoVenda.Observacao}]]></OBS>");
             sb.AppendLine("             </localFields>");
             sb.AppendLine("         </dataRow>");
@@ -145,7 +145,7 @@ namespace PortalGrupoAlyne.Services
 
             body = sb.ToString();
 
-            //Console.WriteLine(body);
+            Console.WriteLine(body);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
