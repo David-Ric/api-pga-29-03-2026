@@ -59,6 +59,8 @@ namespace PortalGrupoAlyne.Helpers
             CreateMap<RelatorioPedidoFaturar, RelatorioPedidoFaturarDto>().ReverseMap();
             CreateMap<Sessao,  SessaoDto>().ReverseMap();
             CreateMap<LogAcao, LogAcaoDto>().ReverseMap();
+            CreateMap<Etiqueta, EtiquetaDto>().ReverseMap();
+            CreateMap<EtiqParam, EtiqParamDto>().ReverseMap();
 
         }
     }

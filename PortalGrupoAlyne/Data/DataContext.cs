@@ -42,8 +42,6 @@ namespace PortalGrupoAlyne.Data
         public DbSet<ItemTabela> ItemTabela { get; set; }
         public DbSet<Empresa> Empresa { get; set; }
 
-
-
         public DbSet<Pagina> Pagina { get; set; }
         public DbSet<PaginaBase> PaginaBase { get; set; }
 
@@ -102,7 +100,8 @@ namespace PortalGrupoAlyne.Data
         public DbSet<TabelaPrecoAdicional> TabelaPrecoAdicional { get; set; }
         public DbSet<Sessao> Sessao { get; set; }
         public DbSet<LogAcao> LogAcao { get; set; }
-
+        public DbSet<Etiqueta> Etiqueta { get; set; }
+        public DbSet<EtiqParam> EtiqParam { get; set; }
 
         private byte[] CreateHash(string input, byte[] salt)
         {
@@ -923,6 +922,25 @@ namespace PortalGrupoAlyne.Data
                          Icon = "",
                          MenuId = 1,
                          SubMenuId = 4,
+                     },
+                     new Pagina
+                     {
+                         Id = 203,
+                         Codigo = 40,
+                         Nome = "Etiquetas",
+                         Url = "/etiquetas",
+                         Icon = "",
+                         MenuId = 1,
+                         SubMenuId = 4,
+                     }, new Pagina
+                     {
+                         Id = 204,
+                         Codigo = 40,
+                         Nome = "Etiquetas",
+                         Url = "/etiquetas",
+                         Icon = "",
+                         MenuId = 5,
+
                      }
 
 

@@ -69,22 +69,40 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
+        //[HttpGet]
+        //public async Task<IActionResult> GetAll([FromServices] DataContext context, [FromQuery] int pagina, [FromQuery] int totalpagina)
+        //{
+        //    var horaAtual = DateTime.Now; 
+
+        //    var sessoes = await context.Sessao.ToListAsync();
+
+        //    var data = sessoes.Where(s => s.Online == "S" && s.Nome !="admin").Skip((pagina - 1) * totalpagina).Take(totalpagina).ToList();
+
+        //    return Ok(new
+        //    {
+        //        total = data.Count,
+        //        data = data
+        //    });
+        //}
+
         [HttpGet]
         public async Task<IActionResult> GetAll([FromServices] DataContext context, [FromQuery] int pagina, [FromQuery] int totalpagina)
         {
-            var horaAtual = DateTime.Now; 
+            var horaAtual = DateTime.Now;
 
-            var sessoes = await context.Sessao.ToListAsync();
-
-            var data = sessoes.Where(s => s.Online == "S" && s.Nome !="admin").Skip((pagina - 1) * totalpagina).Take(totalpagina).ToList();
+            var sessoes = await context.Sessao
+                .Where(s => s.Online == "S" && s.Nome != "admin")
+                .OrderByDescending(s => s.HoraAcesso) // Ordenar por HoraAcesso em ordem decrescente
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina)
+                .ToListAsync();
 
             return Ok(new
             {
-                total = data.Count,
-                data = data
+                total = sessoes.Count,
+                data = sessoes
             });
         }
-
 
 
 

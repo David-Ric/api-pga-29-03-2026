@@ -145,7 +145,7 @@ namespace PortalGrupoAlyne.Services
 
             body = sb.ToString();
 
-            Console.WriteLine(body);
+           // Console.WriteLine(body);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
@@ -213,7 +213,7 @@ namespace PortalGrupoAlyne.Services
                 sb.AppendLine("</serviceRequest>");
 
                 body = sb.ToString();
-                //Console.WriteLine(body);
+                Console.WriteLine(body);
 
                 request = new HttpRequestMessage(HttpMethod.Post, url);
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));

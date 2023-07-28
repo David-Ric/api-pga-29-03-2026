@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!--Normalização dos validations(DS Wildfly)-->
+<datasources xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.ironjacamar.org/schema/datasources_1_0.xsd">
+  <datasource jta="true" jndi-name="java:/FORTESAC" pool-name="FORTESAC" enabled="true" use-ccm="true">
+   <connection-url>jdbc:firebirdsql://10.0.0.250:53052/C:/Fortes/AC/AC.FDB</connection-url> 
+   <driver-class>org.firebirdsql.jdbc.FBDriver</driver-class>  
+   <connection-property name="charSet">ISO8859-1</connection-property>
+   <connection-property name="roleName">ROLE_APP</connection-property>
+   <driver>jaybird-4.0.6.java8.jar</driver>
+   <security> 
+            <user-name>SYSDBA</user-name>  
+            <password>masterkey</password>
+   </security> 
+   <validation> 
+            <validate-on-match>false</validate-on-match>
+            <background-validation>false</background-validation> 
+   </validation> 
+   <timeout> 
+            <idle-timeout-minutes>1</idle-timeout-minutes>
+   </timeout>
+   <statement> 
+            <share-prepared-statements>false</share-prepared-statements>
+   </statement> 
+  </datasource> 
+</datasources>
+

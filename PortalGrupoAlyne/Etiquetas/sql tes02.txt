@@ -1,0 +1,54 @@
+select CAB.CODPARCTRANSP
+	, TRA.RAZAOSOCIAL AS TRANSPORTADORA
+	, CLI.RAZAOSOCIAL AS CLIENTE
+	, CID.NOMECID AS MUNICIPIO
+	, CAB.AD_UF AS UF
+	, CAB.NUMNOTA AS NF
+	, CAB.QTDVOL AS VOLUME
+	, CAB.DTNEG AS DATA_SAIDA
+	, CAB.OBSERVACAO AS PEDIDO
+
+FROM TGFCAB CAB
+LEFT JOIN TGFPAR TRA ON TRA.CODPARC = CAB.CODPARCTRANSP
+LEFT JOIN TGFPAR CLI ON CLI.CODPARC = CAB.CODPARC
+LEFT JOIN TSICID CID ON CID.CODCID  = CLI.CODCID
+WHERE CAB.NUMNOTA = $NUNOTA$
+AND CAB.TIPMOV = 'V'
+
+
+
+NUMNOTA
+
+QTDVOL
+
+dtNeG
+
+titulo
+tituloEtq
+
+nomeTxt
+nomeTxt
+
+sql
+sql
+posturado e calmo
+
+<form onSubmit={handleSubmit}>
+            
+            {variaveisEncontradas.map((variavel) => (
+              <div className="divint" key={variavel}>
+                <label htmlFor={variavel}>{variavel}</label>
+                <input style={{margin:10}}
+                type="text" id={variavel}
+                value={values[variavel] || ''}
+                onChange={handleChange} />
+              </div>
+            ))}
+            <button className="btn btn-primary btnOk " type="submit">
+              OK
+            </button>
+            
+          </form>
+
+
+{"key": "string","value": "string"}

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Normalização dos validations(DS Wildfly)-->
+<datasources>
+  <datasource jta="true" jndi-name="java:/MGEDS" pool-name="MGEDS" enabled="true" use-java-context="true" use-ccm="true">
+    <connection-url>jdbc:jtds:sqlserver://10.0.0.254:1433;DatabaseName=SANKHYA_TEST;instance=SQLSERVER2014;useLOBs=false;appName=SANKHYAW</connection-url>
+    <driver-class>net.sourceforge.jtds.jdbc.Driver</driver-class>
+    <driver>net.sourceforge.jtds</driver>
+    <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
+    <pool>
+      <min-pool-size>100</min-pool-size>
+      <max-pool-size>100</max-pool-size>
+    </pool>
+    <security>
+      <security-domain>encrypted-security-domain</security-domain>
+    </security>
+    <validation>
+      <valid-connection-checker class-name="org.jboss.jca.adapters.jdbc.extensions.mssql.MSSQLValidConnectionChecker" />
+    </validation>
+  </datasource>
+</datasources>
+
