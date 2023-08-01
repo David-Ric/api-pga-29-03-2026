@@ -104,10 +104,16 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(CabecalhoPedidoVenda tabela)
         {
 
+            if (tabela.Valor <= 0)
+            {
+                return BadRequest("O Valor do Pedido não pode ser igual a zero.");
+            }
+
             if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
             {
                 return BadRequest("Pedido de Venda ja existe na base de dados.");
             }
+           
 
 
             _context.CabecalhoPedidoVenda.Add(tabela);
@@ -152,6 +158,7 @@ namespace PortalGrupoAlyne.Controllers
         public IActionResult Update(int id, CabecalhoPedidoVendaDto model)
         {
             _cabecalhoPedidoVendaService.Update(id, model);
+
             return Ok(new { message = "Pedido atualizado com sucesso" });
         }
 

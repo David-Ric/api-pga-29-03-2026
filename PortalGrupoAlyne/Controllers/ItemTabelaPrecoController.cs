@@ -95,7 +95,7 @@ namespace PortalGrupoAlyne.Controllers
             [FromQuery] int pagina,
             [FromQuery] int totalpagina,
             [FromQuery] int? codTabela,
-            [FromQuery] int? codProduto,
+            [FromQuery] string codProduto,
             [FromQuery] int? parceiroId,
             [FromQuery] int? empresaId)
         {
@@ -104,7 +104,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var data = await context.ItemTabela
                 .AsNoTracking()
-                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd == codProduto)
+                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd.ToString().Contains(codProduto))
                 .OrderBy(e => e.Id)
                 .Include(e => e.Produtos)
                 //.Skip(skip)
@@ -113,13 +113,13 @@ namespace PortalGrupoAlyne.Controllers
 
             var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.IdProd == codProduto)
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.IdProd.ToString().Contains(codProduto))
                  .Include(e => e.Produtos)
                 .ToListAsync();
 
             var totalItemTabela = await context.ItemTabela
                 .AsNoTracking()
-                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd == codProduto)
+                .Where(e => e.TabelaPrecoId == codTabela && e.IdProd.ToString().Contains(codProduto))
                 .CountAsync();
 
             var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional

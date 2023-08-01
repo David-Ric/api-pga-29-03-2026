@@ -123,46 +123,68 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(List<ItemPedidoVendaDto> itens)
         {
             try
             {
-                List<ItemPedidoVenda> itemPedidoVendaList = new List<ItemPedidoVenda>();
+                if (itens == null || itens.Count == 0)
+                {
+                    return BadRequest("Não é permitido salvar uma lista vazia.");
+                }
+
+                List<string> mensagensErro = new List<string>();
+                List<int> itensNaoSalvos = new List<int>();
 
                 foreach (var item in itens)
                 {
                     if (item.Quant <= 0)
                     {
-                        return BadRequest("A Quantidade não pode ser menor ou igual a zero.");
+                        mensagensErro.Add($"Item com ProdutoId {item.ProdutoId}: A Quantidade não pode ser menor ou igual a zero.");
                     }
-
-                    var itemPedidoVenda = new ItemPedidoVenda
+                    else if (item.ValUnit <= 0)
                     {
-                        Filial = item.Filial,
-                        VendedorId = item.VendedorId,
-                        PalMPV = item.PalMPV,
-                        ProdutoId = item.ProdutoId,
-                        Quant = item.Quant,
-                        ValUnit = item.ValUnit,
-                        ValTotal = item.ValTotal,
-                        Baixado = item.Baixado
-                    };
-
-                    if (_context.ItemPedidoVenda.Any(u => u.Id == itemPedidoVenda.Id))
-                    {
-                        return BadRequest("Item do pedido de venda já existe na base de dados.");
+                        mensagensErro.Add($"O produto: {item.ProdutoId} está com o valor unitário zerado");
                     }
+                    else if (item.ValTotal <= 0)
+                    {
+                        mensagensErro.Add($"Item com ProdutoId {item.ProdutoId}: O Valor Total não pode ser igual a zero.");
+                    }
+                    else
+                    {
+                        var itemPedidoVenda = new ItemPedidoVenda
+                        {
+                            Filial = item.Filial,
+                            VendedorId = item.VendedorId,
+                            PalMPV = item.PalMPV,
+                            ProdutoId = item.ProdutoId,
+                            Quant = item.Quant,
+                            ValUnit = item.ValUnit,
+                            ValTotal = item.ValTotal,
+                            Baixado = item.Baixado
+                        };
 
-                    itemPedidoVendaList.Add(itemPedidoVenda);
+                        if (_context.ItemPedidoVenda.Any(u => u.Id == itemPedidoVenda.Id))
+                        {
+                            mensagensErro.Add($"Item com ProdutoId {item.ProdutoId}: Item do pedido de venda já existe na base de dados.");
+                        }
+                        else
+                        {
+                            _context.ItemPedidoVenda.Add(itemPedidoVenda);
+                        }
+                    }
                 }
 
-                _context.ItemPedidoVenda.AddRange(itemPedidoVendaList);
-
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Pedido de Venda criado com sucesso." });
+                if (mensagensErro.Count > 0)
+                {
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Alguns itens não puderam ser salvos.", errors = mensagensErro });
+                }
+                else
+                {
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Pedido de Venda criado com sucesso." });
+                }
             }
             catch (Exception ex)
             {
@@ -172,11 +194,84 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
+        //[HttpPost]
+        //public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(List<ItemPedidoVendaDto> itens)
+        //{
+        //    try
+        //    {
+        //        if (itens == null || itens.Count == 0)
+        //        {
+        //            return BadRequest("Não é permitido salvar uma lista vazia.");
+        //        }
+
+        //        List<ItemPedidoVenda> itemPedidoVendaList = new List<ItemPedidoVenda>();
+
+        //        foreach (var item in itens)
+        //        {
+
+        //            if (item.Quant <= 0)
+        //            {
+        //                return BadRequest("A Quantidade não pode ser menor ou igual a zero.");
+        //            }
+        //            if (item.ValUnit <= 0)
+        //            {
+        //                return BadRequest("O Valor não pode ser igual a zero.");
+        //            }
+        //            if (item.ValTotal <= 0)
+        //            {
+        //                return BadRequest("O Valor Total não pode ser igual a zero.");
+        //            }
+
+        //            var itemPedidoVenda = new ItemPedidoVenda
+        //            {
+        //                Filial = item.Filial,
+        //                VendedorId = item.VendedorId,
+        //                PalMPV = item.PalMPV,
+        //                ProdutoId = item.ProdutoId,
+        //                Quant = item.Quant,
+        //                ValUnit = item.ValUnit,
+        //                ValTotal = item.ValTotal,
+        //                Baixado = item.Baixado
+        //            };
+
+        //            if (_context.ItemPedidoVenda.Any(u => u.Id == itemPedidoVenda.Id))
+        //            {
+        //                return BadRequest("Item do pedido de venda já existe na base de dados.");
+        //            }
+
+
+        //            itemPedidoVendaList.Add(itemPedidoVenda);
+        //        }
+
+        //        _context.ItemPedidoVenda.AddRange(itemPedidoVendaList);
+
+        //        await _context.SaveChangesAsync();
+
+        //        return Ok(new { message = "Pedido de Venda criado com sucesso." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest("Erro ao criar pedido de venda.");
+        //    }
+        //}
+
+
+
         [HttpPut("{id}")]
 
         public IActionResult Update(int id, ItemPedidoVendaDto model)
         {
             _itemPedidoVendaService.Update(id, model);
+
+            if (_context.ItemPedidoVenda.Any(u => u.ValUnit <= 0))
+            {
+                return BadRequest("O Valor Unitário não pode ser igual a zero.");
+            }
+            if (_context.ItemPedidoVenda.Any(u => u.ValTotal <= 0))
+            {
+                return BadRequest("O Valor Total não pode ser igual a zero.");
+            }
+
             return Ok(new { message = "Item do pedido de venda atualizado com sucesso" });
         }
 
