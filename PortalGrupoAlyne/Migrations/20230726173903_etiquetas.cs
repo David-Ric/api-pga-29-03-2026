@@ -120,14 +120,14 @@ namespace PortalGrupoAlyne.Migrations
             //    column: "SqlObterSankhya",
             //    value: "Select AD.CODEMP as EmpresaId \n	                 , AD.CODPARC as ParceiroId \n	                 , EXC.CODPROD as IdProd\n	                 , EXC.VLRVENDA as Preco\n	 \n	                 FROM AD_TABCLI AD \n	                 JOIN TGFPAR PAR ON PAR.CODPARC = AD.CODPARC \n	                 JOIN TGFEXC EXC ON EXC.NUTAB = AD.CODTAB \n	                 WHERE PAR.CODVEND = $VendedorId");
 
-            migrationBuilder.InsertData(
-                table: "Pagina",
-                columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "SubMenuId", "Url" },
-                values: new object[,]
-                {
-                    { 203, 40, "", 1, "Etiquetas", 4, "/etiquetas" },
-                    { 204, 40, "", 5, "Etiquetas", null, "/etiquetas" }
-                });
+            //migrationBuilder.InsertData(
+            //    table: "Pagina",
+            //    columns: new[] { "Id", "Codigo", "Icon", "MenuId", "Nome", "SubMenuId", "Url" },
+            //    values: new object[,]
+            //    {
+            //        { 203, 40, "", 1, "Etiquetas", 4, "/etiquetas" },
+            //        { 204, 40, "", 5, "Etiquetas", null, "/etiquetas" }
+            //    });
 
             //migrationBuilder.UpdateData(
             //    table: "Usuario",
@@ -150,15 +150,15 @@ namespace PortalGrupoAlyne.Migrations
             migrationBuilder.DropTable(
                 name: "Etiqueta");
 
-            migrationBuilder.DeleteData(
-                table: "Pagina",
-                keyColumn: "Id",
-                keyValue: 203);
+            //migrationBuilder.DeleteData(
+            //    table: "Pagina",
+            //    keyColumn: "Id",
+            //    keyValue: 203);
 
-            migrationBuilder.DeleteData(
-                table: "Pagina",
-                keyColumn: "Id",
-                keyValue: 204);
+            //migrationBuilder.DeleteData(
+            //    table: "Pagina",
+            //    keyColumn: "Id",
+            //    keyValue: 204);
 
             //migrationBuilder.UpdateData(
             //    table: "IntegracaoSankhya",
