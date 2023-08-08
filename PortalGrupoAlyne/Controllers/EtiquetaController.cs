@@ -74,6 +74,67 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
+        //[HttpGet("{id}")]
+        //[AllowAnonymous]
+        //public async Task<ActionResult<Etiqueta>> Get(int id)
+        //{
+        //    try
+        //    {
+        //        var etiqueta = await _context.Etiqueta
+        //            .Include(e => e.Parametros)
+        //            .FirstOrDefaultAsync(e => e.Id == id);
+
+        //        if (etiqueta == null)
+        //            return NotFound("Etiqueta não encontrada.");
+
+        //        return Ok(etiqueta);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode(StatusCodes.Status500InternalServerError, $"Erro ao obter a etiqueta: {ex.Message}");
+        //    }
+        //}
+
+
+        //[HttpPost]
+        //public async Task<ActionResult<List<Etiqueta>>> AddEtiqueta(Etiqueta etiqueta)
+        //{
+        //    if (_context.Etiqueta.Any(u => u.Titulo == etiqueta.Titulo))
+        //    {
+        //        return BadRequest("Ja existe uma etiqueta com esse título.");
+        //    }
+
+        //    _context.Etiqueta.Add(etiqueta);
+        //    await _context.SaveChangesAsync();
+
+        //    var response = new
+        //    {
+        //        message = "Etiqueta criada com sucesso.",
+        //        id = etiqueta.Id
+        //    };
+
+        //    return Ok(response);
+        //}
+
+
+
+
+        //[HttpPut("{id}")]
+        //public IActionResult Update(int id, EtiquetaDto etiquetaDto)
+        //{
+        //    var etiqueta = _context.Etiqueta.FirstOrDefault(p => p.Id == id);
+        //    if (etiqueta == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _mapper.Map(etiquetaDto, etiqueta);
+        //    _context.Etiqueta.Update(etiqueta);
+        //    _context.SaveChanges();
+
+        //    return NoContent();
+        //}
+
         [HttpGet("{id}")]
         [AllowAnonymous]
         public async Task<ActionResult<Etiqueta>> Get(int id)
@@ -81,13 +142,14 @@ namespace PortalGrupoAlyne.Controllers
             try
             {
                 var etiqueta = await _context.Etiqueta
-                    .Include(e => e.Parametros)
                     .FirstOrDefaultAsync(e => e.Id == id);
 
                 if (etiqueta == null)
                     return NotFound("Etiqueta não encontrada.");
 
-                return Ok(etiqueta);
+                var etiquetaDto = _mapper.Map<EtiquetaDto>(etiqueta); // Mapear para DTO, se necessário
+
+                return Ok(etiquetaDto);
             }
             catch (Exception ex)
             {
@@ -96,44 +158,60 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
+
+
+
         [HttpPost]
-        public async Task<ActionResult<List<Etiqueta>>> AddEtiqueta(Etiqueta etiqueta)
+        public async Task<IActionResult> AddEtiqueta([FromForm] Etiqueta etiqueta)
         {
             if (_context.Etiqueta.Any(u => u.Titulo == etiqueta.Titulo))
             {
-                return BadRequest("Ja existe uma etiqueta com esse título.");
+                return BadRequest("Já existe uma etiqueta com esse título.");
             }
 
-            _context.Etiqueta.Add(etiqueta);
+            if (etiqueta.File != null)
+            {
+                using (var reader = new StreamReader(etiqueta.File.OpenReadStream()))
+                {
+                    etiqueta.Zpl = await reader.ReadToEndAsync();
+                }
+            }
+
+            var etiquetaToAdd = _mapper.Map<Etiqueta>(etiqueta); // Mapear para a entidade
+
+            _context.Etiqueta.Add(etiquetaToAdd);
             await _context.SaveChangesAsync();
 
-            var response = new
-            {
-                message = "Etiqueta criada com sucesso.",
-                id = etiqueta.Id
-            };
-
-            return Ok(response);
+            return Ok(new { message = "Etiqueta criada com sucesso.", id = etiquetaToAdd.Id });
         }
-        
-
 
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, EtiquetaDto etiquetaDto)
+        public async Task<IActionResult> Update(int id, [FromForm] Etiqueta etiqueta)
         {
-            var etiqueta = _context.Etiqueta.FirstOrDefault(p => p.Id == id);
-            if (etiqueta == null)
+            var existingEtiqueta = await _context.Etiqueta.FirstOrDefaultAsync(p => p.Id == id);
+            if (existingEtiqueta == null)
             {
                 return NotFound();
             }
 
-            _mapper.Map(etiquetaDto, etiqueta);
-            _context.Etiqueta.Update(etiqueta);
-            _context.SaveChanges();
+            if (etiqueta.File != null)
+            {
+                using (var reader = new StreamReader(etiqueta.File.OpenReadStream()))
+                {
+                    existingEtiqueta.Zpl = await reader.ReadToEndAsync();
+                }
+            }
+
+            // Mapear propriedades de 'etiqueta' para 'existingEtiqueta'
+            _mapper.Map(etiqueta, existingEtiqueta);
+
+            await _context.SaveChangesAsync();
 
             return NoContent();
         }
+
+
 
 
 

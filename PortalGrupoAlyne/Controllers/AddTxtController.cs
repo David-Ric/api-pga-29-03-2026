@@ -187,7 +187,7 @@ namespace PortalGrupoAlyne.Controllers
                 // Aplicar as substituições nos valores encontrados entre '$' e '$'.
                 fileContent = ReplaceTextBetweenDollarAndDollaruP(fileContent, replacements);
 
-                EnviarParaOutraImpressora(fileContent, quantPaginas, printerAddress);
+              //  EnviarParaOutraImpressora(fileContent, quantPaginas, printerAddress);
 
                 return Ok(fileContent);
               
