@@ -1112,8 +1112,7 @@ WHERE
                     FROM sankhya.TGFPRO (NOLOCK) PRO
                     LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
                     LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'
-                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')
-                    AND PRO.DTALTER > '$AtualizadoEm'"
+                    WHERE PRO.CODPROD <> 0 AND PRO.USOPROD IN ('V','R')"
                     },
 
                      new IntegracaoSankhya

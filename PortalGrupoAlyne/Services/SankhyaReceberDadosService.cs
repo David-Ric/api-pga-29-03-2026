@@ -12,7 +12,7 @@ namespace PortalGrupoAlyne.Services
     {
         static IConfiguration? _configuration;
 
-        
+
 
         public static async Task<Object> processar(IConfiguration configuration, string tabela, int vendedorId)
         {
@@ -32,7 +32,7 @@ namespace PortalGrupoAlyne.Services
                     }
                     if (tabela == "Titulo")
                     {
-                        limpaTb("Titulo", " ParceiroId in (select id from Parceiro where VendedorId = "+ vendedorId + ")");
+                        limpaTb("Titulo", " ParceiroId in (select id from Parceiro where VendedorId = " + vendedorId + ")");
                     }
                     if (tabela == "TabelaPrecoParceiro")
                     {
@@ -216,7 +216,7 @@ namespace PortalGrupoAlyne.Services
 
             catch (Exception e)
             {
-                
+
                 Console.WriteLine("Erro: " + e.Message);
 
                 string mensagemErro = "Erro de migração de dados! ";
@@ -363,7 +363,7 @@ namespace PortalGrupoAlyne.Services
 
             catch (Exception e)
             {
-                
+
             }
 
             return "Sucesso";

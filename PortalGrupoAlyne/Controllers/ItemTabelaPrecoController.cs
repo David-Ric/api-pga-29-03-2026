@@ -53,24 +53,63 @@ namespace PortalGrupoAlyne.Controllers
 
 
 
+        //     [HttpGet("ItensTotais")]
+        //     public async Task<IActionResult> GetAllTotais(
+        //[FromServices] DataContext context)
+        //     {
+        //         var total = await context.ItemTabela.CountAsync();
+
+        //         var data = await context.ItemTabela
+        //             .AsNoTracking()
+        //             .Include(i => i.Produtos)
+        //             .OrderBy(p => p.Produtos.Nome)
+        //             .ToListAsync();
+
+        //         return Ok(new
+        //         {
+        //             total,
+        //             data
+        //         });
+        //     }
+
+
         [HttpGet("ItensTotais")]
         public async Task<IActionResult> GetAllTotais(
-   [FromServices] DataContext context)
+    [FromServices] DataContext context,
+    [FromQuery] int vendedorId)  // Parâmetro para filtrar por VendedorId
         {
-            var total = await context.ItemTabela.CountAsync();
+            var parceiros = await context.Parceiro
+                                          .Where(p => p.VendedorId == vendedorId)
+                                          .Select(p => p.id)
+                                          .ToListAsync();
+
+            var tabelaPrecoIds = await context.TabelaPrecoParceiro
+                                               .Where(tp => parceiros.Contains(tp.ParceiroId))
+                                               .Select(tp => tp.TabelaPrecoId)
+                                               .ToListAsync();
 
             var data = await context.ItemTabela
-                .AsNoTracking()
-                .Include(i => i.Produtos)
-                .OrderBy(p => p.Produtos.Nome)
-                .ToListAsync();
+                                .AsNoTracking()
+                                .Include(i => i.Produtos)
+                                .Where(i => tabelaPrecoIds.Contains(i.TabelaPrecoId))
+                                .OrderBy(p => p.Produtos.Nome)
+                                .ToListAsync();
 
             return Ok(new
             {
-                total,
+                total = data.Count,
                 data
             });
         }
+
+
+
+
+
+
+
+
+
 
         //[HttpGet]
 
