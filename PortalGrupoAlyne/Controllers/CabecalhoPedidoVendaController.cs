@@ -123,16 +123,58 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         //============salvar diversas tabelas =======================================================================
-        [HttpPost("Lista")]
-        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(List<CabecalhoPedidoVenda> listaTabelas)
-        {
-            List<CabecalhoPedidoVenda> tabelasJaExistem = new List<CabecalhoPedidoVenda>();
+        //[HttpPost("Lista")]
+        //public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(List<CabecalhoPedidoVenda> listaTabelas)
+        //{
+        //    List<CabecalhoPedidoVenda> tabelasJaExistem = new List<CabecalhoPedidoVenda>();
 
+        //    foreach (var tabela in listaTabelas)
+        //    {
+        //        if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
+        //        {
+        //            tabelasJaExistem.Add(tabela);
+        //        }
+        //        else
+        //        {
+        //            _context.CabecalhoPedidoVenda.Add(tabela);
+        //        }
+        //    }
+
+        //    if (tabelasJaExistem.Count > 0)
+        //    {
+        //        return BadRequest("Os seguintes Pedidos de Venda já existem na base de dados: " +
+        //            string.Join(", ", tabelasJaExistem.Select(t => t.Id.ToString())));
+        //    }
+
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok(new { data = listaTabelas, message = "Pedidos de Venda criados com sucesso." });
+        //}
+        [HttpPost("Lista")]
+        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddOrUpdatePedido(List<CabecalhoPedidoVenda> listaTabelas)
+        {
             foreach (var tabela in listaTabelas)
             {
-                if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
+                var existingTabela = await _context.CabecalhoPedidoVenda.FirstOrDefaultAsync(u => u.PalMPV == tabela.PalMPV);
+
+                if (existingTabela != null)
                 {
-                    tabelasJaExistem.Add(tabela);
+                    // Atualize manualmente as propriedades do objeto existente
+                    existingTabela.Data = tabela.Data;
+                    existingTabela.DataEntrega = tabela.DataEntrega;
+                    existingTabela.Filial = tabela.Filial;
+                    existingTabela.Observacao = tabela.Observacao;
+                    existingTabela.PalMPV = tabela.PalMPV;
+                    existingTabela.ParceiroId = tabela.ParceiroId;
+                    existingTabela.pedido = tabela.pedido;
+                    existingTabela.Status = tabela.Status;
+                    existingTabela.TipPed = tabela.TipPed;
+                    existingTabela.TipoNegociacaoId = tabela.TipoNegociacaoId;
+                    existingTabela.Valor = tabela.Valor;
+                    existingTabela.VendedorId = tabela.VendedorId;
+
+                    // Atualize a entidade no contexto
+                    _context.CabecalhoPedidoVenda.Update(existingTabela);
                 }
                 else
                 {
@@ -140,16 +182,13 @@ namespace PortalGrupoAlyne.Controllers
                 }
             }
 
-            if (tabelasJaExistem.Count > 0)
-            {
-                return BadRequest("Os seguintes Pedidos de Venda já existem na base de dados: " +
-                    string.Join(", ", tabelasJaExistem.Select(t => t.Id.ToString())));
-            }
-
             await _context.SaveChangesAsync();
 
-            return Ok(new { data = listaTabelas, message = "Pedidos de Venda criados com sucesso." });
+            return Ok(new { data = listaTabelas, message = "Pedidos de Venda criados/atualizados com sucesso." });
         }
+
+
+
 
 
 

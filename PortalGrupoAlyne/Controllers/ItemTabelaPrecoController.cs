@@ -76,7 +76,7 @@ namespace PortalGrupoAlyne.Controllers
         [HttpGet("ItensTotais")]
         public async Task<IActionResult> GetAllTotais(
     [FromServices] DataContext context,
-    [FromQuery] int vendedorId)  // Parâmetro para filtrar por VendedorId
+    [FromQuery] int vendedorId)  
         {
             var parceiros = await context.Parceiro
                                           .Where(p => p.VendedorId == vendedorId)

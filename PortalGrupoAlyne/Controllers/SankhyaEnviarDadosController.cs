@@ -5,7 +5,7 @@ using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+  //  [Authorize]
     [Route("api/Sankhya")]
     [ApiController]
     public class SankhyaEnviarDadosController : ControllerBase
