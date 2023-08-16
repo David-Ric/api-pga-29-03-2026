@@ -148,6 +148,7 @@ namespace PortalGrupoAlyne.Controllers
             }
         }
 
+
         [HttpPost]
         public async Task<ActionResult<List<ItemPedidoVenda>>> AddItemPedido(List<ItemPedidoVendaDto> itens)
         {
@@ -177,6 +178,12 @@ namespace PortalGrupoAlyne.Controllers
                     }
                     else
                     {
+                        var existingItems = _context.ItemPedidoVenda.Where(u => u.PalMPV == item.PalMPV).ToList();
+                        foreach (var existingItem in existingItems)
+                        {
+                            _context.ItemPedidoVenda.Remove(existingItem);
+                        }
+
                         var itemPedidoVenda = new ItemPedidoVenda
                         {
                             Filial = item.Filial,
@@ -189,14 +196,7 @@ namespace PortalGrupoAlyne.Controllers
                             Baixado = item.Baixado
                         };
 
-                        if (_context.ItemPedidoVenda.Any(u => u.Id == itemPedidoVenda.Id))
-                        {
-                            mensagensErro.Add($"Item com ProdutoId {item.ProdutoId}: Item do pedido de venda já existe na base de dados.");
-                        }
-                        else
-                        {
-                            _context.ItemPedidoVenda.Add(itemPedidoVenda);
-                        }
+                        _context.ItemPedidoVenda.Add(itemPedidoVenda);
                     }
                 }
 
@@ -216,6 +216,10 @@ namespace PortalGrupoAlyne.Controllers
                 return BadRequest("Erro ao criar pedido de venda.");
             }
         }
+
+
+
+
 
         [HttpPost("Lista")]
         public async Task<ActionResult<List<ItemPedidoVenda>>> UpdateOrInsertItems(List<ItemPedidoVendaDto> novosItens)

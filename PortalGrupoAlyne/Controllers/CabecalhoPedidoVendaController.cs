@@ -38,15 +38,53 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
+
+        [HttpGet("ultimos/vendedor")]
+        public async Task<IActionResult> Get05ultumos([FromServices] DataContext context, [FromQuery] int codVendedor)
+        {
+            var cabecalho = await context.CabecalhoPedidoVenda
+                .Where(e => e.Vendedor.Id == codVendedor)
+                .OrderByDescending(e => e.Data)
+                .Take(5)
+                .Include("Vendedor")
+                .Include("TipoNegociacao")
+                .AsNoTracking()
+                .ToListAsync();
+
+            var palMPVs = cabecalho.Select(c => c.PalMPV); 
+
+            var itens = await context.ItemPedidoVenda
+                .Where(item => palMPVs.Contains(item.PalMPV)) 
+                .Include("Produto")
+                .AsNoTracking()
+                .ToListAsync();
+
+            var totalCabecalho = cabecalho.Count();
+            //var totalItens = itens.Count();
+
+            return Ok(new
+            {
+                totalCabecalho,
+                cabecalho,
+                itens
+            });
+        }
+
+
+
+        //====================== GET 5 ULTIMOS DO  VENDEDOR =======================================
+
+
         [HttpGet("filter/vendedor")]
         public async Task<IActionResult> GetAllFilterCleinteEmpresa([FromServices] DataContext context,
-           [FromQuery] int pagina,
-            [FromQuery] int totalpagina,
-            [FromQuery] int codVendedor
-   
-           )
+          [FromQuery] int pagina,
+           [FromQuery] int totalpagina,
+           [FromQuery] int codVendedor
+
+          )
         {
-            
+
             var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("TipoNegociacao").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
             var total = data.Count();
             return Ok(new
@@ -55,6 +93,10 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
+
+
+
         //[HttpGet("Pendentes")]
         //public async Task<IActionResult> GetPendentes([FromServices] DataContext context)
         //{
@@ -98,29 +140,67 @@ namespace PortalGrupoAlyne.Controllers
                 return BadRequest("Pedido não encontrada.");
             }
         }
-
-
         [HttpPost]
         public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(CabecalhoPedidoVenda tabela)
         {
-
             if (tabela.Valor <= 0)
             {
                 return BadRequest("O Valor do Pedido não pode ser igual a zero.");
             }
 
-            if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
-            {
-                return BadRequest("Pedido de Venda ja existe na base de dados.");
-            }
-           
+            var existingPedido = await _context.CabecalhoPedidoVenda.FirstOrDefaultAsync(u => u.PalMPV == tabela.PalMPV);
 
+            if (existingPedido != null)
+            {
+
+                existingPedido.Data = tabela.Data;
+                existingPedido.DataEntrega = tabela.DataEntrega;
+                existingPedido.Filial = tabela.Filial;
+                existingPedido.Observacao = tabela.Observacao;
+                existingPedido.PalMPV = tabela.PalMPV;
+                existingPedido.ParceiroId = tabela.ParceiroId;
+                existingPedido.pedido = tabela.pedido;
+                existingPedido.Status = tabela.Status;
+                existingPedido.TipPed = tabela.TipPed;
+                existingPedido.TipoNegociacaoId = tabela.TipoNegociacaoId;
+                existingPedido.Valor = tabela.Valor;
+                existingPedido.VendedorId = tabela.VendedorId;
+              
+
+                _context.CabecalhoPedidoVenda.Update(existingPedido);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { data = existingPedido, message = "Pedido de Venda existente atualizado com sucesso." });
+            }
 
             _context.CabecalhoPedidoVenda.Add(tabela);
             await _context.SaveChangesAsync();
 
-            return Ok((new {data=tabela, message = "Pedido de Venda criado com sucesso." }));
+            return Ok(new { data = tabela, message = "Pedido de Venda criado com sucesso." });
         }
+
+
+        //[HttpPost]
+        //public async Task<ActionResult<List<CabecalhoPedidoVenda>>> AddPedido(CabecalhoPedidoVenda tabela)
+        //{
+
+        //    if (tabela.Valor <= 0)
+        //    {
+        //        return BadRequest("O Valor do Pedido não pode ser igual a zero.");
+        //    }
+
+        //    if (_context.CabecalhoPedidoVenda.Any(u => u.Id == tabela.Id))
+        //    {
+        //        return BadRequest("Pedido de Venda ja existe na base de dados.");
+        //    }
+
+
+
+        //    _context.CabecalhoPedidoVenda.Add(tabela);
+        //    await _context.SaveChangesAsync();
+
+        //    return Ok((new {data=tabela, message = "Pedido de Venda criado com sucesso." }));
+        //}
 
         //============salvar diversas tabelas =======================================================================
         //[HttpPost("Lista")]
