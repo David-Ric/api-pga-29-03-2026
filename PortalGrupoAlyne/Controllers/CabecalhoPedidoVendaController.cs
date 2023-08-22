@@ -46,7 +46,7 @@ namespace PortalGrupoAlyne.Controllers
             var cabecalho = await context.CabecalhoPedidoVenda
                 .Where(e => e.Vendedor.Id == codVendedor)
                 .OrderByDescending(e => e.Data)
-                .Take(5)
+                .Take(10)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
                 .AsNoTracking()
@@ -61,7 +61,6 @@ namespace PortalGrupoAlyne.Controllers
                 .ToListAsync();
 
             var totalCabecalho = cabecalho.Count();
-            //var totalItens = itens.Count();
 
             return Ok(new
             {
