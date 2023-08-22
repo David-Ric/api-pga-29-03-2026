@@ -306,7 +306,7 @@ namespace PortalGrupoAlyne.Controllers
                 return NotFound();
             }
 
-            pedido.Status = "Não Enviado";
+            pedido.Status = "Pendente";
             _context.SaveChanges();
 
             return Ok(new { message = "Erro ao Enviar Pedido" });
@@ -321,7 +321,7 @@ namespace PortalGrupoAlyne.Controllers
                 return NotFound();
             }
 
-            pedido.Status = "Não Enviado";
+            pedido.Status = "Pendente";
             _context.SaveChanges();
 
             return Ok(new { message = "Erro ao Enviar Pedido" });
