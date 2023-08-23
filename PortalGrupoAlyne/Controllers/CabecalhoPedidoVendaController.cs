@@ -93,6 +93,63 @@ namespace PortalGrupoAlyne.Controllers
             });
         }
 
+        [HttpGet("filter/status")]
+        public async Task<IActionResult> GetAllFilterPedisoStatus([FromServices] DataContext context,
+         [FromQuery] int pagina,
+          [FromQuery] int totalpagina,
+          [FromQuery] int codVendedor,
+          [FromQuery] int codParceiro,
+          [FromQuery] string status
+         )
+        {
+            var skip = (pagina - 1) * totalpagina;
+            var take = totalpagina;
+
+            List<CabecalhoPedidoVenda> data;
+            var total = 0;
+
+            if (status == "todos")
+            {
+                data =
+                await context.CabecalhoPedidoVenda
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro)
+                .OrderByDescending(e => e.Id)
+                .Include("Vendedor")
+                .Include("TipoNegociacao")
+                .AsNoTracking()
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina).ToListAsync();
+
+                total = await context.CabecalhoPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro)
+                .CountAsync();
+
+            }
+            else
+            {
+                data =
+                await context.CabecalhoPedidoVenda
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status)
+                .OrderByDescending(e => e.Id)
+                .Include("Vendedor")
+                .Include("TipoNegociacao")
+                .AsNoTracking()
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina).ToListAsync();
+                total = await context.CabecalhoPedidoVenda
+                .AsNoTracking()
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status)
+                .CountAsync();
+
+            }
+ 
+            return Ok(new
+            {
+                total,
+                data = data
+            });
+        }
 
 
 
