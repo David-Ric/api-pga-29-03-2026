@@ -46,7 +46,7 @@ namespace PortalGrupoAlyne.Controllers
             var cabecalho = await context.CabecalhoPedidoVenda
                 .Where(e => e.Vendedor.Id == codVendedor)
                 .OrderByDescending(e => e.Data)
-                .Take(10)
+                .Take(60)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
                 .AsNoTracking()
