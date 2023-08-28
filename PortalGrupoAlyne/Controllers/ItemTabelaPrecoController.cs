@@ -73,44 +73,38 @@ namespace PortalGrupoAlyne.Controllers
         //     }
 
 
-        [HttpGet("ItensTotais")]
-        public async Task<IActionResult> GetAllTotais(
-    [FromServices] DataContext context,
-    [FromQuery] int vendedorId)  
-        {
-            var parceiros = await context.Parceiro
-                                          .Where(p => p.VendedorId == vendedorId)
-                                          .Select(p => p.id)
-                                          .ToListAsync();
-
-            var tabelaPrecoIds = await context.TabelaPrecoParceiro
-                                               .Where(tp => parceiros.Contains(tp.ParceiroId))
-                                               .Select(tp => tp.TabelaPrecoId)
-                                               .ToListAsync();
-
-            var data = await context.ItemTabela
-                                .AsNoTracking()
-                                .Include(i => i.Produtos)
-                                .Where(i => tabelaPrecoIds.Contains(i.TabelaPrecoId))
-                                .OrderBy(p => p.Produtos.Nome)
-                                .ToListAsync();
-
-            return Ok(new
+            [HttpGet("ItensTotais")]
+            public async Task<IActionResult> GetAllTotais(
+        [FromServices] DataContext context,
+        [FromQuery] int vendedorId)  
             {
-                total = data.Count,
-                data
-            });
-        }
+                var parceiros = await context.Parceiro
+                                              .Where(p => p.VendedorId == vendedorId)
+                                              .Select(p => p.id)
+                                              .ToListAsync();
+
+                var tabelaPrecoIds = await context.TabelaPrecoParceiro
+                                                   .Where(tp => parceiros.Contains(tp.ParceiroId))
+                                                   .Select(tp => tp.TabelaPrecoId)
+                                                   .ToListAsync();
+
+                var data = await context.ItemTabela
+                                    .AsNoTracking()
+                                    .Include(i => i.Produtos)
+                                    .Where(i => tabelaPrecoIds.Contains(i.TabelaPrecoId))
+                                    .OrderBy(p => p.Produtos.Nome)
+                                    .ToListAsync();
+
+                return Ok(new
+               {
+                    total = data.Count,
+                    data
+                });
+            }
 
 
-
-
-
-
-
-
-
-
+       // [HttpGet("ItensTotais")]
+    
         //[HttpGet]
 
         //public async Task<IActionResult> GetAll([FromServices] DataContext context,
@@ -206,7 +200,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var tabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId)
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
                  .Include(e => e.Produtos)
                 .ToListAsync();
 
@@ -217,7 +211,7 @@ namespace PortalGrupoAlyne.Controllers
 
             var totalTabelaPrecoAdicional = await context.TabelaPrecoAdicional
                 .AsNoTracking()
-                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
+                .Where(e => e.EmpresaId == empresaId && e.ParceiroId == parceiroId)
                 .CountAsync();
 
             var total = data.Count + tabelaPrecoAdicional.Count;
@@ -344,22 +338,43 @@ namespace PortalGrupoAlyne.Controllers
         }
 
 
-    
+
 
         //==============itens tabela preço adicional======================================================
 
-        [HttpGet("tabelaAdicional")]
+        //[HttpGet("tabelaAdicional")]
 
+        //public async Task<IActionResult> GetAllAdicional([FromServices] DataContext context)
+         
+        //{
+        //    var total = await context.TabelaPrecoAdicional.CountAsync();
+        //    var data = await context.TabelaPrecoAdicional.AsNoTracking()
+        //    .Include(i => i.Produtos)
+        //    .ToListAsync();
+
+        //    return Ok(new
+        //    {
+        //        total,
+        //        data = data
+        //    });
+        //}
+
+        [HttpGet("tabelaAdicional")]
         public async Task<IActionResult> GetAllAdicional([FromServices] DataContext context,
-           [FromQuery] int pagina,
-            [FromQuery] int totalpagina
-           )
+    [FromQuery] int vendedorId)
         {
-            var total = await context.TabelaPrecoAdicional.CountAsync();
-            var data = await context.TabelaPrecoAdicional.AsNoTracking()
-            .Include(i => i.Produtos)
-            .Skip((pagina - 1) * totalpagina)
-            .Take(totalpagina).ToListAsync();
+            var parceiros = await context.Parceiro
+                                          .Where(p => p.VendedorId == vendedorId)
+                                          .Select(p => (int?)p.id) 
+                                          .ToListAsync();
+
+    
+            var data = await context.TabelaPrecoAdicional
+                                    .Where(tpa => parceiros.Contains(tpa.ParceiroId))
+                                    .Include(i => i.Produtos)
+                                    .ToListAsync();
+
+            var total = data.Count;
 
             return Ok(new
             {
@@ -367,6 +382,10 @@ namespace PortalGrupoAlyne.Controllers
                 data = data
             });
         }
+
+
+
+
         //================================================================================================
 
 
