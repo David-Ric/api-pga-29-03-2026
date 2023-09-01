@@ -1103,12 +1103,13 @@ WHERE
                         TabelaPortal = "Produto",
                         ChaveTabelaPortal = "Id",
                         SqlObterSankhya = @"SELECT PRO.CODPROD Id, 
-                        PRO.DESCRPROD Nome, 
+                        substring(PRO.DESCRPROD,1,60) as Nome,  
                         convert(int,SUBSTRING(RTRIM(CODGRUPOPROD),2,5)) GrupoProdutoId,
                         PRO.DTALTER AtualizadoEm,
                         PRO.CODVOL TipoUnid,
                         ISNULL(VOA.CODVOL,'UN') TipoUnid2,
-                        ISNULL(VOA.QUANTIDADE,1) Conv
+                        ISNULL(VOA.QUANTIDADE,1) Conv,
+                        isnull(IPI.PERCENTUAL,0) as AliIpi
                     FROM sankhya.TGFPRO (NOLOCK) PRO
                     LEFT JOIN sankhya.TGFVOA (NOLOCK) VOA ON VOA.CODPROD = PRO.CODPROD AND VOA.ATIVO = 'S' AND VOA.AD_UNCOM = 'S'
                     LEFT JOIN sankhya.TGFIPI (NOLOCK) IPI ON IPI.CODIPI = PRO.CODIPI AND VOA.ATIVO = 'S'

@@ -21,9 +21,9 @@ namespace PortalGrupoAlyne.Model
         [ForeignKey("Produto")]
         public int ProdutoId { get; set; }
         public Produto? Produto { get; set; }
-        public decimal? Quant { get; set; }
-        public decimal? ValUnit { get; set; }
-        public decimal? ValTotal { get; set; }
+        public float? Quant { get; set; }
+        public float? ValUnit { get; set; }
+        public float? ValTotal { get; set; }
 
         [StringLength(4, ErrorMessage = "inserir no máximo 4 caracteres")]
         public string? Baixado { get; set; }

@@ -29,7 +29,7 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         public DateTime Data { get; set; }
 
-        public decimal? Valor { get; set; }
+        public float? Valor { get; set; }
 
         public DateTime DataEntrega { get; set; }
 
@@ -47,6 +47,8 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         [StringLength(2, ErrorMessage = "inserir no máximo 2 caracteres")]
         public string? TipPed { get; set; }
+        [StringLength(1, ErrorMessage = "inserir no máximo 2 caracteres")]
+        public string? Ativo { get; set; }
 
     }
     

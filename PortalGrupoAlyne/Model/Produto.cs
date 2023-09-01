@@ -17,7 +17,7 @@ namespace PortalGrupoAlyne.Model
         [StringLength(4, ErrorMessage = "inserir no máximo 4 caracteres")]
         public string? TipoUnid2 { get; set; }
         public int? Conv { get; set; }
-        public int? CodIpi { get; set; }
+        public float? AliIpi { get; set; }
 
         [ForeignKey("GrupoProduto")]
         public int GrupoProdutoId { get; set; }

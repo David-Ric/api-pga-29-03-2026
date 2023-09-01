@@ -44,7 +44,7 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<IActionResult> Get05ultumos([FromServices] DataContext context, [FromQuery] int codVendedor)
         {
             var cabecalho = await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor)
+                .Where(e => e.Vendedor.Id == codVendedor && e.Ativo !="N")
                 .OrderByDescending(e => e.Data)
                 .Take(60)
                 .Include("Vendedor")
@@ -83,7 +83,14 @@ namespace PortalGrupoAlyne.Controllers
           )
         {
 
-            var data = await context.CabecalhoPedidoVenda.Where(e => e.Vendedor.Id == codVendedor).OrderBy(e => e.Id).Include("Vendedor").Include("TipoNegociacao").AsNoTracking().Skip((pagina - 1) * totalpagina).Take(totalpagina).ToListAsync();
+            var data = await context.CabecalhoPedidoVenda
+                .Where(e => e.Vendedor.Id == codVendedor && e.Ativo !="N")
+                .OrderBy(e => e.Id)
+                .Include("Vendedor")
+                .Include("TipoNegociacao")
+                .AsNoTracking()
+                .Skip((pagina - 1) * totalpagina)
+                .Take(totalpagina).ToListAsync();
             var total = data.Count();
             return Ok(new
             {
@@ -111,7 +118,7 @@ namespace PortalGrupoAlyne.Controllers
             {
                 data =
                 await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro)
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
                 .OrderByDescending(e => e.Id)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
@@ -121,7 +128,7 @@ namespace PortalGrupoAlyne.Controllers
 
                 total = await context.CabecalhoPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro)
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
                 .CountAsync();
 
             }
@@ -129,7 +136,7 @@ namespace PortalGrupoAlyne.Controllers
             {
                 data =
                 await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status)
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
                 .OrderByDescending(e => e.Id)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
@@ -138,7 +145,7 @@ namespace PortalGrupoAlyne.Controllers
                 .Take(totalpagina).ToListAsync();
                 total = await context.CabecalhoPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status)
+                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
                 .CountAsync();
 
             }
@@ -296,20 +303,57 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { message = "Erro ao Enviar Pedido" });
         }
 
-        [HttpPut("{palMPV}/statusErroPalMPV")]
-        public IActionResult UpdateStatusErroPalMPV(string palMPV)
+        [HttpPut("palmpv")]
+        public async Task<ActionResult> UpdateInativar(List<string> palmpvList)
         {
-            var pedido = _context.CabecalhoPedidoVenda.FirstOrDefault(p => p.PalMPV == palMPV);
-            if (pedido == null)
+            if (palmpvList == null || palmpvList.Count == 0)
             {
-                return NotFound();
+                return BadRequest("A lista de PalMPV está vazia.");
             }
 
-            pedido.Status = "Pendente";
-            _context.SaveChanges();
+            var pedidos = await _context.CabecalhoPedidoVenda
+                .Where(p => palmpvList.Contains(p.PalMPV))
+                .ToListAsync();
 
-            return Ok(new { message = "Erro ao Enviar Pedido" });
+            if (pedidos == null || pedidos.Count == 0)
+            {
+                return BadRequest("Pedidos não encontrados.");
+            }
+
+            foreach (var pedido in pedidos)
+            {
+                pedido.Ativo = "N";
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Pedidos Inativados");
         }
+
+
+        [HttpPut("palmpv/{palmpv}")]
+        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> UpdatePropertyInList(string palmpv)
+        {
+            var pedidos = await _context.CabecalhoPedidoVenda
+                .Where(p => p.PalMPV == palmpv)
+                .ToListAsync();
+
+            if (pedidos == null || pedidos.Count == 0)
+            {
+                return BadRequest("Pedidos não encontrados.");
+            }
+
+            foreach (var pedido in pedidos)
+            {
+                pedido.Ativo = "N"; 
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Propriedade Ativo atualizada com sucesso em todos os pedidos com PalMPV igual a '" + palmpv + "'.");
+        }
+
+
 
 
 
