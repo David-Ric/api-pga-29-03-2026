@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace PortalGrupoAlyne.Controllers
 {
-    [Authorize]
+    //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class PostLidosController : ControllerBase

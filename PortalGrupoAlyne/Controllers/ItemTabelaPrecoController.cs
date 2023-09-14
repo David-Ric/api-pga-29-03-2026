@@ -192,7 +192,7 @@ namespace PortalGrupoAlyne.Controllers
             var data = await context.ItemTabela
                 .AsNoTracking()
                 .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.Nome.ToLower().Contains(nomeProduto.ToLower()))
-                .OrderBy(e => e.Id)
+                .OrderBy(e => e.Produtos.Nome)
                 .Include(e => e.Produtos)
                 //.Skip(skip)
                 //.Take(take)
@@ -245,7 +245,7 @@ namespace PortalGrupoAlyne.Controllers
             var data = await context.ItemTabela
                 .AsNoTracking()
                 .Where(e => e.TabelaPrecoId == codTabela && e.Produtos.GrupoProdutoId == grupoId)
-                .OrderBy(e => e.Id)
+                .OrderBy(e => e.Produtos.Nome)
                 .Include(e => e.Produtos)
                 //.Skip(skip)
                 //.Take(take)
