@@ -288,6 +288,23 @@ namespace PortalGrupoAlyne.Controllers
             return Ok(new { message = "Erro de comunicação com o Sankya, Envio Pendente" });
         }
 
+        [HttpPut("statusErroPalMPV")]
+        public IActionResult StatusErroPalMPV([FromQuery] string PalMPV)
+        {
+            var pedido = _context.CabecalhoPedidoVenda.FirstOrDefault(p => p.PalMPV == PalMPV);
+
+            if (pedido == null)
+            {
+                return NotFound(new { message = "Pedido não encontrado" });
+            }
+
+            pedido.Status = "Pendente";
+            _context.SaveChanges();
+
+            return Ok(new { message = "Status atualizado para Pendente" });
+        }
+
+
         [HttpPut("{id}/statusErro")]
         public IActionResult UpdateStatusErro(int id)
         {
