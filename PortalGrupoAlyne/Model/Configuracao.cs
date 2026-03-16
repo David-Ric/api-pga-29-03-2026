@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace PortalGrupoAlyne.Model
 {
@@ -18,5 +18,6 @@ namespace PortalGrupoAlyne.Model
 
         public DateTime? AtualizadoEm { get; set; }
         public int? TempoSessao { get; set; }
+        public string? Versao { get; set; }
     }
 }

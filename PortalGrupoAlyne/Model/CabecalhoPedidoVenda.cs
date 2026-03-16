@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PortalGrupoAlyne.Model
@@ -49,7 +49,11 @@ namespace PortalGrupoAlyne.Model
         public string? TipPed { get; set; }
         [StringLength(1, ErrorMessage = "inserir no máximo 2 caracteres")]
         public string? Ativo { get; set; }
+        [StringLength(100, ErrorMessage = "inserir no máximo 100 caracteres")]
+        public string? Versao { get; set; }
 
+        [NotMapped]
+        public List<ItemPedidoVenda>? Itens { get; set; }
 
     }
 }

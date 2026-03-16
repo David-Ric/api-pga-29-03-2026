@@ -20,8 +20,10 @@ namespace PortalGrupoAlyne.Data
         {
             base.OnConfiguring(optionsBuilder);
             //optionsBuilder
-            //    .UseMySql("server=localhost;database=GrupoAlyne;user=root;password=root");
+            //.UseMySql("server=localhost;database=GrupoAlyne;user=root;password=root");
+        
         }
+        public DbSet<RDV> Rdvs => Set<RDV>();
         public DbSet<Usuario> Usuario => Set<Usuario>();
         public DbSet<GrupoProduto> GrupoProduto { get; set; }
 
@@ -125,6 +127,8 @@ namespace PortalGrupoAlyne.Data
 
             var password = "Sync550v";
             var salt = CreateSalt();
+
+
 
             modelBuilder.Entity<Usuario>().HasData(
                 new Usuario
@@ -941,6 +945,24 @@ namespace PortalGrupoAlyne.Data
                          Icon = "",
                          MenuId = 5,
 
+                     }, new Pagina
+                     {
+                         Id = 205,
+                         Codigo = 42,
+                         Nome = "Pedidos em Processo",
+                         Url = "/pedidos-em-processamento",
+                         Icon = "fa fa-line-chart",
+                         MenuId = 1,
+                         SubMenuId = 2,
+                     }, new Pagina
+                     {
+                         Id = 206,
+                         Codigo = 42,
+                         Nome = "Pedidos em Processo",
+                         Url = "/pedidos-em-processamento",
+                         Icon = "fa fa-line-chart",
+                         MenuId = 3,
+                         
                      }
 
 

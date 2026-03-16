@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace PortalGrupoAlyne.Model
 {
@@ -10,7 +10,7 @@ namespace PortalGrupoAlyne.Model
 
         [StringLength(80, ErrorMessage = "inserir no máximo 80 caracteres")]
         public string? Descricao { get; set; }
+        public string? Natureza { get; set; }
         public DateTime? AtualizadoEm { get; set; }
     }
 }
-

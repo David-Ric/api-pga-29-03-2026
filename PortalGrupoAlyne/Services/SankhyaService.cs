@@ -1,4 +1,4 @@
-using System.Net.Http.Headers;
+ï»¿using System.Net.Http.Headers;
 using System.Text;
 using System.Xml.Serialization;
 using Dapper;
@@ -145,7 +145,7 @@ namespace PortalGrupoAlyne.Services
 
             body = sb.ToString();
 
-           // Console.WriteLine(body);
+            // Console.WriteLine(body);
 
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, url);
             request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
@@ -167,12 +167,13 @@ namespace PortalGrupoAlyne.Services
             status = status.Substring(8, 1);
 
             // *************************
-            // Se obtiver sucesso ao enviar ao cabeçalho, envia também os itens
+            // Se obtiver sucesso ao enviar ao cabeï¿½alho, envia tambï¿½m os itens
             // *************************
             if (status == "1")
             {
                 //StringBuilder sb = new StringBuilder();
-                result = "Erro ao utilizar a API Sankhya";
+                //result = "Erro ao utilizar a API Sankhya";
+               // result = responseBody;
                 url = $"{configuracao.SankhyaServidor}mge/service.sbr?serviceName=CRUDServiceProvider.saveRecord&Application=DynaformLauncher&mgeSession={jsessionid}&resourceID=br.com.sankhya.menu.adicional.AD_Z39";
                 sb.Clear();
                 sb.AppendLine(@"<serviceRequest serviceName=""CRUDServiceProvider.saveRecord"">");
@@ -236,6 +237,18 @@ namespace PortalGrupoAlyne.Services
                 {
                     result = "Sucesso";
                 }
+                else
+                {
+
+                    PedidoVendaResponse? pedRes = result2 as PedidoVendaResponse;
+                    string txtenc = pedRes.statusMessage.ToString();
+
+                    byte[] data = Convert.FromBase64String(txtenc);
+                    // string decotxt = Encoding.UTF8.GetString(data);
+                    string decotxt = Encoding.GetEncoding("ISO-8859-1").GetString(data);
+                    result = decotxt;
+
+                }
             }
             else
             {
@@ -244,12 +257,8 @@ namespace PortalGrupoAlyne.Services
                 string txtenc = pedRes.statusMessage.ToString();
 
                 byte[] data = Convert.FromBase64String(txtenc);
-                string decotxt = Encoding.UTF8.GetString(data);
-
-                //var conteudoBytes = Encoding.GetEncoding("ISO-8859-1").GetBytes(decotxt);
-                //var conteudoString = new StringContent(Encoding.UTF8.GetString(conteudoBytes), Encoding.GetEncoding("ISO-8859-1"), "text/plain");
-
-                //Console.WriteLine(conteudoString);
+                // string decotxt = Encoding.UTF8.GetString(data);
+                string decotxt = Encoding.GetEncoding("ISO-8859-1").GetString(data);
 
                 result = decotxt;
             }

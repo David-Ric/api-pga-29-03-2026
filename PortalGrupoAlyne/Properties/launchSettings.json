@@ -15,7 +15,7 @@
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:8095;http://localhost:8091",
-     //"applicationUrl": "https://191.252.194.145:8095",
+      //"applicationUrl": "https://pga.cigel.com.br:8095",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

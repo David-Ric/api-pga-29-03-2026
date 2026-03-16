@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PortalGrupoAlyne.Model.Dtos
@@ -77,6 +77,9 @@ namespace PortalGrupoAlyne.Model.Dtos
 
         [StringLength(30, ErrorMessage = "inserir no máximo 30 caracteres")]
         public string? Empresa { get; set; }
+
+        [StringLength(30, ErrorMessage = "inserir no máximo 30 caracteres")]
+        public string? TipoParceiro { get; set; }
 
         [ForeignKey("Vendedor")]
         public int VendedorId { get; set; }

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using PortalGrupoAlyne.Helpers;
 using PortalGrupoAlyne.Model.Dtos;
 using PortalGrupoAlyne.Persist;
@@ -9,6 +9,8 @@ namespace PortalGrupoAlyne.Services
     {
         void Update(int id, CabecalhoPedidoVendaDto model);
         Task<CabecalhoPedidoVenda> GetPedidoVendaByIdAsync(int id);
+        Task<CabecalhoPedidoVenda> GetPedidoVendaByIdWithItemsAsync(int id);
+        Task<CabecalhoPedidoVenda> GetPedidoVendaByPalMPVWithItemsAsync(string palMPV);
     }
     public class CabecalhoPedidoVendaService : ICabecalhoPedidoVendaService
     {
@@ -35,6 +37,36 @@ namespace PortalGrupoAlyne.Services
                 var resultado = _mapper.Map<CabecalhoPedidoVenda>(cabecalho);
 
                 return resultado;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<CabecalhoPedidoVenda> GetPedidoVendaByIdWithItemsAsync(int id)
+        {
+            try
+            {
+                var cabecalho = await _cabecalhoPedidoVendaPresist.GetCabecalhoByIdWithItemsAsync(id);
+                if (cabecalho == null) return null;
+
+                return cabecalho;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<CabecalhoPedidoVenda> GetPedidoVendaByPalMPVWithItemsAsync(string palMPV)
+        {
+            try
+            {
+                var cabecalho = await _cabecalhoPedidoVendaPresist.GetCabecalhoByPalMPVWithItemsAsync(palMPV);
+                if (cabecalho == null) return null;
+
+                return cabecalho;
             }
             catch (Exception ex)
             {

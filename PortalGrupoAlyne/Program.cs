@@ -17,6 +17,9 @@ using PortalGrupoAlyne.Persist;
 using System.Net;
 using Microsoft.AspNetCore.Hosting;
 using System.Security.Cryptography.X509Certificates;
+using PortalGrupoAlyne.Interfaces;
+using PortalGrupoAlyne.Persistence;
+
 
 namespace PortalGrupoAlyne
 {
@@ -26,8 +29,13 @@ namespace PortalGrupoAlyne
 
         {
 
-
             var builder = WebApplication.CreateBuilder(args);
+
+            // LOCAL: descomente para rodar na sua máquina
+            // builder.WebHost.UseUrls("https://localhost:8095;http://localhost:8094");
+
+            // SERVIDOR: descomente para rodar no Ubuntu (escuta em todas as interfaces)
+            // builder.WebHost.UseUrls("http://0.0.0.0:8095");
 
             // Add services to the container.
             string mySqlConnection = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -35,6 +43,11 @@ namespace PortalGrupoAlyne
                 options.UseMySql(mySqlConnection, ServerVersion.AutoDetect(mySqlConnection),
                                  mySqlOptions => mySqlOptions.EnableRetryOnFailure()));
 
+
+            // Configuração da conexão ao MySQL
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+                                new MySqlServerVersion(new Version(8, 0, 25))));
 
             //builder.Services.AddDbContext<ProEventosContext>(
             //    context => context.UseSqlite(Configuration.GetConnectionString("Default"))
@@ -109,6 +122,8 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<ITabelaPrecoParceiroService, TabelaPrecoParceiroService>();
             builder.Services.AddScoped<ICabecalhoPedidoVendaService, CabecalhoPedidoVendaService>();
             builder.Services.AddScoped<IItemPedidoVendaService, ItemPedidoVendaService>();
+            builder.Services.AddScoped<IRDVRepository, RDVRepository>();
+            builder.Services.AddScoped<RDVService>();
 
 
             // Persist
@@ -130,6 +145,9 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<ITabelaPrecoParceiroPersist, TabelaPrecoParceiroPersist>();
             builder.Services.AddScoped<ICabecalhoPedidoVendaPersist, CabecalhoPedidoVendaPersist>();
             builder.Services.AddScoped<IItemPedidoVendaPersist, ItemPedidoVendaPersist>();
+            
+            
+            
 
             var app = builder.Build();
 
