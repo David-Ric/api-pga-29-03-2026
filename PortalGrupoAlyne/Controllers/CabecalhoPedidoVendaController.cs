@@ -264,7 +264,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.Status == "AProcessar" || e.Status == "EmEnvio")
+                .Where(e => e.Status == "AProcessar" || e.Status == "EmEnvio" || e.Status == "Processar")
                 .OrderByDescending(e => e.Id)
                 //.Include("Vendedor")
                 //.Include("TipoNegociacao")
@@ -288,7 +288,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.VendedorId == codVendedor && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
+                .Where(e => e.VendedorId == codVendedor && (e.Status == "AProcessar" || e.Status == "EmEnvio" || e.Status == "Processar"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
@@ -310,7 +310,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.ParceiroId == codCliente && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
+                .Where(e => e.ParceiroId == codCliente && (e.Status == "AProcessar" || e.Status == "EmEnvio" || e.Status == "Processar"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
@@ -333,7 +333,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                 .Where(e => e.PalMPV.ToLower().Contains(palm.ToLower()) && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
+                 .Where(e => e.PalMPV.ToLower().Contains(palm.ToLower()) && (e.Status == "AProcessar" || e.Status == "EmEnvio" || e.Status == "Processar"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
