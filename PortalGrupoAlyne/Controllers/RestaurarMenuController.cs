@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -529,6 +529,15 @@ WHERE
                       Nome = "Pedido de Vendas",
                       Url = "/pedido_vendas",
                       Icon = "fa fa-line-chart",
+                      MenuId = 1,
+                      SubMenuId = 2,
+                     },
+                        new Pagina {
+                      Id = 207,
+                      Codigo = 43,
+                      Nome = "Orçamento",
+                      Url = "/orcamento",
+                      Icon = "fa fa-file-text-o",
                       MenuId = 1,
                       SubMenuId = 2,
                      },

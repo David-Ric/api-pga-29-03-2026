@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Dapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using MySqlConnector;
 using PortalGrupoAlyne.Model;
 using PortalGrupoAlyne.Model.Dtos;
+using PortalGrupoAlyne.Model.Dtos.Sankhya;
 using PortalGrupoAlyne.Services;
 
 namespace PortalGrupoAlyne.Controllers
@@ -25,6 +26,186 @@ namespace PortalGrupoAlyne.Controllers
             _context = context;
             _mapper = mapper;
             _configuration = configuration;
+        }
+
+        private static string? NormalizarStatus(string? status)
+        {
+            var s = status?.Trim();
+            if (string.IsNullOrWhiteSpace(s)) return s;
+            if (string.Equals(s, "Processar", StringComparison.OrdinalIgnoreCase)) return "AProcessar";
+            if (string.Equals(s, "Falha no Envio", StringComparison.OrdinalIgnoreCase)) return "Falhou";
+            return s;
+        }
+
+        public class NovoPedidoVendaRequest
+        {
+            public PortalGrupoAlyne.Model.CabecalhoPedidoVenda CabecalhoPedidoVenda { get; set; } = null!;
+            public List<PortalGrupoAlyne.Model.ItemPedidoVenda> ItensPedidoVenda { get; set; } = new();
+            public bool Envio { get; set; }
+        }
+
+        [HttpPost("envio")]
+        public async Task<ActionResult> Envio([FromBody] NovoPedidoVendaRequest request)
+        {
+            if (request == null || request.CabecalhoPedidoVenda == null)
+            {
+                return BadRequest("Cabeçalho é obrigatório.");
+            }
+
+            var cabecalho = request.CabecalhoPedidoVenda;
+            var itens = request.ItensPedidoVenda ?? new List<PortalGrupoAlyne.Model.ItemPedidoVenda>();
+            cabecalho.Status = NormalizarStatus(cabecalho.Status);
+
+            if (string.IsNullOrWhiteSpace(cabecalho.PalMPV))
+            {
+                return BadRequest("PalMPV é obrigatório.");
+            }
+
+            if (cabecalho.Valor <= 0)
+            {
+                return BadRequest("O Valor do Pedido não pode ser igual a zero.");
+            }
+
+            var itensNormalizados = itens
+                .Where(i => i != null)
+                .GroupBy(i => i.ProdutoId)
+                .Select(g => g.Last())
+                .ToList();
+
+            foreach (var item in itensNormalizados)
+            {
+                item.PalMPV = cabecalho.PalMPV;
+                if (string.IsNullOrWhiteSpace(item.Inativo))
+                {
+                    item.Inativo = "N";
+                }
+                item.Produto = null;
+                item.Vendedor = null;
+            }
+
+            var itensAtivosCount = itensNormalizados.Count(i => !string.Equals(i.Inativo, "S", StringComparison.OrdinalIgnoreCase));
+            cabecalho.Quant_Itens = itensAtivosCount;
+
+            PortalGrupoAlyne.Model.CabecalhoPedidoVenda cabecalhoFinal;
+
+            var strategy = _context.Database.CreateExecutionStrategy();
+            await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await _context.Database.BeginTransactionAsync();
+                try
+                {
+                    var produtoIds = itensNormalizados.Select(i => i.ProdutoId).Distinct().ToList();
+                    var itensExistentes = !produtoIds.Any()
+                        ? new List<PortalGrupoAlyne.Model.ItemPedidoVenda>()
+                        : await _context.ItemPedidoVenda
+                            .Where(i => i.PalMPV == cabecalho.PalMPV && produtoIds.Contains(i.ProdutoId))
+                            .ToListAsync();
+
+                    var itensExistentesPorProduto = itensExistentes.ToDictionary(i => i.ProdutoId, i => i);
+
+                    foreach (var item in itensNormalizados)
+                    {
+                        if (itensExistentesPorProduto.TryGetValue(item.ProdutoId, out var itemDb))
+                        {
+                            itemDb.Filial = item.Filial;
+                            itemDb.VendedorId = item.VendedorId;
+                            itemDb.Quant = item.Quant;
+                            itemDb.ValUnit = item.ValUnit;
+                            itemDb.ValTotal = item.ValTotal;
+                            itemDb.Baixado = item.Baixado;
+                            itemDb.Inativo = item.Inativo;
+                        }
+                        else
+                        {
+                            item.Id = 0;
+                            _context.ItemPedidoVenda.Add(item);
+                        }
+                    }
+
+                    if (produtoIds.Any())
+                    {
+                        var itensParaInativar = await _context.ItemPedidoVenda
+                            .Where(i => i.PalMPV == cabecalho.PalMPV && !produtoIds.Contains(i.ProdutoId) && (i.Inativo == null || i.Inativo != "S"))
+                            .ToListAsync();
+
+                        foreach (var it in itensParaInativar)
+                        {
+                            it.Inativo = "S";
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    var cabecalhoExistente = await _context.CabecalhoPedidoVenda.FirstOrDefaultAsync(p => p.PalMPV == cabecalho.PalMPV);
+                    if (cabecalhoExistente != null)
+                    {
+                        cabecalhoExistente.Data = cabecalho.Data;
+                        cabecalhoExistente.DataEntrega = cabecalho.DataEntrega;
+                        cabecalhoExistente.Filial = cabecalho.Filial;
+                        cabecalhoExistente.Observacao = cabecalho.Observacao;
+                        cabecalhoExistente.ParceiroId = cabecalho.ParceiroId;
+                        cabecalhoExistente.pedido = cabecalho.pedido;
+                        cabecalhoExistente.Status = cabecalho.Status;
+                        cabecalhoExistente.TipPed = cabecalho.TipPed;
+                        cabecalhoExistente.TipoNegociacaoId = cabecalho.TipoNegociacaoId;
+                        cabecalhoExistente.Valor = cabecalho.Valor;
+                        cabecalhoExistente.VendedorId = cabecalho.VendedorId;
+                        cabecalhoExistente.Ativo = cabecalho.Ativo;
+                        cabecalhoExistente.Versao = cabecalho.Versao;
+                        cabecalhoExistente.Quant_Itens = cabecalho.Quant_Itens;
+                        cabecalhoExistente.Log_Envio = cabecalho.Log_Envio;
+                        cabecalhoFinal = cabecalhoExistente;
+                    }
+                    else
+                    {
+                        cabecalho.Vendedor = null;
+                        cabecalho.TipoNegociacao = null;
+                        cabecalho.Itens = null;
+                        if (string.IsNullOrWhiteSpace(cabecalho.Ativo))
+                        {
+                            cabecalho.Ativo = "S";
+                        }
+                        if (string.IsNullOrWhiteSpace(cabecalho.Status))
+                        {
+                            cabecalho.Status = "Não Enviado";
+                        }
+
+                        _context.CabecalhoPedidoVenda.Add(cabecalho);
+                        cabecalhoFinal = cabecalho;
+                    }
+
+                    await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
+            });
+
+            if (request.Envio)
+            {
+                cabecalhoFinal = await _context.CabecalhoPedidoVenda.FirstAsync(p => p.PalMPV == cabecalho.PalMPV);
+                cabecalhoFinal.Status = "AProcessar";
+                cabecalhoFinal.Log_Envio = null;
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                cabecalhoFinal = await _context.CabecalhoPedidoVenda.FirstAsync(p => p.PalMPV == cabecalho.PalMPV);
+                cabecalhoFinal.Status = "Não Enviado";
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(new
+            {
+                message = "Operação concluída com sucesso.",
+                palmpv = cabecalhoFinal.PalMPV,
+                status = cabecalhoFinal.Status,
+                pedido = cabecalhoFinal.pedido,
+                logEnvio = cabecalhoFinal.Log_Envio
+            });
         }
 
         [HttpGet]
@@ -48,7 +229,7 @@ namespace PortalGrupoAlyne.Controllers
         public async Task<IActionResult> Get05ultumos([FromServices] DataContext context, [FromQuery] int codVendedor)
         {
             var cabecalho = await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.Ativo !="N")
+                .Where(e => e.VendedorId == codVendedor && e.Ativo !="N")
                 .OrderByDescending(e => e.Data)
                 .Take(60)
                 .Include("Vendedor")
@@ -83,7 +264,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.Status == "Processar")
+                .Where(e => e.Status == "AProcessar" || e.Status == "EmEnvio")
                 .OrderByDescending(e => e.Id)
                 //.Include("Vendedor")
                 //.Include("TipoNegociacao")
@@ -107,7 +288,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.VendedorId == codVendedor && e.Status == "Processar")
+                .Where(e => e.VendedorId == codVendedor && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
@@ -129,7 +310,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.ParceiroId == codCliente && e.Status == "Processar")
+                .Where(e => e.ParceiroId == codCliente && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
@@ -152,7 +333,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                 .Where(e => e.PalMPV.ToLower().Contains(palm.ToLower()) && e.Status == "Processar")
+                 .Where(e => e.PalMPV.ToLower().Contains(palm.ToLower()) && (e.Status == "AProcessar" || e.Status == "EmEnvio"))
                 .OrderByDescending(e => e.Id)
                 .AsNoTracking()
                 .Skip((pagina - 1) * totalpagina)
@@ -177,7 +358,7 @@ namespace PortalGrupoAlyne.Controllers
         {
 
             var data = await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.Ativo !="N")
+                .Where(e => e.VendedorId == codVendedor && e.Ativo !="N")
                 .OrderBy(e => e.Id)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
@@ -201,17 +382,18 @@ namespace PortalGrupoAlyne.Controllers
           [FromQuery] string status
          )
         {
+            status = NormalizarStatus(status) ?? status;
             var skip = (pagina - 1) * totalpagina;
             var take = totalpagina;
 
-            List<CabecalhoPedidoVenda> data;
+            List<PortalGrupoAlyne.Model.CabecalhoPedidoVenda> data;
             var total = 0;
 
             if (status == "todos")
             {
                 data =
                 await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
+                .Where(e => e.VendedorId == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
                 .OrderByDescending(e => e.Id)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
@@ -221,7 +403,7 @@ namespace PortalGrupoAlyne.Controllers
 
                 total = await context.CabecalhoPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
+                .Where(e => e.VendedorId == codVendedor && e.ParceiroId == codParceiro && e.Ativo != "N")
                 .CountAsync();
 
             }
@@ -229,7 +411,7 @@ namespace PortalGrupoAlyne.Controllers
             {
                 data =
                 await context.CabecalhoPedidoVenda
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
+                .Where(e => e.VendedorId == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
                 .OrderByDescending(e => e.Id)
                 .Include("Vendedor")
                 .Include("TipoNegociacao")
@@ -238,7 +420,7 @@ namespace PortalGrupoAlyne.Controllers
                 .Take(totalpagina).ToListAsync();
                 total = await context.CabecalhoPedidoVenda
                 .AsNoTracking()
-                .Where(e => e.Vendedor.Id == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
+                .Where(e => e.VendedorId == codVendedor && e.ParceiroId == codParceiro && e.Status.Trim() == status && e.Ativo != "N")
                 .CountAsync();
 
             }
@@ -330,7 +512,7 @@ namespace PortalGrupoAlyne.Controllers
         //}
 
         [HttpGet("listagem")]
-        public async Task<ActionResult<IEnumerable<CabecalhoPedidoVenda>>> GetCabecalhoPedidoVenda()
+        public async Task<ActionResult<IEnumerable<PortalGrupoAlyne.Model.CabecalhoPedidoVenda>>> GetCabecalhoPedidoVenda()
         {
             using (var connection = new MySqlConnection(_configuration.GetConnectionString("DefaultConnection")))
             {
@@ -339,7 +521,7 @@ namespace PortalGrupoAlyne.Controllers
                 // Sua consulta personalizada
                 string selectQuery = "SELECT * FROM CabecalhoPedidoVenda";
 
-                var cabecalhoPedidoVenda = await connection.QueryAsync<CabecalhoPedidoVenda>(selectQuery);
+                var cabecalhoPedidoVenda = await connection.QueryAsync<PortalGrupoAlyne.Model.CabecalhoPedidoVenda>(selectQuery);
 
                 if (!cabecalhoPedidoVenda.Any())
                 {
@@ -355,7 +537,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult> AddOrUpdatePedido(CabecalhoPedidoVenda tabela)
+        public async Task<ActionResult> AddOrUpdatePedido(PortalGrupoAlyne.Model.CabecalhoPedidoVenda tabela)
         {
             if (tabela.Valor <= 0)
             {
@@ -648,7 +830,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpPut("palmpv/{palmpv}")]
-        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> UpdatePropertyInList(string palmpv)
+        public async Task<ActionResult<List<PortalGrupoAlyne.Model.CabecalhoPedidoVenda>>> UpdatePropertyInList(string palmpv)
         {
             var pedidos = await _context.CabecalhoPedidoVenda
                 .Where(p => p.PalMPV == palmpv)
@@ -674,7 +856,7 @@ namespace PortalGrupoAlyne.Controllers
 
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> Delete(int id)
+        public async Task<ActionResult<List<PortalGrupoAlyne.Model.CabecalhoPedidoVenda>>> Delete(int id)
         {
             var pedido = await _context.CabecalhoPedidoVenda.FindAsync(id);
             if (pedido == null)
@@ -687,7 +869,7 @@ namespace PortalGrupoAlyne.Controllers
         }
 
         [HttpDelete("palmpv/{palmpv}")]
-        public async Task<ActionResult<List<CabecalhoPedidoVenda>>> DeleteByPalMPV(string palmpv)
+        public async Task<ActionResult<List<PortalGrupoAlyne.Model.CabecalhoPedidoVenda>>> DeleteByPalMPV(string palmpv)
         {
             var pedido = await _context.CabecalhoPedidoVenda.FirstOrDefaultAsync(p => p.PalMPV == palmpv);
             if (pedido == null)

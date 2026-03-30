@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Options;
 using PortalGrupoAlyne.Model.Dtos;
@@ -37,6 +37,8 @@ namespace PortalGrupoAlyne.Data
 
         public DbSet<Parceiro> Parceiro { get; set; }
 
+        public DbSet<Documento> Documento { get; set; }
+
         public DbSet<TipoNegociacao> TipoNegociacao { get; set; }
 
         public DbSet<TabelaPreco> TabelaPreco { get; set; }
@@ -64,6 +66,10 @@ namespace PortalGrupoAlyne.Data
         public DbSet<CabecalhoPedidoVenda> CabecalhoPedidoVenda { get; set; }
 
         public DbSet<ItemPedidoVenda> ItemPedidoVenda { get; set; }
+
+        public DbSet<CabecalhoOrcamento> CabecalhoOrcamento { get; set; }
+
+        public DbSet<ItemOrcamento> ItemOrcamento { get; set; }
 
         public DbSet<Configuracao> Configuracao { get; set; }
 
@@ -124,6 +130,18 @@ namespace PortalGrupoAlyne.Data
         {
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<CabecalhoPedidoVenda>()
+                .HasIndex(e => e.PalMPV)
+                .IsUnique();
+
+            modelBuilder.Entity<ItemPedidoVenda>()
+                .HasIndex(e => new { e.PalMPV, e.ProdutoId })
+                .IsUnique();
+
+            modelBuilder.Entity<ItemPedidoVenda>()
+                .Property(e => e.Inativo)
+                .HasDefaultValue("N");
 
             var password = "Sync550v";
             var salt = CreateSalt();
@@ -963,6 +981,15 @@ namespace PortalGrupoAlyne.Data
                          Icon = "fa fa-line-chart",
                          MenuId = 3,
                          
+                     }, new Pagina
+                     {
+                         Id = 207,
+                         Codigo = 43,
+                         Nome = "Orçamento",
+                         Url = "/orcamento",
+                         Icon = "fa fa-file-text-o",
+                         MenuId = 1,
+                         SubMenuId = 2,
                      }
 
 

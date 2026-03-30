@@ -1,9 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PortalGrupoAlyne.Model
 {
-    public class ItemPedidoVenda
+    public class ItemOrcamento
     {
         [Key]
         public int Id { get; set; }
@@ -15,12 +15,13 @@ namespace PortalGrupoAlyne.Model
         public int VendedorId { get; set; }
         public Vendedor? Vendedor { get; set; }
 
-        [StringLength(18, ErrorMessage = "inserir no máximo 18 caracteres")]
-        public string? PalMPV { get; set; }
+        [StringLength(50, ErrorMessage = "inserir no máximo 50 caracteres")]
+        public string? PedidoId { get; set; }
 
         [ForeignKey("Produto")]
         public int ProdutoId { get; set; }
         public Produto? Produto { get; set; }
+
         public float? Quant { get; set; }
         public float? ValUnit { get; set; }
         public float? ValTotal { get; set; }
@@ -30,6 +31,5 @@ namespace PortalGrupoAlyne.Model
 
         [StringLength(1, ErrorMessage = "inserir no máximo 1 caractere")]
         public string? Inativo { get; set; }
-
     }
 }

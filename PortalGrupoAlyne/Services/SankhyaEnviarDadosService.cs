@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Dapper;
 using MySqlConnector;
 using PortalGrupoAlyne.Model.Dtos.Sankhya;
@@ -19,7 +19,7 @@ namespace PortalGrupoAlyne.Services
                 {
                     _configuration = configuration;
                     // ------------------------ Enviar Pedido ---------------------------
-                    resultado = await SankhyaService.EnviarPedido(configuration, pedido);
+                    resultado = await SankhyaService.EnviarPedidoItensPrimeiro(configuration, pedido);
 
                     // ------------------------ Logout ----------------------------------
                     await SankhyaService.logout(configuration);

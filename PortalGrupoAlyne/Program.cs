@@ -125,6 +125,7 @@ namespace PortalGrupoAlyne
             builder.Services.AddScoped<IRDVRepository, RDVRepository>();
             builder.Services.AddScoped<RDVService>();
 
+            builder.Services.AddHostedService<SankhyaPedidoEnvioQueueWorker>();
 
             // Persist
 

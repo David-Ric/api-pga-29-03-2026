@@ -626,6 +626,41 @@ namespace PortalGrupoAlyne.Controllers
             return Ok("Item do pedido de venda excluído com sucesso!");
         }
 
+        [HttpPut("delete_logico/palmpv/{palmpv}/produto/{produtoId}")]
+        public async Task<IActionResult> DeleteLogico(string palmpv, int produtoId)
+        {
+            var item = await _context.ItemPedidoVenda
+                .Where(i => i.PalMPV == palmpv && i.ProdutoId == produtoId)
+                .FirstOrDefaultAsync();
+
+            if (item == null)
+            {
+                return BadRequest("Item do pedido de venda não encontrado");
+            }
+
+            item.Inativo = "S";
+            await _context.SaveChangesAsync();
+
+            try
+            {
+                var ativosCount = await _context.ItemPedidoVenda.CountAsync(i =>
+                    i.PalMPV == palmpv && (i.Inativo == null || i.Inativo != "S"));
+
+                var cabecalho = await _context.CabecalhoPedidoVenda
+                    .Where(c => c.PalMPV == palmpv)
+                    .FirstOrDefaultAsync();
+
+                if (cabecalho != null)
+                {
+                    cabecalho.Quant_Itens = ativosCount;
+                    await _context.SaveChangesAsync();
+                }
+            }
+            catch { }
+
+            return Ok(new { message = "Item marcado como inativo com sucesso" });
+        }
+
 
 
     }
