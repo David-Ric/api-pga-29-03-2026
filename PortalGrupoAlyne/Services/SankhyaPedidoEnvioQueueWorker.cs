@@ -118,12 +118,7 @@ namespace PortalGrupoAlyne.Services
                 string? numeroPedidoSankhya = null;
                 try
                 {
-                    var loginRes = await SankhyaService.login(_configuration) as SankhyaDtos.LoginResponse;
-                    if (loginRes == null || loginRes.status != "1")
-                    {
-                        resultadoEnvio = "Falha ao autenticar no Sankhya.";
-                    }
-                    else
+                    resultadoEnvio = await SankhyaService.ExecuteWithLoginLogout(_configuration, async () =>
                     {
                         var pedidoReq = new SankhyaDtos.PedidoVendaRequest
                         {
@@ -156,9 +151,9 @@ namespace PortalGrupoAlyne.Services
                         };
 
                         var envio = await SankhyaService.EnviarPedidoItensPrimeiro(_configuration, pedidoReq);
-                        resultadoEnvio = envio?.ToString();
+                        var resultado = envio?.ToString();
 
-                        if (string.Equals(resultadoEnvio, "Sucesso", StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(resultado, "Sucesso", StringComparison.OrdinalIgnoreCase))
                         {
                             var palSql = (cabecalho.PalMPV ?? "").Replace("'", "''");
                             var query = $"SELECT TOP 1 PEDIDO FROM AD_Z38 (NOLOCK) WHERE PALMPV = '{palSql}' AND PEDIDO IS NOT NULL AND LTRIM(RTRIM(PEDIDO)) <> ''";
@@ -183,9 +178,8 @@ namespace PortalGrupoAlyne.Services
                                 await Task.Delay(TimeSpan.FromMilliseconds(800 + (tentativaPedido * 250)), stoppingToken);
                             }
                         }
-
-                        await SankhyaService.logout(_configuration);
-                    }
+                        return resultado;
+                    });
                 }
                 catch (Exception ex)
                 {

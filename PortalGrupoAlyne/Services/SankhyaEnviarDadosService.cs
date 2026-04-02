@@ -11,26 +11,16 @@ namespace PortalGrupoAlyne.Services
 
         public static async Task<Object> processarPedido(IConfiguration configuration, PedidoVendaRequest pedido)
         {
-            Object resultado = "";
             try
             {
-                LoginResponse? result = (LoginResponse?)await SankhyaService.login(configuration);
-                if (result != null && result.status == "1") //SankhyaService.getJsessionid() == null) 
-                {
-                    _configuration = configuration;
-                    // ------------------------ Enviar Pedido ---------------------------
-                    resultado = await SankhyaService.EnviarPedidoItensPrimeiro(configuration, pedido);
-
-                    // ------------------------ Logout ----------------------------------
-                    await SankhyaService.logout(configuration);
-                }
+                _configuration = configuration;
+                return await SankhyaService.ExecuteWithLoginLogout(configuration, () => SankhyaService.EnviarPedidoItensPrimeiro(configuration, pedido));
             }
             catch (Exception e)
             {
                 Console.WriteLine("error: " + e.Message);
                 return "error: " + e.Message;
             }
-            return resultado;
         }
 
         public static IntegracaoSankhya obterIntegracaoSankhya(IConfiguration configuration, string tabelaPortal)

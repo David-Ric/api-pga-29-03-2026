@@ -12,9 +12,51 @@ namespace PortalGrupoAlyne.Services
 
         //const string EndPoint = "http://10.0.0.254:8280/";
         //const string EndPoint = "http://10.0.0.253:8180/";
-        static HttpClient client = new HttpClient();
+        static HttpClient client = new HttpClient { Timeout = TimeSpan.FromMinutes(5) };
         static string jsessionid = null;
+        static readonly SemaphoreSlim sankhyaSessionLock = new SemaphoreSlim(1, 1);
         //public SankhyaService() { }
+
+        public static async Task<T> ExecuteWithLoginLogout<T>(IConfiguration configuration, Func<Task<T>> action)
+        {
+            await sankhyaSessionLock.WaitAsync();
+            try
+            {
+                var loginResult = await login(configuration) as LoginResponse;
+                if (loginResult == null || loginResult.status != "1")
+                {
+                    throw new UnauthorizedAccessException("Falha ao autenticar no Sankhya.");
+                }
+
+                try
+                {
+                    return await action();
+                }
+                finally
+                {
+                    try
+                    {
+                        await logout(configuration);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+            }
+            finally
+            {
+                sankhyaSessionLock.Release();
+            }
+        }
+
+        public static Task ExecuteWithLoginLogout(IConfiguration configuration, Func<Task> action)
+        {
+            return ExecuteWithLoginLogout<object?>(configuration, async () =>
+            {
+                await action();
+                return null;
+            });
+        }
 
         public static async Task<Object> login(IConfiguration configuration)
         {
@@ -269,8 +311,6 @@ namespace PortalGrupoAlyne.Services
             StringBuilder sb = new StringBuilder();
             string url = $"{configuracao.SankhyaServidor}mge/service.sbr?serviceName=CRUDServiceProvider.saveRecord&Application=DynaformLauncher&mgeSession={jsessionid}&resourceID=br.com.sankhya.menu.adicional.AD_Z39";
             string body;
-            HttpRequestMessage request = null!;
-            HttpResponseMessage response = null!;
             string responseBody = "";
             string status = "";
 
@@ -280,6 +320,7 @@ namespace PortalGrupoAlyne.Services
 
             string lastItemError = "";
             bool itensOk = false;
+            const int batchSize = 50;
             for (int tentativa = 0; tentativa < 3; tentativa++)
             {
                 int existentes = await ObterQuantidadeItensAdZ39(configuration, palmPv);
@@ -288,53 +329,62 @@ namespace PortalGrupoAlyne.Services
                     await ApagarItensAdZ39(configuration, palmPv);
                 }
 
-                sb.Clear();
-                sb.AppendLine(@"<serviceRequest serviceName=""CRUDServiceProvider.saveRecord"">");
-                sb.AppendLine(" <requestBody>");
-                sb.AppendLine(@"    <dataSet rootEntity=""AD_Z39"" includePresentationFields=""S"" datasetid=""1667584438688_4"">");
-                sb.AppendLine(@"        <entity path=""""><fieldset list=""*""/></entity>");
-                sb.AppendLine(@"        <entity path=""Produto""><field name=""DESCRPROD""/></entity>");
-
-                string sQuant, sValUnit;
-                foreach (var item in itens)
+                bool loteOk = true;
+                for (int start = 0; start < itens.Count; start += batchSize)
                 {
-                    sQuant = item.Quant.ToString();
-                    sQuant = sQuant.Replace(",", ".");
-                    sValUnit = item.ValUnit.ToString();
-                    sValUnit = sValUnit.Replace(",", ".");
+                    sb.Clear();
+                    sb.AppendLine(@"<serviceRequest serviceName=""CRUDServiceProvider.saveRecord"">");
+                    sb.AppendLine(" <requestBody>");
+                    sb.AppendLine(@"    <dataSet rootEntity=""AD_Z39"" includePresentationFields=""S"" datasetid=""1667584438688_4"">");
+                    sb.AppendLine(@"        <entity path=""""><fieldset list=""*""/></entity>");
+                    sb.AppendLine(@"        <entity path=""Produto""><field name=""DESCRPROD""/></entity>");
 
-                    sb.AppendLine("         <dataRow>");
-                    sb.AppendLine("             <localFields>");
-                    sb.AppendLine($"                <VEND>{item.VendedorId}</VEND>");
-                    sb.AppendLine($"                <CODPRO>{item.ProdutoId}</CODPRO>");
-                    sb.AppendLine($"                <QTDE>{sQuant}</QTDE>");
-                    sb.AppendLine($"                <PUNIT>{sValUnit}</PUNIT>");
-                    sb.AppendLine("             </localFields>");
-                    sb.AppendLine("             <foreingKey>");
-                    sb.AppendLine($"                <PALMPV><![CDATA[{palmPv}]]></PALMPV>");
-                    sb.AppendLine("             </foreingKey>");
-                    sb.AppendLine("         </dataRow>");
+                    int end = Math.Min(start + batchSize, itens.Count);
+                    for (int i = start; i < end; i++)
+                    {
+                        var item = itens[i];
+                        string sQuant = item.Quant.ToString().Replace(",", ".");
+                        string sValUnit = item.ValUnit.ToString().Replace(",", ".");
+
+                        sb.AppendLine("         <dataRow>");
+                        sb.AppendLine("             <localFields>");
+                        sb.AppendLine($"                <VEND>{item.VendedorId}</VEND>");
+                        sb.AppendLine($"                <CODPRO>{item.ProdutoId}</CODPRO>");
+                        sb.AppendLine($"                <QTDE>{sQuant}</QTDE>");
+                        sb.AppendLine($"                <PUNIT>{sValUnit}</PUNIT>");
+                        sb.AppendLine("             </localFields>");
+                        sb.AppendLine("             <foreingKey>");
+                        sb.AppendLine($"                <PALMPV><![CDATA[{palmPv}]]></PALMPV>");
+                        sb.AppendLine("             </foreingKey>");
+                        sb.AppendLine("         </dataRow>");
+                    }
+
+                    sb.AppendLine("     </dataSet>");
+                    sb.AppendLine("     <clientEventList/>");
+                    sb.AppendLine("  </requestBody>");
+                    sb.AppendLine("</serviceRequest>");
+
+                    body = sb.ToString();
+
+                    using var loteRequest = new HttpRequestMessage(HttpMethod.Post, url);
+                    loteRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+                    loteRequest.Content = new StringContent(body, Encoding.UTF8, "text/xml");
+                    loteRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jsessionid);
+
+                    using var loteResponse = await client.SendAsync(loteRequest);
+                    loteResponse.EnsureSuccessStatusCode();
+                    responseBody = await loteResponse.Content.ReadAsStringAsync();
+                    status = ExtrairStatus(responseBody);
+                    if (status != "1")
+                    {
+                        lastItemError = DecodeStatusMessage(responseBody);
+                        loteOk = false;
+                        break;
+                    }
                 }
 
-                sb.AppendLine("     </dataSet>");
-                sb.AppendLine("     <clientEventList/>");
-                sb.AppendLine("  </requestBody>");
-                sb.AppendLine("</serviceRequest>");
-
-                body = sb.ToString();
-
-                request = new HttpRequestMessage(HttpMethod.Post, url);
-                request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
-                request.Content = new StringContent(body, Encoding.UTF8, "text/xml");
-                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jsessionid);
-
-                response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
-                responseBody = await response.Content.ReadAsStringAsync();
-                status = ExtrairStatus(responseBody);
-                if (status != "1")
+                if (!loteOk)
                 {
-                    lastItemError = DecodeStatusMessage(responseBody);
                     if (tentativa < 2)
                     {
                         await ApagarItensAdZ39(configuration, palmPv);
@@ -390,14 +440,14 @@ namespace PortalGrupoAlyne.Services
 
             body = sb.ToString();
 
-            request = new HttpRequestMessage(HttpMethod.Post, url);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
-            request.Content = new StringContent(body, Encoding.UTF8, "text/xml");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jsessionid);
+            using var cabecalhoRequest = new HttpRequestMessage(HttpMethod.Post, url);
+            cabecalhoRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/xml"));
+            cabecalhoRequest.Content = new StringContent(body, Encoding.UTF8, "text/xml");
+            cabecalhoRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", jsessionid);
 
-            response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            responseBody = await response.Content.ReadAsStringAsync();
+            using var cabecalhoResponse = await client.SendAsync(cabecalhoRequest);
+            cabecalhoResponse.EnsureSuccessStatusCode();
+            responseBody = await cabecalhoResponse.Content.ReadAsStringAsync();
             status = ExtrairStatus(responseBody);
 
             if (status == "1")

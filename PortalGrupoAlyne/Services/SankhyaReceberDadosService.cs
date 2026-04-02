@@ -18,10 +18,9 @@ namespace PortalGrupoAlyne.Services
         {
             try
             {
-                LoginResponse? result = (LoginResponse?)await SankhyaService.login(configuration);
-                if (result != null && result.status == "1") //SankhyaService.getJsessionid() == null) 
+                _configuration = configuration;
+                return await SankhyaService.ExecuteWithLoginLogout(configuration, async () =>
                 {
-                    _configuration = configuration;
                     IntegracaoSankhya integracao;
                     DateTime AtualizadoEm;
                     string? sql;
@@ -70,16 +69,14 @@ namespace PortalGrupoAlyne.Services
 
                         await AtualizarTabela(sql, tabela, chave);
                     }
-                    // ------------------------ Logout ----------------------------------
-                    await SankhyaService.logout(configuration);
-                }
+                    return (Object)"Sucesso";
+                });
             }
             catch (Exception e)
             {
                 Console.WriteLine("error: " + e.Message);
                 return "error: " + e.Message;
             }
-            return "Sucesso";
         }
         public static string limpaTb(string table, string condicao)
         {
